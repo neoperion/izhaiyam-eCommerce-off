@@ -1,27 +1,43 @@
 import React from "react";
+import { ArrowRight } from "lucide-react";
 
 export const Newsletter = () => {
   return (
-    <section className="mt-16 py-8 px-6 tablet:px-[5%] lg:w-[50%] xs:[40%] w-[92%] tablet:w-[75%] md:w-[60%] mx-auto bg-primaryColor text-white rounded-md z-10 sticky">
-      <h2 className="font-bold text-[24px] text-center">Get early access today</h2>
-      <p className="mt-6 font-medium text-center">
-        Subscribe to our newsletter to get the latest furniture trends,products,events and exciting offers
-      </p>
-      <form className="flex tablet:w-[90%] tablet:mx-auto flex-col gap-6 mt-6">
-        <input
-          className="w-[100%]  pl-8 h-12 rounded-full outline-0 text-secondaryColor"
-          type="email"
-          placeholder="Your email"
-          name=""
-          id=""
-        />
-        <button
-          type="submit"
-          className="text-white rounded-full bg-gradient-to-r from-secondaryColor to-black w-[100%] h-12 "
-        >
-          subscribe
-        </button>
-      </form>
+    <section className="bg-background py-16 md:py-20">
+      <div className="container-page max-w-4xl">
+        <div className="text-center">
+          <p className="text-primary text-xs md:text-sm font-semibold tracking-widest uppercase mb-3">
+            Newsletter
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            Stay Updated
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Subscribe for our newsletter for exclusive updates, new furniture trends, and timeless design tips
+          </p>
+          
+          <form className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto items-center">
+            <input
+              className="flex-1 w-full px-6 py-4 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              type="email"
+              placeholder="Enter your email"
+              name="email"
+              required
+            />
+            <button
+              type="submit"
+              className="btn-primary inline-flex items-center gap-2 whitespace-nowrap"
+            >
+              Subscribe
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+          
+          <p className="text-xs text-muted-foreground mt-4">
+            Subscribe to enjoy exclusive discounts and updates
+          </p>
+        </div>
+      </div>
     </section>
   );
 };

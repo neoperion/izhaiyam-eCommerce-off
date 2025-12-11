@@ -13,6 +13,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { ArrowRight, Filter, ChevronDown } from "lucide-react";
 
 const Index = () => {
   const [sortingCriteria, setSortingCriteria] = useState("Default: Latest");
@@ -62,108 +63,166 @@ const Index = () => {
   };
 
   return (
-    <section className="lg:grid lg:grid-cols-[250px_1fr_1fr_1fr] lg:grid-rows-[auto_1fr_auto]">
-      <div className="mt-12 tablet:px-[6%] w-[100%] h-[54px] bg-neutralColor text-secondaryColor xl:px-[4%] px-[4%] lg:px-[2%] flex items-center justify-between font-bold  font-RobotoCondensed lg:col-span-full lg:row-span-1">
-        <div className="flex gap-[4px] items-center text-base">
-          <IoIosArrowBack />
-          <li onClick={() => navigate("/")} className="hover:underline capitalize">
-            Home
-          </li>
-          <IoIosArrowBack />
-          <span>Shop</span>
-          {selectedSubCategoryForFilter && (
-            <>
-              {" "}
-              <IoIosArrowBack />
-              <span>{selectedCategory}</span> <IoIosArrowBack />
-              <span>{selectedSubCategoryForFilter}</span>
-            </>
-          )}
+    <>
+      {/* Breadcrumb */}
+      <div className="mt-12 w-full bg-sage-50 border-b border-sage-200">
+        <div className="container-page py-4">
+          <div className="flex items-center gap-2 text-sm text-sage-700">
+            <button onClick={() => navigate("/")} className="hover:text-sage-900 transition-colors">
+              Home
+            </button>
+            <ArrowRight className="w-4 h-4" />
+            <span className="text-sage-900 font-medium">Shop</span>
+            {selectedSubCategoryForFilter && (
+              <>
+                <ArrowRight className="w-4 h-4" />
+                <span className="text-sage-700">{selectedCategory}</span>
+                <ArrowRight className="w-4 h-4" />
+                <span className="text-sage-900 font-medium">{selectedSubCategoryForFilter}</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
-      <FilterBySection
-        {...{
-          isFilterBySectionOpen,
-          setIsFilterBySectionOpen,
-          currentPageNo,
-          NoOfProductsPerPage,
-          setIsFilterFnApplied,
-        }}
-      />
+      {/* Main Content Container */}
+      <div className="flex items-start min-h-screen">
+        {/* Left Filter Sidebar - Fixed & Scrollable */}
+        <aside className="hidden lg:block w-[280px] sticky top-0 h-screen overflow-y-auto border-r border-sage-200 bg-white">
+          <div className="p-6">
+            <FilterBySection
+              {...{
+                isFilterBySectionOpen,
+                setIsFilterBySectionOpen,
+                currentPageNo,
+                NoOfProductsPerPage,
+                setIsFilterFnApplied,
+              }}
+            />
+          </div>
+        </aside>
 
-      <div className="lg:col-start-2  lg:col-end-5 lg:row-span-1 lg:ml-[8%] xl:ml-[10%] lg:mr-[3%] xl:mr-[5%]">
-        <h1 className="text-center font-bold text-[2.5rem] my-20">Shop</h1>
-        {isLoading ? (
-          <ProductLoader />
-        ) : (
-          <>
-            <div className="lg:flex lg:justify-between lg:items-start">
-              {isFilterFnApplied && (selectedSubCategoryForFilter || priceRange) && (
-                <article className="w-[300px] tablet:w-[360px] max-w-[75%] md:w-[400px]  bg-[#ffffff] laptop:w-[17%]  ml-[4%] tablet:ml-[6%]  mb-12 flex-col flex gap-2 lg:ml-0 lg:order-2 lg:min-w-[400px]">
-                  <h3 className="text-lg font-bold ml-2"> Active Filters</h3>
-                  <div className="flex  justify-between h-14 bg-lightPrimaryColor text-white rounded-md shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)]  items-center px-[5%] font-medium text-base ">
-                    {selectedSubCategoryForFilter && <h3>Sub-Category : {selectedSubCategoryForFilter}</h3>}
-                    {priceRange && <h3>priceRange : {priceRange}($)</h3>}
-                  </div>
-                </article>
-              )}
-              <article className="w-[65%] tablet:w-[40%] md:w-[30%] bg-[#ffffff] lg:order-1 laptop:w-[17%] lg:w-[30%] ml-[4%] tablet:ml-[6%]  mb-20 flex-col lg:ml-0 flex gap-2 lg:max-w-[262px]">
-                <h3 className="text-lg font-bold ml-2"> Sort by</h3>
-                <div
-                  className={`flex justify-between h-14 rounded-md  shadow-[0.5px_2px_32px_-2px_rgba(0,0,0,0.1)]  items-center px-[10%] cursor-pointer ${
-                    sortingCriteria !== "Default: Latest" && "bg-lightPrimaryColor text-white"
-                  }`}
-                  onClick={(e) => {
-                    e.currentTarget.nextElementSibling.classList.toggle("active-sorting-lists");
-                  }}
-                >
-                  <h2>{sortingCriteria}</h2>
-                  <RiArrowDropDownLine className="w-8 h-8 " />
-                </div>
-                <div
-                  className={`hidden flex-col bg-[#ffffff] rounded-md shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)]   py-4  gap-4 z-[200] px-[10%] sticky top-0 left-0 right-0 mb-[-16.5rem] lg:mb-[-15.5rem] transition duration-700 ease-in-out sorting-lists ${
-                    sortingCriteria !== "Default: Latest" && "bg-lightPrimaryColor text-white"
-                  }`}
-                  onClick={(e) => handleSortingCriteriaSelection(e)}
-                >
-                  <li data-list="sorting-criteria">Default: Latest</li>
-                  <li data-list="sorting-criteria">Name: A-Z</li>
-                  <li data-list="sorting-criteria">Name: Z-A</li>
-                  <li data-list="sorting-criteria">Price: low to high</li>
-                  <li data-list="sorting-criteria">Price: high to low</li>
-                  <li data-list="sorting-criteria">Oldest</li>
-                </div>
-              </article>
+        {/* Right Product Section - Scrollable */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="container-page py-8">
+            {/* Page Header */}
+            <div className="mb-8">
+              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-sage-900 mb-4 text-center lg:text-left">
+                Shop Our Collection
+              </h1>
+              <p className="text-sage-600 text-center lg:text-left">
+                Discover handcrafted furniture pieces for your dream space
+              </p>
             </div>
 
-            {placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
+            {/* Active Filters & Sort Section */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+              {/* Active Filters */}
+              {isFilterFnApplied && (selectedSubCategoryForFilter || priceRange) && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-sage-50 border border-sage-200 rounded-xl p-4"
+                >
+                  <h3 className="text-sm font-semibold text-sage-900 mb-2">Active Filters</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedSubCategoryForFilter && (
+                      <span className="px-3 py-1 bg-sage-600 text-white rounded-full text-sm">
+                        {selectedSubCategoryForFilter}
+                      </span>
+                    )}
+                    {priceRange && (
+                      <span className="px-3 py-1 bg-sage-600 text-white rounded-full text-sm">
+                        ${priceRange}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Sort Dropdown */}
+              <div className="w-full lg:w-auto lg:min-w-[280px] mx-4 lg:mx-0">
+                <div className="relative">
+                  <div
+                    className={`flex items-center justify-between h-12 px-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      sortingCriteria !== "Default: Latest"
+                        ? "bg-sage-600 text-white border-sage-600"
+                        : "bg-white text-sage-900 border-sage-300 hover:border-sage-500"
+                    }`}
+                    onClick={(e) => {
+                      e.currentTarget.nextElementSibling.classList.toggle("active-sorting-lists");
+                    }}
+                  >
+                    <span className="text-sm font-medium">{sortingCriteria}</span>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
+                  <div
+                    className={`hidden flex-col bg-white rounded-lg shadow-xl border border-sage-200 py-2 absolute top-full mt-2 left-0 right-0 z-50 sorting-lists overflow-hidden`}
+                    onClick={(e) => handleSortingCriteriaSelection(e)}
+                  >
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Default: Latest
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Name: A-Z
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Name: Z-A
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Price: low to high
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Price: high to low
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm transition-colors">
+                      Oldest
+                    </li>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Loading or Products */}
+            {isLoading ? (
+              <ProductLoader />
+            ) : placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
               <>
-                {" "}
-                <section className="grid grid-cols-1 tablet:grid-cols-2 md:grid-cols-3 xl:grid-cols-4  lg:w-[100%] w-[92%] mx-auto items-center justify-center gap-[4rem]  tablet:justify-between tablet:w-[88%] md:justify-between tablet:gap-y-12 md:gap-y-12 md:gap-[5%]  tablet:gap-[4%]">
+                {/* Products Grid */}
+                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
                   {productsDataForCurrentPage.map((productsData, index) => {
                     return <SingleProductBox key={index} productsData={productsData} />;
                   })}
                 </section>
+
+                {/* Pagination */}
                 <PaginationSection {...{ setCurrentPageNo, NoOfProductsPerPage, currentPageNo }} />
-                <div className="fixed right-[7%] bottom-[7%] lg:hidden z-[1000]">
-                  <BiFilter
-                    className="w-16 h-16 bg-darkPrimaryColor shadow-lg shadow-[rgba(0,0,0,0.2)] fill-secondaryColor cursor-pointer"
-                    onClick={() => setIsFilterBySectionOpen(true)}
-                  />
-                  <span className="absolute   -left-5 -top-2 -translate-y-full w-20 px-2 py-1 bg-gray-700 rounded-lg text-center text-white text-sm after:content-[''] after:absolute after:left-1/2 after:top-[100%] shadow-lg shadow-[rgba(0,0,0,0.2)]   after:border-8 after:border-x-transparent after:border-b-transparent after:border-t-gray-700">
-                    Filter Products
-                  </span>
-                </div>
+
+                {/* Mobile Filter Button */}
+                <button
+                  className="fixed right-6 bottom-6 lg:hidden z-50 w-14 h-14 bg-sage-600 hover:bg-sage-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  onClick={() => setIsFilterBySectionOpen(true)}
+                >
+                  <Filter className="w-6 h-6" />
+                </button>
               </>
             ) : (
-              <h1 className="text-center text-[28px] md-[32px] lg:text-[36px]">product match not found</h1>
+              <div className="text-center py-20">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-sage-100 flex items-center justify-center">
+                  <Filter className="w-12 h-12 text-sage-400" />
+                </div>
+                <h2 className="font-playfair text-2xl md:text-3xl font-bold text-sage-900 mb-2">
+                  No Products Found
+                </h2>
+                <p className="text-sage-600">Try adjusting your filters or search criteria</p>
+              </div>
             )}
-          </>
-        )}
+          </div>
+        </main>
       </div>
+
       <FooterSection />
-    </section>
+    </>
   );
 };
 

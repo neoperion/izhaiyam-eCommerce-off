@@ -1,26 +1,18 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { IoCloseOutline } from "react-icons/io5";
-import { FiHeart } from "react-icons/fi";
-import { AiOutlineShoppingCart } from "react-icons/ai";
-import { BiSearch } from "react-icons/bi";
+import { Menu, X, Heart, User, ShoppingBag, Search } from "lucide-react";
 import { NavTabs } from "./navTabs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { BiUser } from "react-icons/bi";
 import { toast } from "react-toastify";
 import logoDark from "../../logoDark.png";
-import { motion, AnimatePresence } from "framer-motion";
 
 export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }) => {
   const [displayVerticalNavBar, setDisplayVerticalNavBar] = useState(false);
-
   const [isSearchClicked, setIsSearchClicked] = useState(false);
   const [totalProductQuantityCart, setTotalProductQuantityCart] = useState(0);
 
   const { allProductsData, isLoading, loadingOrErrorMessage } = useSelector((state) => state.productsData);
-  const { isLoggedIn, userData } = useSelector((state) => state.userAuth);
   const { wishlist, cart } = useSelector((state) => state.wishlistAndCartSection);
 
   const navigate = useNavigate();
@@ -30,13 +22,13 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
   // SEARCH ENTER BUTTON WONT WORK WHEN THE allProducts IS LOADING OR THERE IS AN ERROR
   const handleSearching = (e) => {
     if (isLoading && loadingOrErrorMessage === "Loading") {
-      toast("Hold on,while product is loading", {
+      toast("Hold on, while product is loading", {
         type: "warning",
         autoClose: 3000,
       });
     }
     if (isLoading && loadingOrErrorMessage !== "Loading") {
-      toast("Products couldnt be loaded", {
+      toast("Products couldn't be loaded", {
         type: "error",
         autoClose: 3000,
       });
@@ -72,102 +64,137 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
     setTotalProductQuantityCart(total);
   }, [cart]);
 
-  // on user  or myaccount icon btn click
+  // on user or myaccount icon btn click
   const handleMyAccountClick = async () => {
     navigate("/profilePage/accountInformation");
   };
 
   return (
-    <header className="h-[80px] sticky top-0 z-[1000] bg-[#ffffff]">
-      <nav className="w-[100%] h-[100%] font-Roboto px-[4%] tablet:px-[6%] lg:px-[2%] xl:px-[4%] font-medium flex items-center justify-between shadow-[0px_0px_4px_0px_rgba(14,19,24,0.7)] ">
-        <img
-          src={logoDark}
-          alt=""
-          className="w-[25%] cursor-pointer h-auto max-w-[120px]"
-          onClick={() => navigate("/")}
-        />
-        {isLargeScreen && <NavTabs />}
-        <div className="flex items-center tablet:gap-4 gap-4  xl:gap-6 2xl:gap-7  md:gap-4 md:basis-[25%] lg:basis-auto text-[18px]">
-          <div className="xl:flex xl:items-center cursor-pointer" onClick={() => setIsSearchClicked(!isSearchClicked)}>
-            <div className="relative p-3  bg-neutralColor rounded-[50%]">
-              <BiSearch className="w-4 h-4 tablet:w-5 tablet:h-5 md:w-5 md:h-5  stroke-secondaryColor " />
-            </div>
-            <span className="text-[18px] hidden cursor-pointer xl:block">&nbsp; Search</span>
-          </div>
+    <header className="sticky top-0 z-[1000] bg-primary shadow-lg">
+      <nav className="container-page">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <img
+            src={logoDark}
+            alt="IZHAYAM HANDLOOM FURNITURE"
+            className="h-10 md:h-16 w-auto cursor-pointer brightness-[5] contrast-[0.8]"
+            onClick={() => navigate("/")}
+          />
+
+          {/* Desktop Navigation */}
           {isLargeScreen && (
-            <div className="xl:flex xl:items-center cursor-pointer" onClick={handleMyAccountClick}>
-              <div className="relative p-3 bg-neutralColor    rounded-[50%]">
-                <BiUser className="w-4 h-4 tablet:w-5 tablet:h-5 md:w-5 md:h-5   stroke-secondaryColor " />
-              </div>
-              {isLoggedIn ? (
-                <span className="text-[18px] hidden cursor-pointer xl:block">&nbsp;{userData.username}</span>
-              ) : (
-                <span className="text-[18px] hidden cursor-pointer xl:block">&nbsp;Login/Register</span>
-              )}
+            <div className="hidden md:flex items-center">
+              <NavTabs />
             </div>
           )}
-          <div className="xl:flex xl:items-center cursor-pointer">
-            <div className="relative p-3 bg-neutralColor  rounded-[50%]" onClick={() => setIsWishlistActive(true)}>
-              <FiHeart className="w-4 h-4 tablet:w-5 tablet:h-5 md:w-5 md:h-5  stroke-secondaryColor" />
-              <span className="absolute text-[12px] top-[-4px] right-[-9px] z-10 bg-primaryColor text-white px-1 text-center  rounded-[50%]">
-                {wishlist.length}
-              </span>
-            </div>
-            <span className="text-[18px] hidden cursor-pointer xl:block">&nbsp;Wishlist</span>
-          </div>
-          <div className="xl:flex xl:items-center cursor-pointer" onClick={() => setIsCartSectionActive(true)}>
-            <div className="relative p-3  bg-neutralColor rounded-[50%]">
-              <AiOutlineShoppingCart
-                className="w-4 h-4  tablet:w-5
-              tablet:h-5
-              md:w-5
-              md:h-5"
-              />
-              <span className="absolute text-[12px] top-[-4px] right-[-9px] z-10 bg-primaryColor text-white px-1 text-center  rounded-[50%]">
-                {totalProductQuantityCart}
-              </span>
-            </div>
-            <span className="text-[18px] hidden cursor-pointer xl:block">&nbsp;Cart</span>
-          </div>
-          <button
-            className="p-3 bg-neutralColor md:hidden"
-            onClick={() => setDisplayVerticalNavBar(!displayVerticalNavBar)}
-          >
-            {displayVerticalNavBar ? (
-              <IoCloseOutline className="w-4 h-4 tablet:w-5 tablet:h-5 md:w-5 md:h-5  " />
-            ) : (
-              <GiHamburgerMenu className="w-4 h-4 tablet:w-5 tablet:h-5 md:w-5 md:h-5  " />
-            )}
-          </button>
-        </div>
-      </nav>
-      <AnimatePresence>
-        {isSearchClicked && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: 45 }}
-            exit={{ height: "auto", transition: { duration: 0.3, ease: "easeOut" } }}
-            transition={{ type: "spring", stiffness: 100, dampness: 5 }}
-            className="w-[92%] lg: xl:w-[92%] tablet:w-[88%] absolute top-[100%] tablet:left-[6%] lg:w-[96%] left-[4%] lg:left-[2%] xl:left-[4%] bottom-auto searchBar h-[45px] bg-neutralColor text-secondaryColor z-50  shadow-[0_4px_6px_-2px_rgba(0,0,0,0.2)] flex justify-between"
-          >
-            <input
-              className="w-[85%] text-[18px] pl-6 h-[100%] bg-neutralColor border-none outline-none"
-              type="search"
-              name=""
-              placeholder="search ..."
-              id=""
-            />
-            <button
-              className="bg-primaryColor max-w-[100px] w-[15%] h-[100%] flex justify-center items-center"
-              onClick={(e) => handleSearching(e)}
-            >
-              <BiSearch className="w-5 h-5 tablet:w-6 tablet:h-6 md:w-6 md:h-6" fill="white" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      <AnimatePresence>{displayVerticalNavBar && <NavTabs {...{ handleMyAccountClick }} />}</AnimatePresence>
+          {/* Right Icons */}
+          <div className="flex items-center gap-2 md:gap-6">
+            <button
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors hidden md:flex"
+              onClick={() => setIsSearchClicked(!isSearchClicked)}
+              aria-label="Search"
+            >
+              <Search className="w-5 h-5 text-primary-foreground" />
+            </button>
+
+            <button
+              onClick={() => setIsWishlistActive(true)}
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              aria-label="Wishlist"
+            >
+              <Heart className="w-5 h-5 text-primary-foreground" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold">
+                  {wishlist.length}
+                </span>
+              )}
+            </button>
+
+            {isLargeScreen && (
+              <button
+                onClick={handleMyAccountClick}
+                className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors hidden md:flex"
+                aria-label="Account"
+              >
+                <User className="w-5 h-5 text-primary-foreground" />
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsCartSectionActive(true)}
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              aria-label="Shopping Cart"
+            >
+              <ShoppingBag className="w-5 h-5 text-primary-foreground" />
+              {totalProductQuantityCart > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold">
+                  {totalProductQuantityCart}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setDisplayVerticalNavBar(!displayVerticalNavBar)}
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors md:hidden"
+              aria-label="Toggle menu"
+            >
+              {displayVerticalNavBar ? (
+                <X className="w-5 h-5 text-primary-foreground" />
+              ) : (
+                <Menu className="w-5 h-5 text-primary-foreground" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {displayVerticalNavBar && !isLargeScreen && (
+          <div className="md:hidden py-4 border-t border-primary-foreground/20 bg-primary animate-fade-in">
+            <NavTabs isMobile={true} setDisplayVerticalNavBar={setDisplayVerticalNavBar} />
+            
+            {/* Mobile Account Link */}
+            <button
+              onClick={() => {
+                handleMyAccountClick();
+                setDisplayVerticalNavBar(false);
+              }}
+              className="w-full px-4 py-3 rounded-lg text-sm font-semibold text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground flex items-center gap-2 mt-2"
+            >
+              <User className="w-4 h-4" />
+              Account
+            </button>
+          </div>
+        )}
+
+        {/* Search Dropdown */}
+        {isSearchClicked && (
+          <div className="absolute left-0 right-0 top-full bg-primary shadow-lg animate-fade-in">
+            <div className="container-page py-4">
+              <div className="flex gap-2 max-w-2xl mx-auto">
+                <input
+                  type="text"
+                  placeholder="Search for furniture..."
+                  className="flex-1 px-4 py-3 rounded-lg bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearching(e);
+                      setIsSearchClicked(false);
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleSearching}
+                  className="btn-secondary px-6"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 };

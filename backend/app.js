@@ -22,7 +22,12 @@ cloudinary.config({
 const app = express();
 //  middlewares
 app.use(cors({
-  origin:"https://auffur-furnishes.netlify.app"
+  origin: [
+    "https://auffur-furnishes.netlify.app",
+    "http://localhost:3000",
+    "http://localhost:3001"
+  ],
+  credentials: true
 }));
 app.use(express.json());
 app.use(
@@ -50,8 +55,12 @@ const port = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDb(process.env.MONGO_URI);
-    app.listen(port, () => console.log(`Server is listening on port ${port}`));
-  } catch (error) {}
+    console.log("✅ Database connected successfully!");
+    app.listen(port, () => console.log(`🚀 Server is listening on port ${port}`));
+  } catch (error) {
+    console.error("❌ Error starting server:", error.message);
+    process.exit(1);
+  }
 };
 
 startServer();

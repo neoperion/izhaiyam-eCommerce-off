@@ -90,28 +90,36 @@ export const FilterBySection = ({
       initial={{ x: "100%" }}
       animate={{ x: isFilterBySectionOpen ? "0%" : "100%" }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`fixed  lg:mt-16 h-[100vh] lg:max-w-[250px]  lg:static lg:ml-[10%] xl:ml-[24%] lg:col-span-1 lg:row-span-2 lg:w-[100%] lg:translate-x-0 lg:h-auto lg:bg-opacity-100 top-0 left-0 w-[100%] lg:bg-transparent z-[1500] bg-opacity-60 bg-[#000000] translate-x-[100%] lg:z-0  ${
-        isFilterBySectionOpen && "translate-x-[0%]"
+      className={`fixed lg:static lg:translate-x-0 top-0 left-0 w-full h-screen lg:h-auto z-[1500] lg:z-0 bg-black/60 lg:bg-transparent ${
+        isFilterBySectionOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
-      <section className="flex lg:w-[100%]  flex-col md:w-[50%] md:max-w-[450px] tablet:w-[60%] tablet:max-w-[400px] max-w-[360px] lg:z-0 z-[2000] overflow-y-auto absolute top-0 bg-white items-start px-[5%] lg:px-0 w-[80%] right-0 pt-4 pb-12 gap-7 tracking-[0.25px] text-lg h-[100%] lg:static ">
-        <h2 className="text-center w-[100%] text-[1.75rem] mt-2 font-bold border-b-[2px] border-LightSecondaryColor pb-2">
-          Filter by
-        </h2>
-        <IoCloseOutline
-          className="absolute top-5 right-4 w-9 h-9 cursor-pointer lg:hidden"
-          onClick={() => setIsFilterBySectionOpen(false)}
-        />
-        <div className="w-[100%]">
+      <section className="flex flex-col w-[80%] max-w-[360px] sm:w-[60%] sm:max-w-[400px] md:w-[50%] md:max-w-[450px] lg:w-full lg:max-w-none h-full lg:h-auto overflow-y-auto absolute lg:static top-0 right-0 bg-white px-6 lg:px-0 pt-4 pb-12 lg:pb-0 gap-6">
+        {/* Header */}
+        <div className="border-b-2 border-sage-200 pb-4">
+          <h2 className="font-playfair text-2xl font-bold text-sage-900 text-center lg:text-left">
+            Filter Products
+          </h2>
+          <button
+            className="absolute top-5 right-4 lg:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-sage-100 transition-colors"
+            onClick={() => setIsFilterBySectionOpen(false)}
+          >
+            <IoCloseOutline className="w-6 h-6 text-sage-700" />
+          </button>
+        </div>
+        {/* Filter Options */}
+        <div className="w-full space-y-6">
           <CategoriesSection {...{ setCheckedCategoryDOM }} />
           <PriceRange {...{ setCheckedPriceRangeDOM }} />
         </div>
-        <div className="flex items-center justify-between w-[100%] gap-[10%] ">
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-3 lg:pt-4">
           <motion.button
             initial="initial"
             whileTap="click"
             variants={primaryBtnVariant}
-            className="h-[45px] basis-[40%] bg-primaryColor text-white"
+            className="btn-primary w-full sm:w-auto sm:flex-1"
             onClick={() => {
               location.pathname === "/shop" &&
                 handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
@@ -127,12 +135,12 @@ export const FilterBySection = ({
               isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
             }}
           >
-            Filter
+            Apply Filters
           </motion.button>
           <motion.button
-            whileHover={{ backgroundColor: "#000000", borderWidth: "0px", color: "#ffffff" }}
-            transition={{ duration: 0.4 }}
-            className="h-[45px] basis-[60%] bg-transparent border-[1px] border-secondaryColor text-black"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn-outline w-full sm:w-auto sm:flex-1"
             onClick={(e) => {
               resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch);
 
@@ -140,7 +148,7 @@ export const FilterBySection = ({
               isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
             }}
           >
-            Reset Filter
+            Reset All
           </motion.button>
         </div>
       </section>

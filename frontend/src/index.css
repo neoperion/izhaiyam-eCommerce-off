@@ -1,8 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700;1,800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Modern sage green (#93A267) & cream (#F8EFDA) palette */
+    --background: 30 50% 95%;
+    --foreground: 92 25% 35%;
+
+    --card: 35 35% 96%;
+    --card-foreground: 92 25% 35%;
+
+    --popover: 30 50% 95%;
+    --popover-foreground: 92 25% 35%;
+
+    /* Sage Green primary - #93A267 */
+    --primary: 92 25% 52%;
+    --primary-foreground: 35 50% 98%;
+
+    /* Cream secondary - #F8EFDA */
+    --secondary: 30 50% 95%;
+    --secondary-foreground: 92 25% 35%;
+
+    --muted: 35 20% 90%;
+    --muted-foreground: 92 15% 50%;
+
+    /* Accent - sage green variations */
+    --accent: 92 25% 52%;
+    --accent-foreground: 35 50% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 30% 88%;
+    --input: 35 30% 88%;
+    --ring: 92 25% 52%;
+
+    --radius: 0.5rem;
+
+    /* Custom design tokens - Wood tones */
+    --wood-light: 35 30% 75%;
+    --wood-medium: 30 40% 55%;
+    --wood-dark: 25 35% 30%;
+    --wood-header: 35 30% 85%;
+    
+    /* Sage variations */
+    --sage-light: 92 30% 70%;
+    --sage-medium: 92 25% 52%;
+    --sage-dark: 92 30% 38%;
+    
+    /* Cream variations */
+    --cream-light: 35 50% 97%;
+    --cream: 35 50% 96%;
+    --cream-dark: 35 45% 90%;
+
+    /* Shadows - modern soft */
+    --shadow-soft: 0 2px 8px hsl(92 25% 35% / 0.06);
+    --shadow-card: 0 4px 16px hsl(92 25% 35% / 0.08);
+    --shadow-hover: 0 8px 24px hsl(92 25% 35% / 0.12);
+  }
+
   .product-img-container:hover .product-img-overlay {
     opacity: 1;
   }
@@ -31,7 +91,7 @@
   }
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
-    accent-color: #fc6419;
+    accent-color: var(--primary);
   }
 
   .authPage-input-container:focus-within > label,
@@ -44,7 +104,7 @@
     padding: 0 3px;
   }
   .authPage-input-container:focus-within > label {
-    color: #fca311;
+    color: var(--primary);
   }
 
   .loader {
@@ -69,17 +129,125 @@
   }
 }
 
+@layer components {
+  /* Container System */
+  .container-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  /* Button Styles - Premium Design */
+  .btn-primary {
+    @apply bg-primary hover:bg-sage-dark text-primary-foreground px-6 py-3 rounded-md font-medium transition-all duration-300 shadow-soft hover:shadow-hover;
+  }
+
+  .btn-cart {
+    width: 100%;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    background-color: #5A6E3A !important;
+    color: #F7F3EB !important;
+  }
+
+  .btn-cart:hover {
+    background-color: #4A5E2A !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .btn-cart:active {
+    transform: scale(0.98);
+  }
+
+  .btn-view-details {
+    width: 100%;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    background-color: rgba(90, 110, 58, 0.95) !important;
+    color: #F7F3EB !important;
+    backdrop-filter: blur(4px);
+  }
+
+  .btn-view-details:hover {
+    background-color: #5A6E3A !important;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary hover:bg-cream-dark text-secondary-foreground px-6 py-3 rounded-md font-medium transition-all duration-300 border border-border;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 py-3 rounded-md font-medium transition-all duration-300;
+  }
+
+  /* Card Styles */
+  .card-product {
+    @apply bg-card rounded-lg overflow-hidden transition-all duration-300;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-product:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+  }
+
+  .card-category {
+    @apply bg-wood-header rounded-lg overflow-hidden transition-all duration-300 cursor-pointer;
+  }
+
+  .card-category:hover {
+    box-shadow: var(--shadow-hover);
+    transform: scale(1.02);
+  }
+
+  /* Badge Styles */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-sale {
+    @apply bg-destructive text-destructive-foreground;
+  }
+
+  .badge-new {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  /* Input Styles */
+  .input-primary {
+    @apply w-full px-4 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground;
+  }
+
+  /* Header Elements */
+  .nav-link {
+    @apply text-foreground hover:text-primary transition-colors duration-200 font-medium;
+  }
+}
+
 @layer utilities {
   h4,
   h5,
   h6 {
-    @apply font-RobotoSlab;
+    @apply font-body;
   }
 
   h1,
   h2,
   h3 {
-    @apply font-RobotoCondensed font-bold;
+    @apply font-display font-bold;
   }
 
   h4,
@@ -91,7 +259,7 @@
     @apply lg:text-[18px] scroll-smooth;
   }
   body {
-    @apply font-OpenSans tracking-normal;
+    @apply font-body tracking-normal bg-background text-foreground;
   }
   li {
     @apply cursor-pointer;
@@ -130,10 +298,59 @@
     @apply w-[100%] transition ease-in duration-100;
   }
   .active-product-page-no {
-    @apply bg-[#fca311] text-white border-none transition-all duration-500;
+    @apply bg-primary text-white border-none transition-all duration-500;
   }
   .admin-table-borderBottom tr:last-child td {
     @apply border-b;
+  }
+  
+  /* Focus States for Accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  /* Animation Utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 

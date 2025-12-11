@@ -51,68 +51,112 @@ export const SingleProductBox = ({ productsData }) => {
       ref={ref}
       animate={controls}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="flex w-[100%] tablet:mx-0 md:mx-0  mx-auto flex-col  bg-[#ffffff] relative"
+      className="group flex flex-col bg-card rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
     >
-      <div
-        className={`absolute p-3 bg-[#ffffff] shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)] rounded-[50%] ease-in transition-colors cursor-pointer duration-300 top-[5%] right-[5%] z-[100] ${
-          isWishlisted && "bg-lightPrimaryColor"
-        }`}
-        onClick={() => handleWishlistModification(_id, dispatch)}
-      >
-        <FiHeart
-          className={`w-6 h-6 ${
-            isWishlisted && "fill-lightPrimaryColor duration-200 ease-linear transition-colors stroke-white"
-          }`}
+      {/* Image Container */}
+      <div className="relative aspect-[4/3] bg-background overflow-hidden">
+        <img 
+          src={image} 
+          alt={title} 
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" 
         />
+        
+        {/* Badges */}
+        {discountPercentValue > 0 && (
+          <div className="absolute top-3 left-3 bg-rose-700 text-primary-foreground px-3 py-1 rounded-md text-sm font-bold z-10">
+            -{discountPercentValue}% OFF
+          </div>
+        )}
+
+        {/* Wishlist Heart */}
+        <button
+          className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${
+            isWishlisted ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"
+          }`}
+          onClick={() => handleWishlistModification(_id, dispatch)}
+          aria-label="Add to wishlist"
+        >
+          <FiHeart
+            className={`w-5 h-5 transition-all ${
+              isWishlisted ? "fill-current" : "stroke-foreground"
+            }`}
+          />
+        </button>
+
+        {/* View Details - Slide up on hover */}
+        <Link
+          to={`/product/${_id}`}
+          className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+        >
+          <motion.button
+            initial="initial"
+            whileTap="click"
+            variants={primaryBtnVariant}
+            className="btn-view-details"
+          >
+            <BsEye className="w-5 h-5" />
+            <span>View Details</span>
+          </motion.button>
+        </Link>
       </div>
 
-      {discountPercentValue > 0 && (
-        <div className="flex justify-center items-center absolute w-16 px-3 h-8 z-[100] top-[6%]  hover:opacity-100 bg-lightPrimaryColor text-white  shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)]  ">
-          <span>{discountPercentValue}%</span>
-        </div>
-      )}
+      {/* Product Info */}
+      <div className="p-4 flex-1 flex flex-col">
+        <h3 className="font-semibold text-lg text-foreground capitalize truncate mb-1">
+          {title}
+        </h3>
+        
+        <p className="text-sm text-muted-foreground mb-2">
+          Handcrafted Furniture
+        </p>
 
-      <div className="w-[100%] h-[290px] bg-neutralColor relative cursor-pointer product-img-container flex justify-center items-center rounded-md ease-in transition-all duration-100">
-        <img src={image} alt="" className="rounded-md max-w-[90%] h-auto max-h-[90%] object-cover" />
-        <div className="product-img-overlay  rounded-md absolute top-0 left-0 z-50 bg-[rgba(0,0,0,0.2)] w-[100%] h-[100%] opacity-0  transition-opacity ease-in duration-[0.5]"></div>
+        {/* Rating (placeholder - you can integrate real ratings) */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <svg key={i} className="w-4 h-4 fill-amber-600" viewBox="0 0 20 20">
+                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+              </svg>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground">(4.5) 89</span>
+        </div>
+
+        {/* Price */}
+        {discountPercentValue > 0 ? (
+          <div className="flex items-baseline gap-2 mb-4">
+            <span className="font-bold text-xl text-foreground">
+              ₹{discountedPrice.toFixed(2)}
+            </span>
+            <span className="text-sm text-muted-foreground line-through">
+              ₹{price.toFixed(2)}
+            </span>
+          </div>
+        ) : (
+          <span className="font-bold text-xl text-foreground mb-4 block">
+            ₹{price.toFixed(2)}
+          </span>
+        )}
+
+        {/* Add to Cart Button */}
         <motion.button
           initial="initial"
           whileTap="click"
           variants={primaryBtnVariant}
-          className="absolute left-[25%] tablet:left-[20%] md:left-[20%] tablet:w-[60%] md:w-[60%] top-[40%] bg-lightPrimaryColor text-white hidden cursor-pointer rounded-md h-[48px] w-[50%] gap-1 justify-center z-[100] items-center product-details-link transition ease-in duration-[0.5]"
+          className={`btn-cart mt-auto ${
+            isProductInCart ? "!bg-rose-700 !text-white" : ""
+          }`}
+          onClick={() => handleCartModification(_id, dispatch, null, isProductInCart)}
         >
-          <BsEye />
-          <Link to={`/product/${_id}`}>
-            <span> view details</span>
-          </Link>
+          <motion.span
+            initial="initial"
+            whileTap="animate"
+            variants={cartTextChangeVariant}
+          >
+            {isProductInCart ? "Remove from Cart" : "Add to Cart"}
+          </motion.span>
         </motion.button>
       </div>
-      <h4 className=" text-[20px] font-normal capitalize mt-4">{title}</h4>
-      {discountPercentValue > 0 ? (
-        <div className="flex gap-3 mt-[0.125rem] mb-4">
-          <h3 className="font-bold text-[20px] tracking-wide">${discountedPrice.toFixed(2)}</h3>
-          <h3 className="font-medium text-[18px]  tracking-wide text-lightBlack line-through">${price.toFixed(2)}</h3>
-        </div>
-      ) : (
-        <h3 className="font-bold  text-[20px] mt-[0.125rem] mb-4 tracking-wide ">${price.toFixed(2)}</h3>
-      )}
-      <motion.button
-        initial="initial"
-        whileTap="click"
-        variants={primaryBtnVariant}
-        className="w-[100%] h-[52px] mx-auto rounded-md text-[#ffffff] bg-primaryColor "
-        onClick={() => handleCartModification(_id, dispatch, null, isProductInCart)}
-      >
-        <motion.span
-          className="w-[100%] h-[100%] flex items-center justify-center"
-          initial="initial"
-          whileTap="animate"
-          variants={cartTextChangeVariant}
-        >
-          {" "}
-          {isProductInCart ? "Remove from cart" : "Add to cart"}
-        </motion.span>
-      </motion.button>
     </motion.article>
   );
 };

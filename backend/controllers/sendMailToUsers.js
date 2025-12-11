@@ -33,27 +33,38 @@ const checkEmailHost = (email) => {
 const sendMessageToUserEmail = async (email, verificationToken, messageData) => {
   const { port, html, pass, secure, text, subject, user } = messageData(verificationToken);
 
-  let transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: user,
-      pass: pass,
-    },
-  });
+  // Check if email credentials are configured
+  if (!user || !pass || user === 'noreply@example.com' || pass === 'dummy_password_replace_this') {
+    console.warn('⚠️  Email credentials not configured. Skipping email send.');
+    console.log(`📧 Would have sent email to: ${email}`);
+    console.log(`🔗 Verification token: ${verificationToken}`);
+    return { success: false, message: 'Email not configured' };
+  }
 
-  await transporter.sendMail(
-    {
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: user,
+        pass: pass,
+      },
+    });
+
+    await transporter.sendMail({
       from: "Auffur" + " <" + user + ">",
       to: email,
       subject: subject,
       text: text,
       html: html,
-    },
-    (err) => {
-      console.log(err);
-      throw new CustomErrorHandler("something went wrong");
-    }
-  );
+    });
+
+    console.log(`✅ Email sent successfully to: ${email}`);
+    return { success: true };
+  } catch (err) {
+    console.error('❌ Email sending failed:', err.message);
+    // Don't throw error, just log it
+    return { success: false, message: err.message };
+  }
 };
 
 module.exports = { checkEmailHost, sendMessageToUserEmail };

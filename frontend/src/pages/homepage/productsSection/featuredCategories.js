@@ -1,64 +1,131 @@
-import React from "react";
-import { BsArrowRight } from "react-icons/bs";
+import React, { useState } from "react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import bedroomCategoryBgImg from "../../../assets/bedRoomCategory.jpg";
 import kidsCategoryBgImg from "../../../assets/kidsCategory.jpg";
-import firstOrderCategoryBgImg from "../../../assets/firstOrderCategory.jpg";
 import livingRoomCategoryBgImg from "../../../assets/livingRoomCategory.jpg";
 import { useNavigate } from "react-router-dom";
 
 export const FeaturedCategories = () => {
-  const navigateShop = useNavigate();
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const categoriesFaceArr = [
-    { title: "kids", src: kidsCategoryBgImg },
-    { title: "first order deal", src: firstOrderCategoryBgImg },
-    { title: "bedroom", src: bedroomCategoryBgImg },
-    { title: "living room", src: livingRoomCategoryBgImg },
+  // Categories for handloom furniture
+  const categoriesArr = [
+    { title: "Cot", count: 24, src: bedroomCategoryBgImg },
+    { title: "Sofa", count: 36, src: livingRoomCategoryBgImg },
+    { title: "Diwan", count: 18, src: kidsCategoryBgImg },
+    { title: "Chair", count: 28, src: livingRoomCategoryBgImg },
+    { title: "Balcony Furniture", count: 15, src: bedroomCategoryBgImg },
+    { title: "Swing", count: 12, src: kidsCategoryBgImg },
   ];
+
+  const itemsPerView = 3;
+  const maxIndex = Math.max(0, categoriesArr.length - itemsPerView);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
+  };
+
   return (
-    <section className="my-20">
-      <h2 className="text-[36px] text-center mb-10 font-bold mx-4">Featured Categories</h2>
-      <div className="flex flex-col items-center gap-12 md:flex-row md:w-[92%] lg:w-[96%] xl:w-[92%] md:mx-auto md:justify-between md:flex-wrap md:gap-2">
-        {categoriesFaceArr.map((category, index) => {
-          return (
-            <article
-              key={index}
-              className="w-[92%] tablet:w-[88%] md:mx-0 md:w-[100%] mx-auto cursor-pointer basis-[45%]"
+    <section className="section-padding bg-background">
+      <div className="container-page">
+        {/* Section Header */}
+        <div className="text-center mb-12 md:mb-16">
+          <p className="text-primary text-xs md:text-sm font-semibold tracking-widest uppercase mb-3">
+            Explore Our Collection
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+            Shop by Category
+          </h2>
+        </div>
+
+        {/* Categories Carousel Container */}
+        <div className="relative">
+          {/* Navigation Arrows */}
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 rounded-full bg-primary hover:bg-sage-dark text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+            aria-label="Previous categories"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          <button
+            onClick={handleNext}
+            disabled={currentIndex >= maxIndex}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 rounded-full bg-primary hover:bg-sage-dark text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+            aria-label="Next categories"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Categories Grid with Carousel */}
+          <div className="overflow-hidden px-1">
+            <div
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+                gridTemplateColumns: `repeat(${categoriesArr.length}, minmax(0, 1fr))`,
+              }}
             >
-              <div
-                style={{ backgroundImage: `url(${category.src})` }}
-                className="w-[100%]  bg-neutralColor  bg-cover bg-no-repeat bg-center relative category-img-container h-[350px] tablet:h-[400px]"
-              >
-                <div className="product-img-overlay hidden absolute top-0 left-0 z-50 bg-[#0000005d] w-[100%] h-[100%]"></div>
-                <button
-                  onClick={() => navigateShop("/shop")}
-                  className="absolute left-[25%] top-[40%] bg-primaryColor text-white hidden cursor-pointer rounded-sm h-[44px] w-[50%] gap-3 justify-center z-[100]  items-center category-shop-link"
+              {categoriesArr.map((category, index) => (
+                <article
+                  key={index}
+                  className="card-category group cursor-pointer"
+                  onClick={() => navigate("/shop")}
                 >
-                  <span> Shop Now</span>
-                  <BsArrowRight />
-                </button>
-              </div>
-              <h2 className="text-[24px] mt-3 font-bold capitalize">{category.title}</h2>
-            </article>
-          );
-        })}
-      </div>
-      <div className="flex flex-col w-[100%] mt-20 gap-12">
-        <article className="bg-[#e5e5e5] text-secondaryColor  h-[150px] flex justify-center items-center px-[4%]">
-          <h1 className="font-bold text-[24px] tablet:w-[55%] md:w-[55%] lg:w-[40%] text-center">
-            GET UP TO <span className="text-primaryColor mr-[5px]">95% OFF</span>ON FIRST ORDER DEAL AND FREE SHIPPING{" "}
-          </h1>
-        </article>
-        <article className="bg-[#e5e5e5] text-secondaryColor  h-[150px] flex justify-center items-center px-[4%]">
-          <h1 className="font-bold text-[24px] tablet:w-[55%] md:w-[55%] lg:w-[40%] text-center">
-            GET UP TO <span className="text-primaryColor mr-[5px]">60% OFF</span>ON KIDS CATEGORIES{" "}
-          </h1>
-        </article>
-        <article className="bg-[#e5e5e5] text-secondaryColor  h-[150px] flex justify-center items-center px-[4%]">
-          <h1 className="font-bold tablet:w-[55%] md:w-[55%] text-[24px] lg:w-[40%] text-center">
-            GET UP TO <span className="text-primaryColor mr-[5px]">60% OFF</span>ON SETS CATEGORIES{" "}
-          </h1>
-        </article>
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={category.src}
+                      alt={`${category.title} furniture collection`}
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-wood-dark/90 via-wood-dark/50 to-transparent" />
+                    
+                    {/* Content Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <h3 className="text-2xl md:text-3xl font-bold font-display mb-2">
+                        {category.title}
+                      </h3>
+                      <p className="text-sm text-white/80 mb-3">
+                        Explore {category.count}+
+                      </p>
+                      
+                      {/* Explore Button */}
+                      <button className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all duration-300">
+                        Explore
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Pagination Dots */}
+          <div className="flex justify-center gap-2 mt-8">
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  currentIndex === index
+                    ? "w-8 bg-primary"
+                    : "w-2 bg-border hover:bg-primary/50"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
