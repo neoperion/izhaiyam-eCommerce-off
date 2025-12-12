@@ -19,10 +19,15 @@ import { ContactUsPage } from "../pages/contactUsPage";
 import { AboutUsPage } from "../pages/aboutUsPage";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { Dashboard } from "../pages/adminPage/dashboard";
+import { AdminDashboard } from "../pages/adminPage/dashboard";
 import { ProductManagement } from "../pages/adminPage/productTab/";
 import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
+import OrdersManagement from "../pages/adminPage/OrdersManagement";
+import { AnalyticsPage } from "../pages/adminPage/analytics";
+import { CouponsPage } from "../pages/adminPage/coupons";
+import { SupportPage } from "../pages/adminPage/support";
+import { SettingsPage } from "../pages/adminPage/settings";
 
 
 const PagesRoute = ({ setIsCartSectionActive }) => {
@@ -52,11 +57,17 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
         </Route>
 
         <Route path="administrator" element={<AdminPage />}>
-          <Route index element={<Navigate to="product-Management" />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="product-Management" element={<ProductManagement />} />
+          <Route path="products" element={<ProductManagement />} />
+          <Route path="orders-Management" element={<OrdersManagement />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="coupons" element={<CouponsPage />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         <Route path="*" element={<h2>path doesnt exist</h2>} />

@@ -16,14 +16,14 @@ const getAllProducts = async (req, res) => {
 };
 
 const uploadProductImages = async (req, res) => {
-  if (!req.files.image.mimetype.includes("image")) {
-    throw CustomErrorHandler(415, "invalid image type");
+  if (!req.files || !req.files.image) {
+    throw new CustomErrorHandler(400, "No image was uploaded");
   }
-  if (!req.files) {
-    throw CustomErrorHandler(400, "No image waas uploaded");
+  if (!req.files.image.mimetype.includes("image")) {
+    throw new CustomErrorHandler(415, "invalid image type");
   }
   if (req.files.image.size > 3 * 1024 * 1024) {
-    throw CustomErrorHandler(400, "Image size has exceeded the limit");
+    throw new CustomErrorHandler(400, "Image size has exceeded the limit");
   }
   const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
     use_filename: true,

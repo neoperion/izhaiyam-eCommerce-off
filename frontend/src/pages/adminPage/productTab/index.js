@@ -4,6 +4,7 @@ import { AddNewProduct } from "./addNewProduct";
 import { SingleProductTableCell } from "./singleProductTableCell";
 import axios from "axios";
 import { PaginationSectionForProductsAdminPage } from "./paginationForProductsAdmin";
+import AdminLayout from '../../../components/admin/AdminLayout';
 
 export const ProductManagement = () => {
   const [isAddNewProductClicked, setIsAddNewProductClicked] = useState(false);
@@ -82,8 +83,7 @@ export const ProductManagement = () => {
     }
   };
 
-  return (
-    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
+  return (    <AdminLayout>    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
       <AddNewProduct {...{ isAddNewProductClicked, setIsAddNewProductClicked }} />
       <div className="container mx-auto">
         <div className="flex  rounded-md items-center justify-between bg-neutralColor w-full p-5">
@@ -226,5 +226,6 @@ export const ProductManagement = () => {
         </>
       </section>
     </section>
+    </AdminLayout>
   );
 };

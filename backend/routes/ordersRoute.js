@@ -1,8 +1,15 @@
 const express = require("express");
-const postUserOrders = require("../controllers/Orders");
+const { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser } = require("../controllers/Orders");
+const { checkIfUserIsAnAdminMiddleware } = require("../middleware/adminAuthorisation");
 
 const router = express.Router();
 
 router.route("/placeOrders").post(postUserOrders);
+router.route("/all").get(checkIfUserIsAnAdminMiddleware, getAllOrders);
+router.route("/users").get(checkIfUserIsAnAdminMiddleware, getAllUsers);
+router.route("/users/:id").get(checkIfUserIsAnAdminMiddleware, getSingleUser);
+router.route("/users/:id").patch(checkIfUserIsAnAdminMiddleware, updateUser);
+router.route("/users/:id/status").patch(checkIfUserIsAnAdminMiddleware, updateUserStatus);
+router.route("/users/:id").delete(checkIfUserIsAnAdminMiddleware, deleteUser);
 
 module.exports = router;

@@ -82,30 +82,22 @@ export const AdminDashboard = () => {
         axios.get(`${serverUrl}/api/v1/products`)
       ]);
 
-      // Process orders data - Backend returns: { success: true, orders: [...], totalOrders: number }
+      // Process orders data
       if (ordersRes.data.success) {
-        const orders = ordersRes.data.orders || [];
-        const totalRevenue = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
+        const orders = ordersRes.data.AllOrders || [];
+        const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
         const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
         
-        // Calculate order status counts - Backend uses: 'Processing', 'Delivered', 'Cancelled'
-        const pendingOrders = orders.filter(o => o.status === 'Processing').length;
-        const deliveredOrders = orders.filter(o => o.status === 'Delivered').length;
-        const cancelledOrders = orders.filter(o => o.status === 'Cancelled').length;
+        // Calculate order status counts
+        const pendingOrders = orders.filter(o => o.orderStatus === 'Pending' || o.orderStatus === 'Processing').length;
+        const deliveredOrders = orders.filter(o => o.orderStatus === 'Delivered').length;
+        const cancelledOrders = orders.filter(o => o.orderStatus === 'Cancelled').length;
         
         // Generate monthly sales trend from orders
         const monthlySales = generateMonthlySalesData(orders);
         setSalesTrendData(monthlySales);
         
-        // Format recent orders for display
-        const formattedOrders = orders.slice(0, 5).map(order => ({
-          id: order.id?.toString().substring(0, 8) || 'N/A',
-          customer: order.customer || 'Unknown',
-          amount: `₹${order.amount?.toFixed(2) || 0}`,
-          status: order.status || 'Processing',
-          date: order.date || new Date().toLocaleDateString('en-IN')
-        }));
-        setRecentOrders(formattedOrders);
+        setRecentOrders(orders.slice(0, 5));
         
         setStats(prev => ({
           ...prev,
@@ -119,16 +111,16 @@ export const AdminDashboard = () => {
         }));
       }
 
-      // Process users data - Backend returns: { success: true, users: [...], totalUsers: number, verifiedUsers: number }
+      // Process users data
       if (usersRes.data.success) {
         const users = usersRes.data.users || [];
-        const verifiedCount = usersRes.data.verifiedUsers || users.filter(u => u.status === 'Verified').length;
-        const returningRate = users.length > 0 ? ((verifiedCount / users.length) * 100).toFixed(1) : 0;
+        const verifiedUsers = users.filter(u => u.emailVerificationStatus === 'verified').length;
+        const returningRate = users.length > 0 ? ((verifiedUsers / users.length) * 100).toFixed(1) : 0;
         
         setStats(prev => ({
           ...prev,
           totalVisits: users.length * 15, // Estimate based on user count
-          verifiedUsers: verifiedCount,
+          verifiedUsers,
           returningCustomers: returningRate
         }));
       }
@@ -164,12 +156,11 @@ export const AdminDashboard = () => {
     for (let i = 7; i >= 0; i--) {
       const monthIndex = (currentMonth - i + 12) % 12;
       const monthOrders = orders.filter(order => {
-        const orderDate = new Date(order.rawDate || order.date);
-        const orderMonth = orderDate.getMonth();
+        const orderMonth = new Date(order.createdAt).getMonth();
         return orderMonth === monthIndex;
       });
       
-      const monthSales = monthOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
+      const monthSales = monthOrders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
       
       monthlyData.push({
         month: months[monthIndex],
@@ -210,7 +201,7 @@ export const AdminDashboard = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
+        <div className="min-h-screen bg-gray-50 p-4 lg:p-6 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading dashboard data...</p>
@@ -222,6 +213,7 @@ export const AdminDashboard = () => {
 
   return (
     <AdminLayout>
+      <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
@@ -532,9 +524,8 @@ export const AdminDashboard = () => {
           </div>
         </Card>
       </div>
+      </div>
     </AdminLayout>
   );
 };
 
-export default AdminDashboard;
-export { AdminDashboard as Dashboard };

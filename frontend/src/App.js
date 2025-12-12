@@ -2,7 +2,7 @@ import "./index.css";
 import "./App.css";
 import PagesRoute from "./routes/pagesRoute";
 import { Header } from "./components/headerSection/header";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { getAllProductsData } from "./features/productSlice";
 import { Wishlist } from "./components/wishlistSection";
@@ -22,6 +22,11 @@ function App() {
 
 
     const location = useLocation();
+  
+  // Check if current route is an admin route
+  const isAdminRoute = useMemo(() => {
+    return location.pathname.startsWith('/administrator') || location.pathname.startsWith('/admin');
+  }, [location.pathname]);
   
     useEffect(() => {
       window.scrollTo(0, 0);
@@ -63,10 +68,15 @@ function App() {
 
   return (
     <div className="App-container lg:text-[18px]">
-      <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
+      {/* Hide public header on admin routes */}
+      {!isAdminRoute && (
+        <>
+          <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
+          <Wishlist {...{ isWishlistActive, setIsWishlistActive }} />
+          <Cart {...{ isCartSectionActive, setIsCartSectionActive }} />
+        </>
+      )}
       <PagesRoute {...{ setIsCartSectionActive }} />
-      <Wishlist {...{ isWishlistActive, setIsWishlistActive }} />
-      <Cart {...{ isCartSectionActive, setIsCartSectionActive }} />
       <ToastContainer position={`${isLargeScreen ? "top-right" : "bottom-center"}`} />
     </div>
   );
