@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
 import { useLocation } from 'react-router-dom';
+import WelcomeModal from "./components/welcomeModal/WelcomeModal";
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
 
   return (
     <div className="App-container lg:text-[18px]">
+      <WelcomeModal />
       <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
       <PagesRoute {...{ setIsCartSectionActive }} />
       <Wishlist {...{ isWishlistActive, setIsWishlistActive }} />

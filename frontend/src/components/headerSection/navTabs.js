@@ -4,6 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Shop', href: '/shop' },
+  { name: 'Collection', href: '/collection' },
+  { name: 'Gallery', href: '/gallery' },
   { name: 'About', href: '/aboutUs' },
   { name: 'Contact', href: '/contactUs' },
 ];
