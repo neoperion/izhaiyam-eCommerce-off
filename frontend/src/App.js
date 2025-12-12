@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
 import { useLocation } from 'react-router-dom';
+import WelcomeModal from "./components/welcomeModal/WelcomeModal";
 
 
 function App() {
@@ -76,6 +77,8 @@ function App() {
           <Cart {...{ isCartSectionActive, setIsCartSectionActive }} />
         </>
       )}
+      <WelcomeModal />
+      <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
       <PagesRoute {...{ setIsCartSectionActive }} />
       <ToastContainer position={`${isLargeScreen ? "top-right" : "bottom-center"}`} />
     </div>

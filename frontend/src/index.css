@@ -63,6 +63,31 @@
     --shadow-hover: 0 8px 24px hsl(92 25% 35% / 0.12);
   }
 
+  /* Global Font Application */
+  body {
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+  }
+
+  /* Headings with Outfit and tracking-tight */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.025em; /* tracking-tight */
+    font-weight: 600;
+  }
+
+  h1 {
+    font-weight: 700;
+  }
+
+  h2 {
+    font-weight: 700;
+  }
+
+  h3 {
+    font-weight: 600;
+  }
+
   .product-img-container:hover .product-img-overlay {
     opacity: 1;
   }
@@ -351,6 +376,49 @@
       opacity: 1;
       transform: scale(1);
     }
+  }
+
+  /* Typography Utilities */
+  .font-outfit {
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-display {
+    font-family: 'Playfair Display', 'Georgia', serif;
+  }
+
+  .tracking-tight {
+    letter-spacing: -0.025em;
+  }
+
+  .tracking-normal {
+    letter-spacing: 0;
+  }
+
+  .tracking-wide {
+    letter-spacing: 0.025em;
+  }
+
+  .tracking-wider {
+    letter-spacing: 0.05em;
+  }
+
+  .tracking-widest {
+    letter-spacing: 0.3em;
+  }
+
+  /* Horizontal Scroll with Hidden Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .overflow-x-auto {
+    scroll-behavior: smooth;
   }
 }
 
