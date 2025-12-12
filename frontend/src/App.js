@@ -11,30 +11,26 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import WelcomeModal from "./components/welcomeModal/WelcomeModal";
-
 
 function App() {
   const [isLargeScreen, setIsLargeScreen] = useState("");
   const [isWishlistActive, setIsWishlistActive] = useState(false);
   const [isCartSectionActive, setIsCartSectionActive] = useState(false);
 
+  const location = useLocation();
 
-
-    const location = useLocation();
-  
-  // Check if current route is an admin route
   const isAdminRoute = useMemo(() => {
-    return location.pathname.startsWith('/administrator') || location.pathname.startsWith('/admin');
+    return (
+      location.pathname.startsWith("/administrator") ||
+      location.pathname.startsWith("/admin")
+    );
   }, [location.pathname]);
-  
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, [location.pathname]);
-  
 
-  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const dispatch = useDispatch();
 
@@ -43,44 +39,55 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getUserData(JSON.parse(localStorage.getItem("UserData")) || ""));
+    dispatch(
+      getUserData(JSON.parse(localStorage.getItem("UserData")) || "")
+    );
   }, [dispatch]);
 
-  // getAllProducts as soon as app starts from any page
   useEffect(() => {
     dispatch(getAllProductsData());
   }, []);
 
-  // large screens are big ipads, desktop and laptop screen starting from 768
   useEffect(() => {
-    if (window.innerWidth >= 768) {
-      setIsLargeScreen(true);
-    } else if (window.innerWidth < 768) {
-      setIsLargeScreen(false);
-    }
-    window.addEventListener("resize", (e) => {
-      if (e.currentTarget.innerWidth >= 768) {
-        setIsLargeScreen(true);
-      } else if (e.currentTarget.innerWidth < 768) {
-        setIsLargeScreen(false);
-      }
-    });
-  }, [isLargeScreen]);
+    const updateScreen = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+
+    updateScreen();
+    window.addEventListener("resize", updateScreen);
+    return () => window.removeEventListener("resize", updateScreen);
+  }, []);
 
   return (
     <div className="App-container lg:text-[18px]">
-      {/* Hide public header on admin routes */}
+      
+      {/* Show PUBLIC HEADER only when NOT on admin pages */}
       {!isAdminRoute && (
         <>
-          <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
-          <Wishlist {...{ isWishlistActive, setIsWishlistActive }} />
-          <Cart {...{ isCartSectionActive, setIsCartSectionActive }} />
+          <Header
+            {...{
+              setIsWishlistActive,
+              setIsCartSectionActive,
+              isLargeScreen,
+            }}
+          />
+          <Wishlist
+            {...{ isWishlistActive, setIsWishlistActive }}
+          />
+          <Cart
+            {...{ isCartSectionActive, setIsCartSectionActive }}
+          />
         </>
       )}
+
       <WelcomeModal />
-      <Header {...{ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }} />
+
+      {/* Render app content */}
       <PagesRoute {...{ setIsCartSectionActive }} />
-      <ToastContainer position={`${isLargeScreen ? "top-right" : "bottom-center"}`} />
+
+      <ToastContainer
+        position={isLargeScreen ? "top-right" : "bottom-center"}
+      />
     </div>
   );
 }
