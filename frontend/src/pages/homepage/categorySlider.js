@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
 import cotImg from '../../assets/category-cot.jpg';
 import sofaImg from '../../assets/category-sofa.jpg';
 import diwanImg from '../../assets/category-diwan.jpg';
@@ -9,6 +9,9 @@ import balconyImg from '../../assets/category-balcony.jpg';
 
 const CategorySlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const sliderRef = useRef(null);
 
   const categories = [
     { name: 'Cot', image: cotImg, products: 24 },
@@ -34,15 +37,70 @@ const CategorySlider = () => {
     setCurrentIndex(Math.min(index, maxIndex));
   };
 
+  // Touch/Swipe handlers
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) {
+      // Swipe left - go next
+      handleNext();
+    }
+
+    if (touchStart - touchEnd < -75) {
+      // Swipe right - go prev
+      handlePrev();
+    }
+  };
+
+  // Mouse/Trackpad handlers
+  const handleMouseDown = (e) => {
+    setTouchStart(e.clientX);
+    sliderRef.current.style.cursor = 'grabbing';
+  };
+
+  const handleMouseMove = (e) => {
+    if (touchStart !== 0) {
+      setTouchEnd(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (touchStart !== 0) {
+      if (touchStart - touchEnd > 75) {
+        handleNext();
+      }
+      if (touchStart - touchEnd < -75) {
+        handlePrev();
+      }
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+    sliderRef.current.style.cursor = 'grab';
+  };
+
+  const handleMouseLeave = () => {
+    if (touchStart !== 0) {
+      setTouchStart(0);
+      setTouchEnd(0);
+      sliderRef.current.style.cursor = 'grab';
+    }
+  };
+
   return (
-    <section className="py-16 px-4 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
+    <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
       <div className="max-w-7xl mx-auto">
         {/* Heading Section */}
-        <div className="text-center mb-12">
-          <p className="text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
+        <div className="text-center mb-8 sm:mb-12">
+          <p className="text-xs sm:text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
             BROWSE CATEGORIES
           </p>
-          <h2 className="text-2xl md:text-4xl font-bold" style={{ color: '#93a267' }}>
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#93a267' }}>
             Shop By Category
           </h2>
         </div>
@@ -50,9 +108,19 @@ const CategorySlider = () => {
         {/* Slider Container */}
         <div className="relative">
           {/* Cards Container */}
-          <div className="overflow-hidden">
+          <div 
+            ref={sliderRef}
+            className="overflow-hidden cursor-grab active:cursor-grabbing"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+          >
             <div
-              className="flex transition-transform duration-500 ease-out gap-6"
+              className="flex transition-transform duration-500 ease-out gap-6 pointer-events-none"
               style={{
                 transform: `translateX(-${currentIndex * (100 / cardsToShow + 2)}%)`,
               }}
@@ -63,7 +131,7 @@ const CategorySlider = () => {
                   className="flex-shrink-0"
                   style={{ width: `calc(${100 / cardsToShow}% - 16px)` }}
                 >
-                  <div className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[350px]">
+                  <div className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[200px] md:h-[350px] pointer-events-auto">
                     {/* Image */}
                     <img
                       src={category.image}
@@ -88,25 +156,6 @@ const CategorySlider = () => {
               ))}
             </div>
           </div>
-
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed z-10"
-            style={{ backgroundColor: '#93a267' }}
-          >
-            <ChevronLeft className="text-white" size={24} />
-          </button>
-
-          <button
-            onClick={handleNext}
-            disabled={currentIndex >= maxIndex}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed z-10"
-            style={{ backgroundColor: '#93a267' }}
-          >
-            <ChevronRight className="text-white" size={24} />
-          </button>
         </div>
 
         {/* Pagination Dots */}

@@ -40,24 +40,24 @@ export const TestimonialsSection = () => {
   };
 
   return (
-    <section className="section-padding bg-background">
-      <div className="container-page">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <p className="text-primary text-xs md:text-sm font-semibold tracking-widest uppercase mb-3">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <p className="text-primary text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2 sm:mb-3">
             What Our Customers Say
           </p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">
             Testimonials
           </h2>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {testimonials.map((testimonial, index) => (
             <article
               key={index}
-              className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="bg-card rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
             >
               {/* Customer Info */}
               <div className="flex items-center gap-4 mb-4">

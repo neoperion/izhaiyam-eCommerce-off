@@ -130,10 +130,10 @@ const FeaturedProducts = () => {
   };
 
   return (
-    <section className="py-16 px-4 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
+    <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-12 gap-4">
           <div>
             <p className="text-xs tracking-widest mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
               CURATED SELECTION
@@ -153,7 +153,7 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Products Grid with Multiple Rows */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-6 lg:gap-6">
           {products.map((product) => (
             <div
               key={product.id}
@@ -201,27 +201,27 @@ const FeaturedProducts = () => {
               </div>
 
               {/* Product Info */}
-              <div className="p-5">
+              <div className="p-4 sm:p-5">
                 {/* Category */}
-                <p className="text-xs tracking-wider uppercase mb-2 font-semibold" style={{ color: '#93a267' }}>
+                <p className="text-[10px] sm:text-xs tracking-wider uppercase mb-1 sm:mb-2 font-semibold" style={{ color: '#93a267' }}>
                   {product.category}
                 </p>
 
                 {/* Title */}
-                <h3 className="text-xs font-bold mb-2 text-gray-900 line-clamp-1">
+                <h3 className="text-sm sm:text-base font-bold mb-2 text-gray-900 line-clamp-1">
                   {product.title}
                 </h3>
 
                 {/* Rating */}
-                <div className="flex items-center gap-2 mb-3">
-                  <Star size={16} className="fill-amber-400 stroke-amber-400" />
-                  <span className="text-sm font-semibold text-gray-900">{product.rating}</span>
-                  <span className="text-xs text-gray-500">({product.reviews})</span>
+                <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                  <Star size={14} className="sm:w-4 sm:h-4 fill-amber-400 stroke-amber-400" />
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900">{product.rating}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500">({product.reviews})</span>
                 </div>
 
                 {/* Price */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold" style={{ color: '#93a267' }}>
+                  <span className="text-sm sm:text-base font-bold" style={{ color: '#93a267' }}>
                     ₹{product.price.toLocaleString('en-IN')}
                   </span>
                   {product.oldPrice && (

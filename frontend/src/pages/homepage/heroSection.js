@@ -72,7 +72,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[70vh] md:min-h-[85vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[85vh] flex items-center overflow-hidden">
       {/* Base Background - HeroImage1 (Always Fixed) */}
       <div className="absolute inset-0 z-0">
         <img
@@ -100,23 +100,23 @@ export function HeroSection() {
       </div>
 
       {/* Fixed Content - Switches based on active image */}
-      <div className="container-page relative z-10 ml-0">
-        <div className="max-w-2xl animate-fade-in-up">
+      <div className="container-page relative z-10 ml-0 px-4 sm:px-6 md:px-8">
+        <div className="max-w-xl md:max-w-2xl animate-fade-in-up">
           {/* HeroImage1 Content */}
           {!heroImage2Active && (
             <>
-              <p className="text-primary font-bold tracking-[0.3em] uppercase mb-4 text-sm drop-shadow-lg transition-all duration-700">
+              <p className="text-primary font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 text-xs sm:text-sm drop-shadow-lg transition-all duration-700">
                 Handcrafted Furniture
               </p>
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6 drop-shadow-2xl transition-all duration-700"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight mb-4 sm:mb-6 drop-shadow-2xl transition-all duration-700"
                 style={{ fontFamily: "'Playfair Display', 'Georgia', serif" }}
               >
                 Inspired by
                 <br />
                 <span className="text-primary font-extrabold italic">Heritage</span>
               </h1>
-              <p className="text-lg md:text-xl text-foreground/90 font-medium mb-8 max-w-lg drop-shadow-lg leading-relaxed transition-all duration-700">
+              <p className="text-base sm:text-lg md:text-xl text-foreground/90 font-medium mb-6 sm:mb-8 max-w-lg drop-shadow-lg leading-relaxed transition-all duration-700">
                 IZHAIYAM — Celebrating the art of handloom in modern living.
               </p>
             </>
@@ -125,28 +125,28 @@ export function HeroSection() {
           {/* HeroImage2 Content */}
           {heroImage2Active && (
             <>
-              <p className="text-[#faf0e6] font-bold tracking-[0.3em] uppercase mb-4 text-sm drop-shadow-lg transition-all duration-700">
+              <p className="text-[#faf0e6] font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 text-xs sm:text-sm drop-shadow-lg transition-all duration-700">
                 Handloom furniture 
               </p>
               <h1
-                className="text-3xl md:text-5xl lg:text-5xl font-bold text-[#faf0e6] leading-tight mb-6 drop-shadow-2xl transition-all duration-700"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#faf0e6] leading-tight mb-4 sm:mb-6 drop-shadow-2xl transition-all duration-700"
                 style={{ fontFamily: "'Playfair Display', 'Georgia', serif" }}
               >
                 Crafted By,
                 <br />
                 <span className="text-[#faf0e6] font-extrabold italic">Hand.</span>
               </h1>
-              <p className="text-lg md:text-xl text-[#faf0e6] font-medium mb-8 max-w-lg drop-shadow-lg leading-relaxed transition-all duration-700">
+              <p className="text-base sm:text-lg md:text-xl text-[#faf0e6] font-medium mb-6 sm:mb-8 max-w-lg drop-shadow-lg leading-relaxed transition-all duration-700">
                 “IZHAIYAM — Where every weave tells a story.”
               </p>
             </>
           )}
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               to="/shop"
-              className={`inline-flex items-center justify-center gap-2 group font-semibold px-8 py-4 rounded-lg shadow-xl transition-all duration-300 transform hover:scale-105 ${
+              className={`inline-flex items-center justify-center gap-2 group font-semibold px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-lg shadow-xl transition-all duration-300 transform hover:scale-105 ${
                 heroImage2Active
                   ? 'bg-[#faf0e6] hover:bg-[#f5ebe0] text-[#2c2c2c]'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'

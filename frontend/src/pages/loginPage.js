@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 
 // Your chair photo
 import chairImg from "../assets/images (1).jpg";
+import googleIcon from "../assets/google.png";
 
 // ---------------------- COMPONENT ----------------------
 export const LoginPage = () => {
@@ -81,7 +82,7 @@ export const LoginPage = () => {
           duration: 0.5,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="relative w-full max-w-[680px] max-h-[82vh] 
+        className="relative w-full max-w-[1000px] max-h-[92vh] 
                    overflow-y-auto rounded-[22px] bg-white/60 
                    backdrop-blur-xl shadow-[0_10px_50px_rgba(0,0,0,0.25)]
                    border border-white/20 flex flex-col md:flex-row"
@@ -132,12 +133,12 @@ export const LoginPage = () => {
           className="w-full md:w-[60%] bg-[#f9f7f2] px-6 md:px-8 py-10"
         >
           {/* Branding */}
-          <h3 className="tracking-[0.25em] text-[#3f5038] text-xs font-semibold mb-1">
+          <h3 className="tracking-[0.25em] text-[#] text-xl font-semibold mb-2">
             IZHAIYAM
           </h3>
 
-          <h1 className="text-2xl font-bold text-[#3f5038]">Welcome Back</h1>
-          <p className="text-gray-600 text-xs mt-1 mb-5">
+          <h1 className="text-4xl font-bold text-[#93a267]">Welcome Back</h1>
+          <p className="text-gray-600 text-sm mt-2 mb-6">
             Sign in to continue shopping premium furniture.
           </p>
 
@@ -145,7 +146,7 @@ export const LoginPage = () => {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
-              <label className="text-xs text-gray-600 font-medium">Email Address</label>
+              <label className="text-sm text-gray-600 font-medium">Email Address</label>
               <input
                 type="email"
                 placeholder="you@domain.com"
@@ -153,7 +154,7 @@ export const LoginPage = () => {
                 onChange={(e) =>
                   setLoginDetails({ ...loginDetails, email: e.target.value })
                 }
-                className="w-full mt-1 h-11 rounded-lg border border-gray-300 px-4 text-sm 
+                className="w-full mt-1 h-12 rounded-lg border border-gray-300 px-4 text-base 
                            bg-white/80 shadow-sm 
                            focus:ring-2 focus:ring-[#93a267] focus:border-[#93a267]"
                 required
@@ -162,7 +163,7 @@ export const LoginPage = () => {
 
             {/* Password */}
             <div>
-              <label className="text-xs text-gray-600 font-medium">Password</label>
+              <label className="text-sm text-gray-600 font-medium">Password</label>
               <div className="relative">
                 <input
                   type={isPassword ? "password" : "text"}
@@ -171,7 +172,7 @@ export const LoginPage = () => {
                   onChange={(e) =>
                     setLoginDetails({ ...loginDetails, password: e.target.value })
                   }
-                  className="w-full mt-1 h-11 rounded-lg border border-gray-300 px-4 text-sm 
+                  className="w-full mt-1 h-12 rounded-lg border border-gray-300 px-4 text-base 
                              bg-white/80 shadow-sm pr-12
                              focus:ring-2 focus:ring-[#93a267] focus:border-[#93a267]"
                   required
@@ -190,7 +191,7 @@ export const LoginPage = () => {
             {/* Forgot password */}
             <div className="flex justify-end">
               <span
-                className="text-[#93a267] text-xs cursor-pointer hover:underline"
+                className="text-[#93a267] text-sm cursor-pointer hover:underline"
                 onClick={handleForgotPassword}
               >
                 Forgot Password?
@@ -200,7 +201,7 @@ export const LoginPage = () => {
             {/* Submit Button */}
             <motion.button
               whileTap={{ scale: 0.96 }}
-              className="h-11 bg-[#93a267] text-white rounded-lg font-semibold text-sm 
+              className="h-12 bg-[#93a267] text-white rounded-lg font-semibold text-base 
                          shadow-lg hover:shadow-[#93a26755] transition-all"
               type="submit"
               disabled={isLoading}
@@ -208,12 +209,12 @@ export const LoginPage = () => {
               {isLoading ? "Logging in..." : "Sign In"}
             </motion.button>
 
-            {/* Resend verification */}
-            <p
-              className="text-xs text-[#3f5038] text-center cursor-pointer hover:underline"
-              onClick={handleResendVerification}
-            >
-              Resend email verification
+            {/* Create Account Link */}
+            <p className="text-center text-sm mt-2">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-[#93a267] font-semibold hover:underline">
+                Create one
+              </Link>
             </p>
 
             {/* Divider */}
@@ -223,23 +224,15 @@ export const LoginPage = () => {
               <div className="h-px bg-gray-300 flex-1"></div>
             </div>
 
-            {/* Social Buttons */}
-            <div className="flex gap-3 justify-center">
-              <button className="border border-gray-300 rounded-lg bg-white h-10 px-4 text-xs shadow-sm">
-                Google
-              </button>
-              <button className="border border-gray-300 rounded-lg bg-white h-10 px-4 text-xs shadow-sm">
-                Apple
-              </button>
-            </div>
+            {/* Google Button */}
+            <button 
+              type="button"
+              className="flex items-center justify-center gap-3 border border-gray-300 rounded-lg bg-white h-12 px-6 text-sm font-medium shadow-sm hover:shadow-md transition-all hover:bg-gray-50"
+            >
+              <img src={googleIcon} alt="Google" className="w-7 h-8" />
+              Continue with Google
+            </button>
 
-            {/* Footer */}
-            <p className="text-center text-xs mt-3">
-              Don’t have an account?{" "}
-              <Link to="/register" className="text-[#93a267] font-medium hover:underline">
-                Create one
-              </Link>
-            </p>
           </form>
         </motion.div>
       </motion.div>
