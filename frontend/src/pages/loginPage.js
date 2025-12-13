@@ -130,23 +130,23 @@ export const LoginPage = () => {
           initial={{ opacity: 0, x: 15 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full md:w-[60%] bg-[#f9f7f2] px-6 md:px-8 py-10"
+          className="w-full md:w-[60%] bg-[#f9f7f2] px-4 md:px-6 py-4 overflow-y-auto"
         >
           {/* Branding */}
-          <h3 className="tracking-[0.25em] text-[#] text-xl font-semibold mb-2">
-            IZHAIYAM
+          <h3 className="tracking-[0.25em] text-[#93a267] text-xl font-semibold mb-0">
+            IZHAIYAM 
           </h3>
 
           <h1 className="text-4xl font-bold text-[#93a267]">Welcome Back</h1>
-          <p className="text-gray-600 text-sm mt-2 mb-6">
+          <p className="text-gray-600 text-xs mt-0.5 mb-3">
             Sign in to continue shopping premium furniture.
           </p>
 
           {/* FORM */}
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
-              <label className="text-sm text-gray-600 font-medium">Email Address</label>
+              <label className="text-xs text-gray-600 font-medium">Email Address</label>
               <input
                 type="email"
                 placeholder="you@domain.com"
@@ -154,7 +154,7 @@ export const LoginPage = () => {
                 onChange={(e) =>
                   setLoginDetails({ ...loginDetails, email: e.target.value })
                 }
-                className="w-full mt-1 h-12 rounded-lg border border-gray-300 px-4 text-base 
+                className="w-full mt-1 h-10 rounded-lg border border-gray-300 px-3 text-sm 
                            bg-white/80 shadow-sm 
                            focus:ring-2 focus:ring-[#93a267] focus:border-[#93a267]"
                 required
@@ -163,7 +163,7 @@ export const LoginPage = () => {
 
             {/* Password */}
             <div>
-              <label className="text-sm text-gray-600 font-medium">Password</label>
+              <label className="text-xs text-gray-600 font-medium">Password</label>
               <div className="relative">
                 <input
                   type={isPassword ? "password" : "text"}
@@ -172,15 +172,15 @@ export const LoginPage = () => {
                   onChange={(e) =>
                     setLoginDetails({ ...loginDetails, password: e.target.value })
                   }
-                  className="w-full mt-1 h-12 rounded-lg border border-gray-300 px-4 text-base 
-                             bg-white/80 shadow-sm pr-12
+                  className="w-full mt-1 h-10 rounded-lg border border-gray-300 px-3 text-sm 
+                             bg-white/80 shadow-sm pr-10
                              focus:ring-2 focus:ring-[#93a267] focus:border-[#93a267]"
                   required
                 />
 
                 {/* Eye Icon */}
                 <span
-                  className="absolute right-4 top-3.5 cursor-pointer text-gray-600"
+                  className="absolute right-3 top-3 cursor-pointer text-gray-600 text-sm"
                   onClick={() => setIsPassword(!isPassword)}
                 >
                   {isPassword ? <FaEye /> : <FaEyeSlash />}
@@ -191,7 +191,7 @@ export const LoginPage = () => {
             {/* Forgot password */}
             <div className="flex justify-end">
               <span
-                className="text-[#93a267] text-sm cursor-pointer hover:underline"
+                className="text-[#93a267] text-xs cursor-pointer hover:underline"
                 onClick={handleForgotPassword}
               >
                 Forgot Password?
@@ -201,7 +201,7 @@ export const LoginPage = () => {
             {/* Submit Button */}
             <motion.button
               whileTap={{ scale: 0.96 }}
-              className="h-12 bg-[#93a267] text-white rounded-lg font-semibold text-base 
+              className="h-10 bg-[#93a267] text-white rounded-lg font-semibold text-sm 
                          shadow-lg hover:shadow-[#93a26755] transition-all"
               type="submit"
               disabled={isLoading}
@@ -210,7 +210,7 @@ export const LoginPage = () => {
             </motion.button>
 
             {/* Create Account Link */}
-            <p className="text-center text-sm mt-2">
+            <p className="text-center text-xs mt-1">
               Don't have an account?{" "}
               <Link to="/register" className="text-[#93a267] font-semibold hover:underline">
                 Create one
@@ -218,7 +218,7 @@ export const LoginPage = () => {
             </p>
 
             {/* Divider */}
-            <div className="flex items-center gap-3 my-2">
+            <div className="flex items-center gap-3 my-1">
               <div className="h-px bg-gray-300 flex-1"></div>
               <span className="text-gray-500 text-[10px]">OR CONTINUE WITH</span>
               <div className="h-px bg-gray-300 flex-1"></div>
@@ -227,9 +227,9 @@ export const LoginPage = () => {
             {/* Google Button */}
             <button 
               type="button"
-              className="flex items-center justify-center gap-3 border border-gray-300 rounded-lg bg-white h-12 px-6 text-sm font-medium shadow-sm hover:shadow-md transition-all hover:bg-gray-50"
+              className="flex items-center justify-center gap-2 border border-gray-300 rounded-lg bg-white h-10 px-4 text-xs font-medium shadow-sm hover:shadow-md transition-all hover:bg-gray-50"
             >
-              <img src={googleIcon} alt="Google" className="w-7 h-8" />
+              <img src={googleIcon} alt="Google" className="w-4 h-4" />
               Continue with Google
             </button>
 

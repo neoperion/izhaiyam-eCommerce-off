@@ -3,6 +3,7 @@ import { WhyChooseUsSection } from "./whyChooseUsSection";
 import { TestimonialsSection } from "./testimonialsSection";
 import CategorySlider from "./categorySlider";
 import FeaturedProducts from "./featuredProducts";
+import FAQSection from "./faqSection";
 import FooterSection from "../../components/footerSection";
 
 const Homepage = () => {
@@ -12,6 +13,7 @@ const Homepage = () => {
       <CategorySlider />
       <FeaturedProducts />
       <TestimonialsSection />
+      <FAQSection />
       <FooterSection />
     </>
   );
