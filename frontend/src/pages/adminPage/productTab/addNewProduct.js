@@ -9,6 +9,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
   const [productDiscountPercentValue, setProductDiscountPercentValue] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [productStock, setProductStock] = useState(0);
+  const [isFeatured, setIsFeatured] = useState(false);
   const [categories, setCategories] = useState({
     "Featured Categories": [],
     location: [],
@@ -18,8 +19,8 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
 
   const productCategories = {
     "Featured Categories": ["featured", "first order deal", "discounts"],
-    location: ["kitchen", "dining", "bedroom", "living room", "office"],
-    features: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa"],
+    location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
+    features: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 
@@ -59,6 +60,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       price: productPrice,
       stock: productStock,
       discountPercentValue: productDiscountPercentValue,
+      isFeatured: isFeatured,
     };
     const asyncCreateProductToastId = toast.loading("product data upload in progress");
     try {
@@ -83,6 +85,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       setProductPrice("");
       setProductStock(0);
       setProductDiscountPercentValue(0);
+      setIsFeatured(false);
       imgRef.current.nextElementSibling.style.display = "none";
       for (let key of e.target) {
         key.checked = false;
@@ -180,7 +183,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
             />
           </div>
           <div className="mb-6 flex gap-[2%] items-end justify-between">
-            <div className="w-1/3">
+            <div className="w-[30%]">
               <label htmlFor="price" className="font-bold">
                 Price
               </label>
@@ -192,7 +195,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                 className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
               />
             </div>
-            <div className="w-1/3">
+            <div className="w-[20%]">
               <label htmlFor="stock" className="font-bold">
                 Stock
               </label>
@@ -204,7 +207,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                 className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
               />
             </div>
-            <div className="w-1/3">
+            <div className="w-[20%]">
               <label htmlFor="discount" className="font-bold">
                 Discount(%)
               </label>
@@ -215,6 +218,17 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                 onChange={(e) => setProductDiscountPercentValue(e.currentTarget.value)}
                 className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
               />
+            </div>
+            <div className="w-[20%] flex items-center justify-center pb-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        checked={isFeatured} 
+                        onChange={(e) => setIsFeatured(e.target.checked)}
+                        className="w-5 h-5 accent-[#fca311]"
+                    />
+                    <span className="font-bold">Featured</span>
+                </label>
             </div>
           </div>
           <section onChange={handleCheckedCategories}>

@@ -3,6 +3,14 @@ const Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema(
   {
+    firstName: {
+      type: String,
+      required: [true, "please enter your first name"],
+    },
+    lastName: {
+      type: String,
+      required: [true, "please enter your last name"],
+    },
     username: {
       type: String,
       required: [true, "please enter a username"],
@@ -23,7 +31,7 @@ const userSchema = mongoose.Schema(
     },
     verificationStatus: {
       type: String,
-      default: "pending",
+      default: "verified",
     },
     verificationToken: {
       type: String,

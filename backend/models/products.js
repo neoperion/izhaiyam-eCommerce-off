@@ -14,6 +14,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 100,
     },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
     discountPercentValue: {
       type: Number,
       default: function () {
@@ -26,8 +30,8 @@ const productSchema = new mongoose.Schema(
     },
     categories: {
       "Featured Categories": { type: [String], enums: ["featured", "first order deal", "discounts"] },
-      location: { type: [String], enums: ["kitchen", "dining", "bedroom", "living room", "office"] },
-      features: { type: [String], enums: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa"] },
+      location: { type: [String], enums: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"] },
+      features: { type: [String], enums: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"] },
       others: { type: [String], enums: ["kids"] },
     },
   },

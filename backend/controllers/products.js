@@ -10,7 +10,21 @@ const createProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  let products = await Product.find({});
+  const { featured, limit } = req.query;
+  const queryObject = {};
+
+  if (featured) {
+    queryObject.isFeatured = featured === "true";
+  }
+
+  let result = Product.find(queryObject);
+
+  if (limit) {
+    const limitVal = Number(limit) || 10;
+    result = result.limit(limitVal);
+  }
+
+  const products = await result;
 
   res.status(200).json({ message: "success", products });
 };

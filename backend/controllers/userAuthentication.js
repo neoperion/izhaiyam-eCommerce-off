@@ -27,31 +27,28 @@ const emailVerificationMessageDatas = (emailVerificationToken) => {
 };
 
 //Register
+//Register
 const registerUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { firstName, lastName, username, password } = req.body;
   const email = req.body?.email?.toLowerCase();
 
   let checkIfEmailExists = await User.findOne({ email });
-  let token = generateToken(email, "pending", "5d");
   const hashedpassword = await bcryptjs.hash(password, 10);
 
   if (checkIfEmailExists) {
     throw new CustomErrorHandler(400, "Email has already been registered by another user");
-  } else if (!checkEmailHost(email)) {
-    throw new CustomErrorHandler(400, "Email host not supported");
-  }
+  } 
   await User.create({
+    firstName,
+    lastName,
     email,
     username,
     password: hashedpassword,
-    verificationStatus: "pending",
-    verificationToken: token,
+    verificationStatus: "verified",
   });
 
-  const response = await sendMessageToUserEmail(email, token, emailVerificationMessageDatas);
-
   res.send(
-    "Your account has been created! A verification link has been sent to your email. Please check your email to complete your registration."
+    "Account created successfully. Welcome aboard!"
   );
 };
 
@@ -64,8 +61,6 @@ const loginUser = async (req, res) => {
 
   if (!checkIfEmailExists) {
     throw new CustomErrorHandler(400, "Incorect email or password");
-  } else if (checkIfEmailExists && checkIfEmailExists.verificationStatus === "pending") {
-    throw new CustomErrorHandler(403, "User Email address must be verified before login");
   } else if (checkIfEmailExists && !(await bcryptjs.compare(password, checkIfEmailExists.password))) {
     throw new CustomErrorHandler(400, "Incorect email or password");
   } else if (checkIfEmailExists && (await bcryptjs.compare(password, checkIfEmailExists.password))) {

@@ -14,12 +14,12 @@ export const EditAndupdateProductModal = ({
 }) => {
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
-  const { _id, title, stock, price, discountPercentValue, categories, image } = productDetails;
+  const { _id, title, stock, price, discountPercentValue, categories, image, isFeatured } = productDetails;
 
   const productCategories = {
     "Featured Categories": ["featured", "first order deal", "discounts"],
-    location: ["kitchen", "dining", "bedroom", "living room", "office"],
-    features: ["chairs", "table", "sets", "cupboards", "lighting", "sofa"],
+    location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
+    features: ["chairs", "table", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 
@@ -64,6 +64,7 @@ export const EditAndupdateProductModal = ({
       price: parseFloat(price),
       stock: parseInt(stock),
       discountPercentValue,
+      isFeatured,
     };
 
     const asyncCreateProductToastId = toast.loading("product data upload in progress");
@@ -85,6 +86,7 @@ export const EditAndupdateProductModal = ({
         stock: "",
         price: "",
         discountPercentValue: "",
+        isFeatured: false,
         categories: {
           "Featured Categories": [],
           location: [],
@@ -207,7 +209,7 @@ export const EditAndupdateProductModal = ({
               />
             </div>
             <div className="mb-6 flex gap-[2%] items-end justify-between">
-              <div className="w-1/3">
+              <div className="w-[30%]">
                 <label htmlFor="price" className="font-bold">
                   Price
                 </label>
@@ -223,7 +225,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-1/3">
+              <div className="w-[20%]">
                 <label htmlFor="stock" className="font-bold">
                   Stock
                 </label>
@@ -239,7 +241,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-1/3">
+              <div className="w-[20%]">
                 <label htmlFor="discount" className="font-bold">
                   Discount(%)
                 </label>
@@ -254,6 +256,21 @@ export const EditAndupdateProductModal = ({
                   }}
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
+              </div>
+              <div className="w-[20%] flex items-center justify-center pb-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        checked={isFeatured || false} 
+                        onChange={(e) => {
+                            setProductDetails((prevData) => {
+                                return { ...prevData, isFeatured: e.target.checked };
+                            });
+                        }}
+                        className="w-5 h-5 accent-[#fca311]"
+                    />
+                    <span className="font-bold">Featured</span>
+                </label>
               </div>
             </div>
             <section>

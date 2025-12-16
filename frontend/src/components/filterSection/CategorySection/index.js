@@ -14,8 +14,8 @@ const Index = ({ setCheckedCategoryDOM }) => {
   // THE MAPPED JSON TO CREATE THE CHECKBOX AND CATEGORY UI
   const productCategories = {
     "Featured Categories": ["featured", "first order deal", "discounts"],
-    location: ["kitchen", "dining", "bedroom", "living room", "office"],
-    features: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa"],
+    location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
+    features: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 

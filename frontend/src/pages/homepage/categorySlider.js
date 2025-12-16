@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
 import cotImg from '../../assets/category-cot.jpg';
 import sofaImg from '../../assets/category-sofa.jpg';
 import diwanImg from '../../assets/category-diwan.jpg';
@@ -12,15 +15,32 @@ const CategorySlider = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const sliderRef = useRef(null);
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const categories = [
-    { name: 'Cot', image: cotImg, products: 24 },
-    { name: 'Sofa', image: sofaImg, products: 36 },
-    { name: 'Diwan', image: diwanImg, products: 18 },
-    { name: 'Chair', image: chairImg, products: 20 },
-    { name: 'Swing', image: swingImg, products: 12 },
-    { name: 'Balcony', image: balconyImg, products: 14 },
+    { name: 'Cot', image: cotImg, products: 24, type: 'features', value: 'cot' },
+    { name: 'Sofa', image: sofaImg, products: 36, type: 'features', value: 'sofa' },
+    { name: 'Diwan', image: diwanImg, products: 18, type: 'features', value: 'diwan' },
+    { name: 'Chair', image: chairImg, products: 20, type: 'features', value: 'chairs' },
+    { name: 'Swing', image: swingImg, products: 12, type: 'features', value: 'swing' },
+    { name: 'Balcony', image: balconyImg, products: 14, type: 'location', value: 'balcony' },
   ];
+
+  // ... (keep existing state logic)
+
+  const handleCategoryClick = (category) => {
+      // Set the main category (features/location)
+      dispatch(setSelectedCategory(category.type));
+      // Set the sub-category (cot/sofa/etc)
+      dispatch(setSelectedSubCategoryForFilter(category.value));
+      // Navigate to shop
+      navigate('/shop');
+  };
+
+  // ... (keep existing handlePrev, handleNext, etc)
+
 
   const cardsToShow = 3;
   const maxIndex = Math.max(0, categories.length - cardsToShow);
@@ -131,7 +151,10 @@ const CategorySlider = () => {
                   className="flex-shrink-0"
                   style={{ width: `calc(${100 / cardsToShow}% - 16px)` }}
                 >
-                  <div className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[200px] md:h-[350px] pointer-events-auto">
+                  <div 
+                    onClick={() => handleCategoryClick(category)}
+                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[200px] md:h-[350px] pointer-events-auto"
+                  >
                     {/* Image */}
                     <img
                       src={category.image}
