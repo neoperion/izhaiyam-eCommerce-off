@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -46,12 +47,12 @@
     --wood-medium: 30 40% 55%;
     --wood-dark: 25 35% 30%;
     --wood-header: 35 30% 85%;
-    
+
     /* Sage variations */
     --sage-light: 92 30% 70%;
     --sage-medium: 92 25% 52%;
     --sage-dark: 92 30% 38%;
-    
+
     /* Cream variations */
     --cream-light: 35 50% 97%;
     --cream: 35 50% 96%;
@@ -70,9 +71,15 @@
   }
 
   /* Headings with Outfit and tracking-tight */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.025em; /* tracking-tight */
+    letter-spacing: -0.025em;
+    /* tracking-tight */
     font-weight: 600;
   }
 
@@ -91,15 +98,19 @@
   .product-img-container:hover .product-img-overlay {
     opacity: 1;
   }
+
   .product-img-container:hover .product-details-link {
     display: flex;
   }
+
   .category-img-container:hover .product-img-overlay {
     display: block;
   }
+
   .category-img-container:hover .category-shop-link {
     display: flex;
   }
+
   .text-to-be-wrapped {
     hyphens: auto;
     -webkit-hyphens: auto;
@@ -110,17 +121,19 @@
     word-break: break-word;
     -ms-word-break: break-word;
   }
+
   .tailwindUnderlineDidntWork {
     text-underline-offset: 1px;
     text-decoration-line: underline;
   }
+
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
     accent-color: var(--primary);
   }
 
-  .authPage-input-container:focus-within > label,
-  .authPage-input:not(:placeholder-shown) ~ label {
+  .authPage-input-container:focus-within>label,
+  .authPage-input:not(:placeholder-shown)~label {
     top: -0.9rem;
     left: 0.5rem;
     z-index: 10;
@@ -128,7 +141,8 @@
     transition: all 0.4s ease-in-out;
     padding: 0 3px;
   }
-  .authPage-input-container:focus-within > label {
+
+  .authPage-input-container:focus-within>label {
     color: var(--primary);
   }
 
@@ -136,18 +150,22 @@
     -webkit-animation: spinner 0.6s linear infinite;
     animation: spinner 1.5s linear infinite;
   }
+
   @-webkit-keyframes spinner {
     0% {
       -webkit-transform: rotate(0deg);
     }
+
     100% {
       -webkit-transform: rotate(360deg);
     }
   }
+
   @keyframes spinner {
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
@@ -155,11 +173,12 @@
 }
 
 @layer components {
+
   /* Container System */
   .container-page {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+
   .section-padding {
     @apply py-16 md:py-24;
   }
@@ -263,6 +282,7 @@
 }
 
 @layer utilities {
+
   h4,
   h5,
   h6 {
@@ -280,15 +300,19 @@
   h6 {
     @apply font-medium;
   }
+
   html {
     @apply lg:text-[18px] scroll-smooth;
   }
+
   body {
     @apply font-body tracking-normal bg-background text-foreground;
   }
+
   li {
     @apply cursor-pointer;
   }
+
   button {
     @apply cursor-pointer;
   }
@@ -303,6 +327,7 @@
   input[type="email"] {
     @apply border-LightSecondaryColor;
   }
+
   .authPage-input-container {
     @apply border-LightSecondaryColor;
   }
@@ -310,25 +335,31 @@
   li {
     @apply list-none;
   }
+
   .active-sorting-lists {
     @apply flex;
   }
+
   .active-profilePage-tab {
     @apply flex;
   }
+
   .active-AdminPage-tab {
     @apply flex;
   }
+
   .homepage-active-category-tab div {
     @apply w-[100%] transition ease-in duration-100;
   }
+
   .active-product-page-no {
     @apply bg-primary text-white border-none transition-all duration-500;
   }
+
   .admin-table-borderBottom tr:last-child td {
     @apply border-b;
   }
-  
+
   /* Focus States for Accessibility */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
@@ -351,6 +382,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -361,6 +393,7 @@
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -372,6 +405,7 @@
       opacity: 0;
       transform: scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
@@ -381,6 +415,11 @@
   /* Typography Utilities */
   .font-outfit {
     font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-inter {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-optical-sizing: auto;
   }
 
   .font-display {

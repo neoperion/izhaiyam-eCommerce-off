@@ -30,11 +30,10 @@ export const TestimonialsSection = () => {
     return Array.from({ length: 5 }).map((_, index) => (
       <Star
         key={index}
-        className={`w-4 h-4 ${
-          index < Math.floor(rating)
-            ? "fill-amber-600 text-amber-600"
-            : "text-gray-300"
-        }`}
+        className={`w-4 h-4 ${index < Math.floor(rating)
+          ? "fill-amber-600 text-amber-600"
+          : "text-gray-300"
+          }`}
       />
     ));
   };
@@ -44,10 +43,10 @@ export const TestimonialsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <p className="text-primary text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2 sm:mb-3">
+          <p className="font-inter text-primary text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2 sm:mb-3">
             What Our Customers Say
           </p>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">
+          <h2 className="font-inter text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">
             Testimonials
           </h2>
         </div>
@@ -57,7 +56,7 @@ export const TestimonialsSection = () => {
           {testimonials.map((testimonial, index) => (
             <article
               key={index}
-              className="bg-card rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+              className="bg-card rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               {/* Customer Info */}
               <div className="flex items-center gap-4 mb-4">

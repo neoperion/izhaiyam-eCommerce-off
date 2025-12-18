@@ -15,7 +15,7 @@ const CategorySlider = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const sliderRef = useRef(null);
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -31,12 +31,12 @@ const CategorySlider = () => {
   // ... (keep existing state logic)
 
   const handleCategoryClick = (category) => {
-      // Set the main category (features/location)
-      dispatch(setSelectedCategory(category.type));
-      // Set the sub-category (cot/sofa/etc)
-      dispatch(setSelectedSubCategoryForFilter(category.value));
-      // Navigate to shop
-      navigate('/shop');
+    // Set the main category (features/location)
+    dispatch(setSelectedCategory(category.type));
+    // Set the sub-category (cot/sofa/etc)
+    dispatch(setSelectedSubCategoryForFilter(category.value));
+    // Navigate to shop
+    navigate('/shop');
   };
 
   // ... (keep existing handlePrev, handleNext, etc)
@@ -117,10 +117,10 @@ const CategorySlider = () => {
       <div className="max-w-7xl mx-auto">
         {/* Heading Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <p className="text-xs sm:text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
+          <p className="font-inter text-xs sm:text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
             BROWSE CATEGORIES
           </p>
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#93a267' }}>
+          <h2 className="font-inter text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#93a267' }}>
             Shop By Category
           </h2>
         </div>
@@ -128,7 +128,7 @@ const CategorySlider = () => {
         {/* Slider Container */}
         <div className="relative">
           {/* Cards Container */}
-          <div 
+          <div
             ref={sliderRef}
             className="overflow-hidden cursor-grab active:cursor-grabbing"
             onTouchStart={handleTouchStart}
@@ -151,7 +151,7 @@ const CategorySlider = () => {
                   className="flex-shrink-0"
                   style={{ width: `calc(${100 / cardsToShow}% - 16px)` }}
                 >
-                  <div 
+                  <div
                     onClick={() => handleCategoryClick(category)}
                     className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[200px] md:h-[350px] pointer-events-auto"
                   >
@@ -161,10 +161,10 @@ const CategorySlider = () => {
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    
+
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                    
+
                     {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
                       <h3 className="text-xl font-bold mb-1">{category.name}</h3>
@@ -187,11 +187,10 @@ const CategorySlider = () => {
             <button
               key={index}
               onClick={() => handleDotClick(index)}
-              className={`rounded-full transition-all duration-300 ${
-                index === currentIndex
+              className={`rounded-full transition-all duration-300 ${index === currentIndex
                   ? 'w-8 h-2'
                   : 'w-2 h-2 hover:opacity-70'
-              }`}
+                }`}
               style={{
                 backgroundColor: index === currentIndex ? '#93a267' : '#cbd5e0',
               }}

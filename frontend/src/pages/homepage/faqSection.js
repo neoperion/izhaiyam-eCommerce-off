@@ -47,23 +47,22 @@ const FAQSection = () => {
   };
 
   return (
-    <section 
-      className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8" 
+    <section
+      className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8"
       style={{ backgroundColor: '#f9f5f0' }}
     >
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <p 
-            className="text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2 sm:mb-3"
+          <p
+            className="font-inter text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2 sm:mb-3"
             style={{ color: '#93a267' }}
           >
             NEED HELP?
           </p>
-          <h2 
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4"
-            style={{ 
-              fontFamily: "'Playfair Display', 'Georgia', serif",
+          <h2
+            className="font-inter text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4"
+            style={{
               color: '#2c2c2c'
             }}
           >
@@ -86,7 +85,7 @@ const FAQSection = () => {
                 onClick={() => toggleAccordion(index)}
                 onKeyDown={(e) => handleKeyPress(e, index)}
                 className="w-full text-left px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 flex justify-between items-center gap-4 transition-colors duration-200"
-                style={{ 
+                style={{
                   backgroundColor: openIndex === index ? '#faf8f5' : 'white',
                   outline: 'none',
                   border: openIndex === index ? '1px solid #93a26720' : '1px solid transparent'
@@ -94,23 +93,23 @@ const FAQSection = () => {
                 aria-expanded={openIndex === index}
                 aria-controls={`faq-answer-${index}`}
               >
-                <span 
+                <span
                   className="text-sm sm:text-base md:text-lg font-semibold pr-2"
                   style={{ color: '#93a267' }}
                 >
                   {faq.question}
                 </span>
-                <div 
+                <div
                   className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300"
-                  style={{ 
+                  style={{
                     backgroundColor: openIndex === index ? '#93a267' : '#e8e4df',
                     transform: openIndex === index ? 'rotate(180deg)' : 'rotate(0deg)'
                   }}
                 >
-                  <ChevronDown 
-                    size={16} 
+                  <ChevronDown
+                    size={16}
                     className="sm:w-5 sm:h-5"
-                    style={{ 
+                    style={{
                       color: openIndex === index ? 'white' : '#93a267'
                     }}
                   />
@@ -128,7 +127,7 @@ const FAQSection = () => {
                 }}
               >
                 <div className="px-4 sm:px-6 md:px-8 pb-4 sm:pb-5 md:pb-6 pt-0">
-                  <p 
+                  <p
                     className="text-sm sm:text-base leading-relaxed"
                     style={{ color: '#93a267' }}
                   >
@@ -148,7 +147,7 @@ const FAQSection = () => {
           <a
             href="/contactUs"
             className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            style={{ 
+            style={{
               backgroundColor: '#93a267',
               color: 'white'
             }}

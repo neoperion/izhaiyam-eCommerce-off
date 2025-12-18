@@ -4,16 +4,13 @@ import axios from 'axios';
 import { ArrowRight } from 'lucide-react';
 import FeaturedProductCard from './FeaturedProductCard';
 
-const FeaturedProducts = () =>
-{
+const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [wishlist, setWishlist] = useState([]);
 
-    useEffect(() =>
-    {
-        const fetchFeaturedProducts = async () =>
-        {
+    useEffect(() => {
+        const fetchFeaturedProducts = async () => {
             try {
                 setLoading(true);
                 // Fetch only featured products, limit to 4
@@ -29,8 +26,7 @@ const FeaturedProducts = () =>
         fetchFeaturedProducts();
     }, []);
 
-    const toggleWishlist = (id) =>
-    {
+    const toggleWishlist = (id) => {
         // This is a local toggle for now, usually needs API call to update user wishlist
         setWishlist((prev) =>
             prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -49,27 +45,24 @@ const FeaturedProducts = () =>
             <div className="max-w-7xl mx-auto">
 
                 {/* Header content */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div className="max-w-xl">
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className="h-[1px] w-8 bg-[#93a267]"></span>
-                            <span className="text-xs font-bold tracking-[0.2em] text-[#93a267] uppercase">Curated Selection</span>
+                <div className="mb-12">
+                    <div className="text-center mb-8">
+                        <div className="mb-3">
+                            <span className="font-inter text-xs font-bold tracking-[0.2em] text-[#93a267] uppercase">Curated Selection</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-serif font-medium text-gray-900 mb-4">
+                        <h2 className="font-inter text-4xl md:text-5xl font-serif font-medium text-gray-900">
                             Featured Products
                         </h2>
-                        <p className="text-gray-500 text-lg font-light leading-relaxed">
-                            Handpicked furniture loved by our customers. Elevate your living space with our exclusive collection.
-                        </p>
                     </div>
-
-                    <NavLink
-                        to="/shop"
-                        className="group hidden md:flex items-center gap-2 text-[#93a267] font-semibold tracking-wide hover:text-[#7a8a55] transition-colors"
-                    >
-                        <span>View All Products</span>
-                        <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
-                    </NavLink>
+                    <div className="flex justify-end">
+                        <NavLink
+                            to="/shop"
+                            className="group inline-flex items-center gap-2 text-[#93a267] font-semibold tracking-wide hover:text-[#7a8a55] transition-colors"
+                        >
+                            <span>View All Products</span>
+                            <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
+                        </NavLink>
+                    </div>
                 </div>
 
                 {/* Grid / Swipeable Container */}
