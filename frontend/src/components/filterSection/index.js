@@ -16,6 +16,7 @@ export const FilterBySection = ({
   currentPageNo,
   NoOfProductsPerPage,
   setIsFilterFnApplied,
+  variant = "sidebar", // "sidebar" | "left-drawer"
 }) => {
   // DOMS OF THE CHECKED ELEM FOR UNCHECKING DURING RESET
   const [checkedCategoryDOM, setCheckedCategoryDOM] = useState(null);
@@ -62,46 +63,92 @@ export const FilterBySection = ({
   }, [location.pathname, sortedSearchedProductData]);
 
   // check if screen is larger than 1024px
-  // the reasons for the two methods is because the first if/else checks on first render while the resize listener checks on every resize
-  // REMAINDER: i need to change this to custom useState later
-
+  // Only for sidebar variant
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setIsScreenAbove1024(true);
-    } else if (window.innerWidth < 1024) {
-      setIsScreenAbove1024(false);
-    }
-
-    window.addEventListener("resize", (e) => {
-      if (e.currentTarget.innerWidth >= 1024) {
+    if (variant === "sidebar") {
+      if (window.innerWidth >= 1024) {
         setIsScreenAbove1024(true);
-      } else if (e.currentTarget.innerWidth < 1024) {
+      } else if (window.innerWidth < 1024) {
         setIsScreenAbove1024(false);
       }
-    });
-  }, [isScreenAbove1024]);
+
+      const handleResize = (e) => {
+        if (e.currentTarget.innerWidth >= 1024) {
+          setIsScreenAbove1024(true);
+        } else if (e.currentTarget.innerWidth < 1024) {
+          setIsScreenAbove1024(false);
+        }
+      };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, [variant]);
 
   useEffect(() => {
-    isScreenAbove1024 && setIsFilterBySectionOpen(true);
-  }, [isScreenAbove1024]);
+    if (variant === "sidebar") {
+      isScreenAbove1024 && setIsFilterBySectionOpen(true);
+    }
+  }, [isScreenAbove1024, variant]);
+
+  // Scroll Lock for left-drawer
+  useEffect(() => {
+    if (variant === "left-drawer" && isFilterBySectionOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isFilterBySectionOpen, variant]);
+
+  // Close on ESC
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape" && isFilterBySectionOpen) {
+        setIsFilterBySectionOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isFilterBySectionOpen]);
+
+  const isDrawer = variant === "left-drawer";
 
   return (
     <motion.div
-      initial={{ x: "100%" }}
-      animate={{ x: isFilterBySectionOpen ? "0%" : "100%" }}
+      initial={{ x: isDrawer ? "-100%" : "100%" }}
+      animate={{ x: isFilterBySectionOpen ? "0%" : (isDrawer ? "-100%" : "100%") }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`fixed lg:static lg:translate-x-0 top-0 left-0 w-full h-screen lg:h-auto z-[1500] lg:z-0 bg-black/60 lg:bg-transparent ${
-        isFilterBySectionOpen ? "translate-x-0" : "translate-x-full"
-      }`}
+      className={`fixed top-0 left-0 w-full h-screen z-[1500] 
+        ${isDrawer ? "bg-black/40 backdrop-blur-sm" : "bg-black/60 lg:bg-transparent lg:static lg:h-auto lg:z-0 lg:translate-x-0"}
+        ${isFilterBySectionOpen ? "translate-x-0" : (isDrawer ? "-translate-x-full" : "translate-x-full")}
+        ${!isFilterBySectionOpen && !isDrawer && "lg:translate-x-0"} 
+      `}
+      onClick={(e) => {
+        // Close if clicking overlay (only for drawer modes)
+        if (e.target === e.currentTarget && (isDrawer || !isScreenAbove1024)) {
+          setIsFilterBySectionOpen(false);
+        }
+      }}
     >
-      <section className="flex flex-col w-[80%] max-w-[360px] sm:w-[60%] sm:max-w-[400px] md:w-[50%] md:max-w-[450px] lg:w-full lg:max-w-none h-full lg:h-auto overflow-y-auto absolute lg:static top-0 right-0 bg-white px-6 lg:px-0 pt-4 pb-12 lg:pb-0 gap-6">
+      <section
+        className={`flex flex-col h-full bg-white px-6 pt-4 pb-12 gap-6 shadow-2xl overflow-y-auto
+          ${isDrawer
+            ? "w-[90%] sm:w-[400px] absolute top-0 left-0 border-r border-sage-200"
+            : "w-[80%] max-w-[360px] sm:w-[60%] sm:max-w-[400px] md:w-[50%] md:max-w-[450px] lg:w-full lg:max-w-none lg:h-auto lg:static lg:shadow-none lg:p-0 lg:border-none absolute top-0 right-0"
+          }
+        `}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="border-b-2 border-sage-200 pb-4">
+        <div className="border-b-2 border-sage-200 pb-4 flex justify-between items-center">
           <h2 className="font-playfair text-2xl font-bold text-sage-900 text-center lg:text-left">
             Filter Products
           </h2>
           <button
-            className="absolute top-5 right-4 lg:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-sage-100 transition-colors"
+            className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-sage-100 transition-colors ${!isDrawer && "lg:hidden"}`}
             onClick={() => setIsFilterBySectionOpen(false)}
           >
             <IoCloseOutline className="w-6 h-6 text-sage-700" />
@@ -132,7 +179,11 @@ export const FilterBySection = ({
                 );
 
               setIsFilterFnApplied(true);
-              isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+              if (variant === "sidebar") {
+                isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+              } else {
+                setIsFilterBySectionOpen(false);
+              }
             }}
           >
             Apply Filters
@@ -145,7 +196,11 @@ export const FilterBySection = ({
               resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch);
 
               setIsFilterFnApplied(false);
-              isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+              if (variant === "sidebar") {
+                isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+              } else {
+                setIsFilterBySectionOpen(false);
+              }
             }}
           >
             Reset All

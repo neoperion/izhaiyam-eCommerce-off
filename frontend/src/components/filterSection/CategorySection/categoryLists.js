@@ -1,48 +1,79 @@
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { RiArrowDropDownLine } from "react-icons/ri";
-import { RiArrowDropUpLine } from "react-icons/ri";
-import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
-export const CategoryLists = ({ categoryTitle, productCategories }) => {
-  const [isCategoryTitleOpen, setIsCategoryTitleOpen] = useState(false);
+export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategory, onSelect }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Check if any subcategory within this category is selected
+  const isCategoryActive = subCategories.includes(selectedSubCategory);
 
   return (
-    <div className="border-b-[1px] border-LightSecondaryColor pb-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium tablet:text-xl md:text-xl capitalize">{categoryTitle}</h3>
-        {isCategoryTitleOpen ? (
-          <RiArrowDropUpLine
-            className=" w-8 h-6 cursor-pointer"
-            onClick={() => setIsCategoryTitleOpen(!isCategoryTitleOpen)}
-          />
-        ) : (
-          <RiArrowDropDownLine
-            className="w-8 h-6 cursor-pointer"
-            onClick={() => setIsCategoryTitleOpen(!isCategoryTitleOpen)}
-          />
-        )}
-      </div>
+    <div className="border-b border-gray-100 last:border-b-0">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className={`w-full px-4 py-3.5 flex items-center justify-between transition-colors duration-150 hover:bg-gray-50 ${isCategoryActive ? "bg-purple-50" : ""
+          }`}
+        aria-expanded={isExpanded}
+      >
+        <span
+          className={`text-sm font-semibold transition-colors capitalize ${isCategoryActive ? "text-[#9933aa]" : "text-gray-700"
+            }`}
+        >
+          {categoryTitle}
+        </span>
+        <motion.div
+          animate={{ rotate: isExpanded ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ChevronDown size={18} className="text-gray-400" />
+        </motion.div>
+      </button>
+
       <AnimatePresence>
-        {isCategoryTitleOpen && (
+        {isExpanded && (
           <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ overflowY: "hidden", height: 0, transition: { duration: 0.3, ease: "easeOut" } }}
-            className="flex flex-col gap-2 tablet:gap-3 md:gap-3 mt-4"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden bg-gray-50"
           >
-            {productCategories[categoryTitle].map((subCategoryTitle, index) => {
-              return (
-                <div key={index} className="flex gap-2 tablet:gap-3 md:gap-3 items-center">
-                  <input type="checkbox" name="selectedCategoryTitle" value={subCategoryTitle} id={subCategoryTitle} />
-                  <label htmlFor={subCategoryTitle}>
-                    <h4 className="text-base tablet:text-lg md:text-lg cursor-pointer font-normal">
-                      {subCategoryTitle}
-                    </h4>
-                  </label>
-                </div>
-              );
-            })}
+            <div className="py-2 px-4 space-y-2">
+              {subCategories.map((subCategory, idx) => {
+                const isSelected = selectedSubCategory === subCategory;
+                return (
+                  <motion.label
+                    key={subCategory}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05, duration: 0.2 }}
+                    className="flex items-center cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onSelect(categoryTitle, subCategory)}
+                      className="w-4 h-4 rounded border-gray-300 cursor-pointer appearance-none border transition-all checked:bg-[#9933aa] checked:border-[#9933aa] relative"
+                      style={{
+                        backgroundImage: isSelected
+                          ? `url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e")`
+                          : "none",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        backgroundSize: "100%",
+                      }}
+                    />
+                    <span
+                      className={`ml-3 text-sm transition-colors capitalize ${isSelected ? "text-gray-900 font-medium" : "text-gray-600 group-hover:text-gray-900"
+                        }`}
+                    >
+                      {subCategory}
+                    </span>
+                  </motion.label>
+                );
+              })}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

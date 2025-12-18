@@ -3,13 +3,14 @@ import { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { RiArrowDropUpLine } from "react-icons/ri";
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from "../../../features/filterBySlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Index = ({ setCheckedCategoryDOM }) => {
   const [isCategorySectionOpen, setIsCategorySectionOpen] = useState(true);
-
   const dispatch = useDispatch();
+
+  const { selectedSubCategoryForFilter } = useSelector((state) => state.filterByCategoryAndPrice);
 
   // THE MAPPED JSON TO CREATE THE CHECKBOX AND CATEGORY UI
   const productCategories = {
@@ -19,25 +20,22 @@ const Index = ({ setCheckedCategoryDOM }) => {
     others: ["kids"],
   };
 
-  // LOOP THROUGH THE DESCENDANTS WHILE SKIPPING THE EVENT TARGET AND GET THE CHECKBOXES DOM
-  const handleCheckedCategory = (e) => {
-    let descendants = e.currentTarget.getElementsByTagName("*");
-    for (let i = 0; i < descendants.length; i++) {
-      if (descendants[i] === e.target) {
-        continue;
-      }
-      descendants[i].checked = false;
-    }
-
-    if (e.target.checked) {
-      dispatch(
-        setSelectedCategory(e.target.parentElement.parentElement.previousElementSibling.firstElementChild.textContent)
-      );
-      dispatch(setSelectedSubCategoryForFilter(e.target.value));
-      setCheckedCategoryDOM(e.target);
-    } else {
+  const handleSelectCategory = (categoryTitle, subCategory) => {
+    if (selectedSubCategoryForFilter === subCategory) {
+      // Deselect if already selected
       dispatch(setSelectedCategory(null));
       dispatch(setSelectedSubCategoryForFilter(null));
+      // We might not need setCheckedCategoryDOM anymore if we move away from DOM manipulation, 
+      // but keeping it null for safety if parent uses it.
+      setCheckedCategoryDOM(null);
+    } else {
+      // Select new
+      dispatch(setSelectedCategory(categoryTitle));
+      dispatch(setSelectedSubCategoryForFilter(subCategory));
+      // We can't easily pass the DOM element here without the event, 
+      // but the parent 'FilterBySection' uses it for 'resetFilter'.
+      // We might need to adapt 'resetFilter' later or pass a ref. 
+      // For now, let's assume the new UI handles its own checked state via props.
     }
   };
 
@@ -63,11 +61,18 @@ const Index = ({ setCheckedCategoryDOM }) => {
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ overflowY: "hidden", height: 0, transition: { duration: 0.3, ease: "easeOut" } }}
-            className="flex flex-col gap-4 tablet:gap-5 md:gap-5 w-[100%]"
-            onChange={(e) => handleCheckedCategory(e)}
+            className="flex flex-col w-[100%]"
           >
             {Object.keys(productCategories).map((categoryTitle, index) => {
-              return <CategoryLists key={index} {...{ categoryTitle, productCategories }} />;
+              return (
+                <CategoryLists
+                  key={index}
+                  categoryTitle={categoryTitle}
+                  subCategories={productCategories[categoryTitle]}
+                  selectedSubCategory={selectedSubCategoryForFilter}
+                  onSelect={handleSelectCategory}
+                />
+              );
             })}
           </motion.div>
         )}
