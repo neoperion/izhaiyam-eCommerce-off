@@ -55,7 +55,7 @@ module.exports = {
         "amber-700": "#b45309",
         "rose-700": "#be123c",
         "orange-600": "#ea580c",
-        
+
         // Legacy colors (keep for backward compatibility)
         primaryColor: "hsl(92, 25%, 52%)",
         lightPrimaryColor: "hsl(92, 25%, 62%)",
@@ -74,14 +74,15 @@ module.exports = {
         lgHeight: { raw: "(min-height:850px)" },
       },
       fontFamily: {
-        // Primary fonts - Heritage + Modern
+        // Primary fonts - Inter as default
         display: ["Playfair Display", "Georgia", "serif"],
-        outfit: ["Outfit", "Inter", "system-ui", "sans-serif"],
-        body: ["Outfit", "Inter", "system-ui", "sans-serif"],
-        
-        // Legacy support
-        OpenSans: ["Outfit", "Open Sans", "sans-serif"],
-        RobotoCondensed: ["Outfit", "Roboto Condensed", "sans-serif"],
+        inter: ["Inter", "system-ui", "sans-serif"],
+        outfit: ["Inter", "Outfit", "system-ui", "sans-serif"],
+        body: ["Inter", "system-ui", "sans-serif"],
+
+        // Legacy support - all use Inter now
+        OpenSans: ["Inter", "Open Sans", "sans-serif"],
+        RobotoCondensed: ["Inter", "Roboto Condensed", "sans-serif"],
         RobotoSlab: ["Playfair Display", "Roboto Slab", "serif"],
       },
       borderRadius: {

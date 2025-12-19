@@ -144,7 +144,7 @@ export const FilterBySection = ({
       >
         {/* Header */}
         <div className="border-b-2 border-sage-200 pb-4 flex justify-between items-center">
-          <h2 className="font-playfair text-2xl font-bold text-sage-900 text-center lg:text-left">
+          <h2 className="font-inter text-2xl font-bold text-sage-900 text-center lg:text-left">
             Filter Products
           </h2>
           <button
@@ -166,7 +166,10 @@ export const FilterBySection = ({
             initial="initial"
             whileTap="click"
             variants={primaryBtnVariant}
-            className="btn-primary w-full sm:w-auto sm:flex-1"
+            className="w-full sm:w-auto sm:flex-1 px-6 py-3 rounded-md font-semibold text-white transition-all duration-300 shadow-md hover:shadow-lg font-inter"
+            style={{ backgroundColor: '#93A267' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#7d8c56'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#93A267'}
             onClick={() => {
               location.pathname === "/shop" &&
                 handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);

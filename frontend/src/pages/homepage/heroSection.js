@@ -85,11 +85,9 @@ export function HeroSection() {
 
       {/* Sliding Overlay - HeroImage2 */}
       <div
-        className={`absolute inset-0 z-[5] overflow-hidden ${
-          isSliding && heroImage2Active ? 'hero-slide-in' : ''
-        } ${
-          isSliding && !heroImage2Active ? 'hero-slide-out' : ''
-        } ${!isSliding && !heroImage2Active ? 'translate-x-full' : ''}`}
+        className={`absolute inset-0 z-[5] overflow-hidden ${isSliding && heroImage2Active ? 'hero-slide-in' : ''
+          } ${isSliding && !heroImage2Active ? 'hero-slide-out' : ''
+          } ${!isSliding && !heroImage2Active ? 'translate-x-full' : ''}`}
       >
         <img
           src={heroImage2}
@@ -126,7 +124,7 @@ export function HeroSection() {
           {heroImage2Active && (
             <>
               <p className="text-[#faf0e6] font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-3 sm:mb-4 text-xs sm:text-sm drop-shadow-lg transition-all duration-700">
-                Handloom furniture 
+                Handloom furniture
               </p>
               <h1
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#faf0e6] leading-tight mb-4 sm:mb-6 drop-shadow-2xl transition-all duration-700"
@@ -146,22 +144,20 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               to="/shop"
-              className={`inline-flex items-center justify-center gap-2 group font-semibold px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-lg shadow-xl transition-all duration-300 transform hover:scale-105 ${
-                heroImage2Active
+              className={`inline-flex items-center justify-center gap-2 group font-semibold px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-lg shadow-xl transition-all duration-300 transform hover:scale-105 ${heroImage2Active
                   ? 'bg-[#faf0e6] hover:bg-[#f5ebe0] text-[#2c2c2c]'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-              }`}
+                }`}
             >
               Shop Collection
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/collection"
-              className={`inline-flex items-center justify-center border-2 font-semibold px-8 py-4 rounded-lg shadow-xl transition-all duration-300 backdrop-blur-sm ${
-                heroImage2Active
+              className={`inline-flex items-center justify-center border-2 font-semibold px-8 py-4 rounded-lg shadow-xl transition-all duration-300 backdrop-blur-sm ${heroImage2Active
                   ? 'border-[#faf0e6] text-[#faf0e6] hover:bg-[#faf0e6] hover:text-[#2c2c2c]'
                   : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
-              }`}
+                }`}
             >
               Explore Premium
             </Link>

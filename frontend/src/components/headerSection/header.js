@@ -91,7 +91,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
           {/* Right Icons */}
           <div className="flex items-center gap-2 md:gap-6">
             <button
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors hidden md:flex"
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
               onClick={() => setIsSearchClicked(!isSearchClicked)}
               aria-label="Search"
             >
@@ -111,15 +111,13 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
               )}
             </button>
 
-            {isLargeScreen && (
-              <button
-                onClick={handleMyAccountClick}
-                className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors hidden md:flex"
-                aria-label="Account"
-              >
-                <User className="w-5 h-5 text-primary-foreground" />
-              </button>
-            )}
+            <button
+              onClick={handleMyAccountClick}
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+              aria-label="Account"
+            >
+              <User className="w-5 h-5 text-primary-foreground" />
+            </button>
 
             <button
               onClick={() => setIsCartSectionActive(true)}
@@ -153,18 +151,6 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
         {displayVerticalNavBar && !isLargeScreen && (
           <div className="md:hidden py-4 border-t border-primary-foreground/20 bg-primary animate-fade-in">
             <NavTabs isMobile={true} setDisplayVerticalNavBar={setDisplayVerticalNavBar} />
-            
-            {/* Mobile Account Link */}
-            <button
-              onClick={() => {
-                handleMyAccountClick();
-                setDisplayVerticalNavBar(false);
-              }}
-              className="w-full px-4 py-3 rounded-lg text-sm font-semibold text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground flex items-center gap-2 mt-2"
-            >
-              <User className="w-4 h-4" />
-              Account
-            </button>
           </div>
         )}
 

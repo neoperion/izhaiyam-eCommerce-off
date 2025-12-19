@@ -12,9 +12,11 @@ import { FilterBySection } from "../../components/filterSection";
 import { handleSorting } from "../../utils/handleSorting";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { motion } from "framer-motion";
+import { Filter, ChevronDown } from "lucide-react";
+import { FilterTriggerIcon } from "../../components/icons/FilterTriggerIcon";
 
 export const SearchPage = () => {
-  // SEE THE SHP INDEX PAGE,THE UTILS AND THE FEATURES SLICE COMMENTS FOR HOW THE APP FUNCTIONALITIES WORKS
   const [isFilterBySectionOpen, setIsFilterBySectionOpen] = useState(false);
   const [sortingCriteria, setSortingCriteria] = useState("Default: Latest");
   const [isFilterFnApplied, setIsFilterFnApplied] = useState(false);
@@ -40,7 +42,7 @@ export const SearchPage = () => {
   let NoOfProductsPerPage = 10;
   const [currentPageNo, setCurrentPageNo] = useState(1);
 
-  // DIRECTLY ACESSING THE SEARCH PAGE TRIGGERS REDIRECTION TO HOMEPAGE
+  // DIRECTLY ACCESSING THE SEARCH PAGE TRIGGERS REDIRECTION TO HOMEPAGE
   useEffect(() => {
     !prevPage && navigate("/");
   }, []);
@@ -88,26 +90,7 @@ export const SearchPage = () => {
   };
 
   return (
-    <section className="lg:grid lg:grid-cols-[250px_1fr_1fr_1fr] lg:grid-rows-[auto_1fr_auto]">
-      <div className="mt-12 tablet:px-[6%] w-[100%] h-[54px] bg-neutralColor text-secondaryColor xl:px-[4%] px-[4%] lg:px-[2%] flex items-center justify-between font-bold  font-RobotoCondensed lg:col-span-full lg:row-span-1">
-        <div className="flex gap-[4px] items-center text-[15px]">
-          <IoIosArrowBack />
-          <li onClick={() => navigateToPrevPage()} className="hover:underline capitalize">
-            {prevPage}
-          </li>
-          <IoIosArrowBack />
-          <span>Search results</span>
-          {selectedSubCategoryForFilter && (
-            <>
-              {" "}
-              <IoIosArrowBack />
-              <span>{selectedCategory}</span> <IoIosArrowBack />
-              <span>{selectedSubCategoryForFilter}</span>
-            </>
-          )}
-        </div>
-      </div>
-
+    <>
       <FilterBySection
         {...{
           isFilterBySectionOpen,
@@ -115,76 +98,170 @@ export const SearchPage = () => {
           currentPageNo,
           NoOfProductsPerPage,
           setIsFilterFnApplied,
+          variant: "left-drawer",
         }}
       />
 
-      <div className="lg:col-start-2 lg:col-end-5 lg:row-span-1 lg:ml-[8%] xl:ml-[10%] lg:mr-[3%] xl:mr-[5%]">
-        <h3 className="text-center font-bold text-[24px] my-20 px-[10%]">
-          Showing search results for the term : "{locationArr[1]}"
-        </h3>
-        {searchedProductData.length < 1 ? (
-          <ProductsNotFound searchTerm={searchValue} />
-        ) : (
-          <>
-            <div className="lg:flex lg:justify-between lg:items-start">
-              {isFilterFnApplied && (selectedSubCategoryForFilter || priceRange) && (
-                <article className="w-[300px] tablet:w-[360px] max-w-[75%] md:w-[400px]  bg-[#ffffff] laptop:w-[17%]  ml-[4%] tablet:ml-[6%]  mb-12 flex-col flex gap-2 lg:ml-0 lg:order-2 lg:min-w-[400px]">
-                  <h3 className="text-lg font-bold ml-2"> Active Filters</h3>
-                  <div className="flex  justify-between h-14 bg-lightPrimaryColor text-white rounded-md shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)]  items-center px-[5%] font-medium text-base ">
-                    {selectedSubCategoryForFilter && <h3>Sub-Category : {selectedSubCategoryForFilter}</h3>}
-                    {priceRange && <h3>priceRange : {priceRange}($)</h3>}
-                  </div>
-                </article>
+      {/* Mobile Trigger (Floating) */}
+      <div className="fixed left-4 bottom-6 md:hidden z-40">
+        <button
+          className="text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 animate-pulse"
+          style={{ backgroundColor: '#93A267' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#7d8c56'; e.currentTarget.classList.remove('animate-pulse'); }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#93A267'; e.currentTarget.classList.add('animate-pulse'); }}
+          onClick={() => setIsFilterBySectionOpen(true)}
+        >
+          <FilterTriggerIcon className="w-8 h-8 fill-white text-white" />
+        </button>
+      </div>
+
+      {/* Main Content Container */}
+      <div className="flex items-start min-h-screen">
+        {/* Main Product Section - Full Width */}
+        <main className="flex-1 w-full">
+          <div className="container-page py-8">
+            {/* Breadcrumb Navigation */}
+            <div className="flex items-center gap-2 text-sm text-sage-600 mb-6 font-inter">
+              <button onClick={() => navigateToPrevPage()} className="hover:text-sage-900 transition-colors flex items-center gap-1">
+                <IoIosArrowBack />
+                <span className="capitalize">{prevPage}</span>
+              </button>
+              <IoIosArrowBack />
+              <span className="text-sage-900 font-medium">Search results</span>
+              {selectedSubCategoryForFilter && (
+                <>
+                  <IoIosArrowBack />
+                  <span className="capitalize">{selectedCategory}</span>
+                  <IoIosArrowBack />
+                  <span className="capitalize">{selectedSubCategoryForFilter}</span>
+                </>
               )}
-              <article className="w-[65%] lg:order-1 tablet:w-[40%] md:w-[30%] bg-[#ffffff] laptop:w-[40%] lg:w-[30%] ml-[4%] tablet:ml-[6%]  mb-12 flex-col flex gap-2 lg:ml-0 lg:max-w-[262px]">
-                <h3 className="text-lg font-bold ml-2"> Sort by</h3>
-                <div
-                  className={`flex justify-between h-14 rounded-md shadow-[0.5px_2px_32px_-2px_rgba(0,0,0,0.1)] items-center px-[10%] cursor-pointer ${
-                    sortingCriteria !== "Default: Latest" && "bg-lightPrimaryColor text-white"
-                  }`}
-                  onClick={(e) => {
-                    e.currentTarget.nextElementSibling.classList.toggle("active-sorting-lists");
-                  }}
-                >
-                  <h2>{sortingCriteria}</h2>
-                  <RiArrowDropDownLine className="w-8 h-8 " />
-                </div>
-                <div
-                  className={`hidden flex-col bg-[#ffffff] rounded-md shadow-[0px_3px_8px_0px_rgba(0,0,0,0.2)]   py-4  gap-4 z-[200] px-[10%] sticky top-0 left-0 right-0 -mb-64  sorting-lists ${
-                    sortingCriteria !== "Default: Latest" && "bg-lightPrimaryColor text-white"
-                  }`}
-                  onClick={(e) => handleSortingCriteriaSelection(e)}
-                >
-                  <li data-list="sorting-criteria">Default: Latest</li>
-                  <li data-list="sorting-criteria">Name: A-Z</li>
-                  <li data-list="sorting-criteria">Name: Z-A</li>
-                  <li data-list="sorting-criteria">Price: low to high</li>
-                  <li data-list="sorting-criteria">Price: high to low</li>
-                  <li data-list="sorting-criteria">Oldest</li>
-                </div>
-              </article>
             </div>
 
-            {placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
-              <>
-                <section className="grid grid-cols-1 tablet:grid-cols-2 md:grid-cols-3 xl:grid-cols-4  lg:w-[100%] w-[92%] mx-auto items-center justify-center gap-[4rem]  mt-20 tablet:justify-between tablet:w-[88%] md:justify-between tablet:gap-y-12 md:gap-y-12 md:gap-[5%]  tablet:gap-[4%]">
-                  {productsDataForCurrentPage.map((productsData, index) => {
-                    return <SingleProductBox key={index} productsData={productsData} />;
-                  })}
-                </section>
-                <PaginationSection {...{ setCurrentPageNo, NoOfProductsPerPage, currentPageNo }} />
-                <BiFilter
-                  className="w-16 lg:hidden h-16 bg-darkPrimaryColor shadow-lg fill-secondaryColor fixed right-[7%] bottom-[7%] z-[1000] cursor-pointer"
+            {/* Page Header & Sort */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
+              <div className="text-center lg:text-left">
+                <h1 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-sage-900 mb-4">
+                  Search Results
+                </h1>
+                <p className="text-sage-600 font-inter">
+                  Showing results for: <span className="font-semibold text-sage-900">"{locationArr[1]}"</span>
+                </p>
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="w-full lg:w-auto lg:min-w-[280px]">
+                <div className="relative">
+                  <div
+                    className={`flex items-center justify-between h-12 px-4 rounded-lg border-2 cursor-pointer transition-all ${sortingCriteria !== "Default: Latest"
+                      ? "bg-sage-100 text-sage-900 border-sage-200"
+                      : "bg-white text-sage-900 border-sage-300 hover:border-sage-500"
+                      }`}
+                    onClick={(e) => {
+                      e.currentTarget.nextElementSibling.classList.toggle("active-sorting-lists");
+                    }}
+                  >
+                    <span className="text-sm font-medium font-inter">{sortingCriteria}</span>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
+                  <div
+                    className={`hidden flex-col bg-white rounded-lg shadow-xl border border-sage-200 py-2 absolute top-full mt-2 left-0 right-0 z-50 sorting-lists overflow-hidden`}
+                    onClick={(e) => handleSortingCriteriaSelection(e)}
+                  >
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Default: Latest
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Name: A-Z
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Name: Z-A
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Price: low to high
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Price: high to low
+                    </li>
+                    <li data-list="sorting-criteria" className="px-4 py-2 hover:bg-sage-50 cursor-pointer text-sm text-sage-900 transition-colors font-inter">
+                      Oldest
+                    </li>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-8 items-start">
+              {/* Sticky Filter Trigger (Desktop) */}
+              <aside className="hidden lg:block sticky top-32 z-30">
+                <div
+                  className="cursor-pointer hover:scale-110 transition-transform p-2 -ml-2"
                   onClick={() => setIsFilterBySectionOpen(true)}
-                />
-              </>
-            ) : (
-              <h1 className="text-center text-[28px] md-[32px] lg:text-[36px]">product match not found</h1>
-            )}
-          </>
-        )}
+                  title="Open Filters"
+                >
+                  <FilterTriggerIcon className="w-8 h-8 text-sage-900" />
+                </div>
+              </aside>
+
+              <div className="flex-1 w-full">
+                {/* Active Filters */}
+                {isFilterFnApplied && (selectedSubCategoryForFilter || priceRange) && (
+                  <div className="mb-8">
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-sage-50 border border-sage-200 rounded-xl p-4 inline-block"
+                    >
+                      <h3 className="text-sm font-semibold text-sage-900 mb-2 font-inter">Active Filters</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedSubCategoryForFilter && (
+                          <span className="px-3 py-1 bg-sage-600 text-white rounded-full text-sm font-inter">
+                            {selectedSubCategoryForFilter}
+                          </span>
+                        )}
+                        {priceRange && (
+                          <span className="px-3 py-1 bg-sage-600 text-white rounded-full text-sm font-inter">
+                            ₹{priceRange}
+                          </span>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+
+                {/* Search Results or No Results */}
+                {searchedProductData.length < 1 ? (
+                  <ProductsNotFound searchTerm={searchValue} />
+                ) : placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
+                  <>
+                    {/* Products Grid */}
+                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                      {productsDataForCurrentPage.map((productsData, index) => {
+                        return <SingleProductBox key={index} productsData={productsData} />;
+                      })}
+                    </section>
+
+                    {/* Pagination */}
+                    <PaginationSection {...{ setCurrentPageNo, NoOfProductsPerPage, currentPageNo }} />
+                  </>
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-sage-100 flex items-center justify-center">
+                      <Filter className="w-12 h-12 text-sage-400" />
+                    </div>
+                    <h2 className="font-inter text-2xl md:text-3xl font-bold text-sage-900 mb-2">
+                      No Products Found
+                    </h2>
+                    <p className="text-sage-600 font-inter">Try adjusting your filters or search criteria</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
+
       <FooterSection />
-    </section>
+    </>
   );
 };
