@@ -1,6 +1,6 @@
 export const primaryBtnVariant = {
-  initial: { scale: 1, background: "#fca311" },
-  click: { scale: 0.99, background: "#e38d02" },
+  initial: { scale: 1, background: "#93A267" },
+  click: { scale: 0.99, background: "#7d8c56" },
   transition: { duration: 0.3, ease: "ease-in-out" },
 };
 

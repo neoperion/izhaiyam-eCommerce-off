@@ -12,9 +12,11 @@ body {
   width: 100%;
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
-  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-optical-sizing: auto;
   font-size: 16px;
   font-weight: 400;
+  font-style: normal;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }

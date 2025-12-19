@@ -17,7 +17,7 @@ export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategor
         aria-expanded={isExpanded}
       >
         <span
-          className={`text-sm font-semibold transition-colors capitalize ${isCategoryActive ? "text-[#9933aa]" : "text-gray-700"
+          className={`text-sm font-semibold font-inter transition-colors capitalize ${isCategoryActive ? "text-[#9933aa]" : "text-gray-700"
             }`}
         >
           {categoryTitle}
@@ -65,7 +65,7 @@ export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategor
                       }}
                     />
                     <span
-                      className={`ml-3 text-sm transition-colors capitalize ${isSelected ? "text-gray-900 font-medium" : "text-gray-600 group-hover:text-gray-900"
+                      className={`ml-3 text-sm font-inter transition-colors capitalize ${isSelected ? "text-gray-900 font-medium" : "text-gray-600 group-hover:text-gray-900"
                         }`}
                     >
                       {subCategory}

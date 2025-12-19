@@ -64,23 +64,27 @@
     --shadow-hover: 0 8px 24px hsl(92 25% 35% / 0.12);
   }
 
-  /* Global Font Application */
+  /* Global Font Application - Inter Primary */
   body {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-optical-sizing: auto;
     font-weight: 400;
+    font-style: normal;
   }
 
-  /* Headings with Outfit and tracking-tight */
+  /* Headings with Inter and tracking-tight */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-optical-sizing: auto;
     letter-spacing: -0.025em;
     /* tracking-tight */
     font-weight: 600;
+    font-style: normal;
   }
 
   h1 {
@@ -88,11 +92,11 @@
   }
 
   h2 {
-    font-weight: 700;
+    font-weight: 600;
   }
 
   h3 {
-    font-weight: 600;
+    font-weight: 500;
   }
 
   .product-img-container:hover .product-img-overlay {
@@ -170,6 +174,71 @@
       transform: rotate(360deg);
     }
   }
+
+  /* Custom Range Slider Styling */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  input[type="range"]::-webkit-slider-track {
+    background: transparent;
+    height: 0.5rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: hsl(92, 30%, 38%);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: hsl(92, 30%, 30%);
+    transform: scale(1.1);
+  }
+
+  /* Firefox */
+  input[type="range"]::-moz-range-track {
+    background: transparent;
+    height: 0.5rem;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: hsl(92, 30%, 38%);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  input[type="range"]::-moz-range-thumb:hover {
+    background: hsl(92, 30%, 30%);
+    transform: scale(1.1);
+  }
+
+  /* Remove number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
 
 @layer components {
@@ -185,7 +254,13 @@
 
   /* Button Styles - Premium Design */
   .btn-primary {
-    @apply bg-primary hover:bg-sage-dark text-primary-foreground px-6 py-3 rounded-md font-medium transition-all duration-300 shadow-soft hover:shadow-hover;
+    background-color: #93A267;
+    color: white;
+    @apply px-6 py-3 rounded-md font-semibold transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+
+  .btn-primary:hover {
+    background-color: #7d8c56;
   }
 
   .btn-cart {
@@ -306,7 +381,7 @@
   }
 
   body {
-    @apply font-body tracking-normal bg-background text-foreground;
+    @apply font-inter tracking-normal bg-background text-foreground;
   }
 
   li {
@@ -414,12 +489,14 @@
 
   /* Typography Utilities */
   .font-outfit {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+    font-optical-sizing: auto;
   }
 
   .font-inter {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-optical-sizing: auto;
+    font-style: normal;
   }
 
   .font-display {

@@ -77,10 +77,13 @@ const Index = () => {
       {/* Mobile Trigger (Floating) */}
       <div className="fixed left-4 bottom-6 md:hidden z-40">
         <button
-          className="bg-sage-900 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center hover:scale-105 transition-transform"
+          className="text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 animate-pulse"
+          style={{ backgroundColor: '#93A267' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#7d8c56'; e.currentTarget.classList.remove('animate-pulse'); }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#93A267'; e.currentTarget.classList.add('animate-pulse'); }}
           onClick={() => setIsFilterBySectionOpen(true)}
         >
-          <FilterTriggerIcon className="w-6 h-6 fill-white text-white" />
+          <FilterTriggerIcon className="w-8 h-8 fill-white text-white" />
         </button>
       </div>
 
@@ -92,7 +95,7 @@ const Index = () => {
             {/* Page Header & Sort */}
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
               <div className="text-center lg:text-left">
-                <h1 className="font-playfair text-4xl md:text-5xl font-bold text-sage-900 mb-4">
+                <h1 className="font-inter text-4xl md:text-5xl font-bold text-sage-900 mb-4">
                   Shop Our Collection
                 </h1>
                 <p className="text-sage-600">
@@ -200,7 +203,7 @@ const Index = () => {
                     <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-sage-100 flex items-center justify-center">
                       <Filter className="w-12 h-12 text-sage-400" />
                     </div>
-                    <h2 className="font-playfair text-2xl md:text-3xl font-bold text-sage-900 mb-2">
+                    <h2 className="font-inter text-2xl md:text-3xl font-bold text-sage-900 mb-2">
                       No Products Found
                     </h2>
                     <p className="text-sage-600">Try adjusting your filters or search criteria</p>

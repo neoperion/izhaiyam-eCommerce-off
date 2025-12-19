@@ -42,7 +42,7 @@ const Index = ({ setCheckedCategoryDOM }) => {
   return (
     <article className="flex flex-col gap-4 md:gap-5 tablet:gap-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">Categories</h3>
+        <h3 className="text-xl font-bold font-inter">Categories</h3>
         {isCategorySectionOpen ? (
           <RiArrowDropUpLine
             className=" w-8 h-6 cursor-pointer"
