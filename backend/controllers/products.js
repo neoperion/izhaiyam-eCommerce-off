@@ -5,7 +5,9 @@ const CustomErrorHandler = require("../errors/customErrorHandler");
 const { title } = require("process");
 
 const createProducts = async (req, res) => {
-  const product = await Product.create(req.body);
+  console.log("Create Product Request Body:", req.body);
+  const product = await Product.findOne({ _id: { $eq: productID } }, { __v: 0, createdAt: 0, updatedAt: 0, colorVariants: 1, isCustomizable: 1 });
+  console.log("Created Product:", product);
   res.status(201).json(product);
 };
 
@@ -62,6 +64,10 @@ const getAspecificProduct = async (req, res) => {
     discountPercentValue: 1,
     categories: 1,
     image: 1,
+    description: 1,
+    colors: 1,
+    isCustomizable: 1,
+    colorVariants: 1,
   });
   if (!checkIfProductExist) {
     throw new CustomErrorHandler(404, "Products not found");
@@ -89,7 +95,9 @@ const updateAspecificProduct = async (req, res) => {
   if (!id || !updatedData) {
     throw new CustomErrorHandler(401, "parameters missing");
   }
-  const Updatedproduct = await Product.findByIdAndUpdate(id, updatedData, { runValidators: true });
+  console.log("Update Product Request Body:", updatedData);
+  const Updatedproduct = await Product.findByIdAndUpdate(id, updatedData, { runValidators: true, new: true });
+  console.log("Updated Product Result:", Updatedproduct);
 
   res.status(201).json({ message: "product successfully updated", product: Updatedproduct });
 };

@@ -80,7 +80,7 @@ function App() {
         </>
       )}
 
-      <WelcomeModal />
+      {!isAdminRoute && <WelcomeModal />}
 
       {/* Render app content */}
       <PagesRoute {...{ setIsCartSectionActive }} />

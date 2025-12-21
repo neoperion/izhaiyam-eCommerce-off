@@ -6,7 +6,7 @@ export const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ margin: 0, padding: 0 }}>
+    <div className="min-h-screen bg-gray-50 lato-regular" style={{ margin: 0, padding: 0 }}>
       {/* Admin Sidebar - Fixed Left */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       
@@ -32,6 +32,8 @@ export const AdminLayout = ({ children }) => {
             {children}
           </div>
         </main>
+
+        
       </div>
     </div>
   );

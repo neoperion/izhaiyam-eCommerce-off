@@ -1,11 +1,13 @@
-export const isProductInCartFn = (_id, setIsProductInCart, cart) => {
-  setIsProductInCart(() => {
-    if (cart.find((cartProduct) => cartProduct._id === _id)) {
-      return true;
-    } else {
-      return false;
-    }
-  });
+export const isProductInCartFn = (_id, setIsProductInCart, cart, selectedColor = null) => {
+  let isProductInCart;
+  if (selectedColor) {
+      isProductInCart = cart.some((product) => product._id === _id && product.selectedColor?.colorName === selectedColor.colorName);
+  } else {
+      isProductInCart = cart.some((product) => product._id === _id && !product.selectedColor);
+  }
+  
+  if (isProductInCart) setIsProductInCart(true);
+  else setIsProductInCart(false);
 };
 
 export const isProductInWishlistFn = (_id, setIsWishlisted, wishlist) => {

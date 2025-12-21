@@ -24,6 +24,11 @@ const productSchema = new mongoose.Schema(
         return !this.discountPercentValue && 0;
       },
     },
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     image: {
       type: String,
       required: [true, "Product's image is required"],
@@ -34,6 +39,18 @@ const productSchema = new mongoose.Schema(
       features: { type: [String], enums: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"] },
       others: { type: [String], enums: ["kids"] },
     },
+    isCustomizable: {
+      type: Boolean,
+      default: false,
+    },
+    colorVariants: [
+      {
+        colorName: { type: String }, // Renamed from name
+        hexCode: { type: String },
+        imageUrl: { type: String },
+        stock: { type: Number, default: 0 },
+      },
+    ],
   },
   {
     timestamps: true,

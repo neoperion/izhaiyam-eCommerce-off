@@ -26,6 +26,22 @@ import { Line, Bar, Pie } from 'react-chartjs-2';
 import { KPICard, Card } from '../../components/admin/Card';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { motion } from 'framer-motion';
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 // Register Chart.js components
 ChartJS.register(
@@ -40,6 +56,9 @@ ChartJS.register(
   Legend,
   Filler
 );
+
+// Set default font for Chart.js
+ChartJS.defaults.font.family = "'Google Sans Flex', 'Lato', sans-serif";
 
 export const AdminDashboard = () => {
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
@@ -58,8 +77,9 @@ export const AdminDashboard = () => {
     cancelledOrders: 0
   });
   const [recentOrders, setRecentOrders] = useState([]);
-  const [salesTrendData, setSalesTrendData] = useState([]);
+  const [saleTrendData, setSalesTrendData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const COLORS = ['#3D7F57', '#5FAF78', '#81CF99', '#A3DFBA', '#C5EFDB'];
@@ -107,6 +127,33 @@ export const AdminDashboard = () => {
         }));
         setRecentOrders(formattedOrders);
         
+        // Calculate Top Selling Products
+        const productSales = {};
+        orders.forEach(order => {
+          if (order.cartItems && Array.isArray(order.cartItems)) {
+            order.cartItems.forEach(item => {
+              const productId = item.productId || item._id; 
+              if (!productSales[productId]) {
+                productSales[productId] = {
+                  name: item.name || 'Unknown Product',
+                  category: item.category || 'N/A',
+                  sold: 0,
+                  revenue: 0,
+                  image: item.image || item.images?.[0] || ''
+                };
+              }
+              productSales[productId].sold += (item.quantity || 1);
+              productSales[productId].revenue += (item.price * (item.quantity || 1)) || 0;
+            });
+          }
+        });
+
+        const topProductsList = Object.values(productSales)
+          .sort((a, b) => b.sold - a.sold)
+          .slice(0, 5);
+        
+        setTopProducts(topProductsList);
+        
         setStats(prev => ({
           ...prev,
           totalOrders: orders.length,
@@ -141,6 +188,10 @@ export const AdminDashboard = () => {
         // Generate category data from products
         const categoriesData = generateCategoryData(products);
         setCategoryData(categoriesData);
+
+
+
+
         
         setStats(prev => ({
           ...prev,
@@ -223,315 +274,448 @@ export const AdminDashboard = () => {
   return (
     <AdminLayout>
       {/* Page Header */}
-      <div className="mb-8">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="mb-8"
+      >
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
         <p className="text-gray-500 mt-1">Welcome back! Here's what's happening with your store today.</p>
-      </div>
+      </motion.div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <KPICard
-          title="Total Visits"
-          value={stats.totalVisits.toLocaleString()}
-          change="+12.5%"
-          trend="up"
-          icon={TrendingUp}
-          color="blue"
-        />
-        <KPICard
-          title="Total Orders"
-          value={stats.totalOrders.toLocaleString()}
-          change="+8.2%"
-          trend="up"
-          icon={ShoppingCart}
-          color="green"
-        />
-        <KPICard
-          title="Total Revenue"
-          value={`₹${stats.totalRevenue.toLocaleString()}`}
-          change="+15.3%"
-          trend="up"
-          icon={DollarSign}
-          color="purple"
-        />
-        <KPICard
-          title="Low Stock Alerts"
-          value={stats.lowStockCount}
-          change="-2"
-          trend="down"
-          icon={AlertCircle}
-          color="red"
-        />
-      </div>
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+      >
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Total Visits"
+            value={stats.totalVisits.toLocaleString()}
+            change="+12.5%"
+            trend="up"
+            icon={TrendingUp}
+            color="blue"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Total Orders"
+            value={stats.totalOrders.toLocaleString()}
+            change="+8.2%"
+            trend="up"
+            icon={ShoppingCart}
+            color="green"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Total Revenue"
+            value={`₹${stats.totalRevenue.toLocaleString()}`}
+            change="+15.3%"
+            trend="up"
+            icon={DollarSign}
+            color="purple"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Low Stock Alerts"
+            value={stats.lowStockCount}
+            change="-2"
+            trend="down"
+            icon={AlertCircle}
+            color="red"
+          />
+        </motion.div>
+      </motion.div>
 
       {/* Secondary KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <KPICard
-          title="Total Products"
-          value={stats.totalProducts || "245"}
-          icon={Package}
-          color="orange"
-        />
-        <KPICard
-          title="Conversion Rate"
-          value={`${stats.conversionRate}%`}
-          change="+0.5%"
-          trend="up"
-          icon={TrendingUp}
-          color="green"
-        />
-        <KPICard
-          title="Avg Order Value"
-          value={`₹${Math.round(stats.avgOrderValue).toLocaleString()}`}
-          change="+₹124"
-          trend="up"
-          icon={DollarSign}
-          color="blue"
-        />
-        <KPICard
-          title="Returning Customers"
-          value={`${stats.returningCustomers}%`}
-          change="+2.1%"
-          trend="up"
-          icon={Users}
-          color="purple"
-        />
-      </div>
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+      >
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Total Products"
+            value={stats.totalProducts || "245"}
+            icon={Package}
+            color="orange"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Conversion Rate"
+            value={`${stats.conversionRate}%`}
+            change="+0.5%"
+            trend="up"
+            icon={TrendingUp}
+            color="green"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Avg Order Value"
+            value={`₹${Math.round(stats.avgOrderValue).toLocaleString()}`}
+            change="+₹124"
+            trend="up"
+            icon={DollarSign}
+            color="blue"
+          />
+        </motion.div>
+        <motion.div variants={fadeInUp}>
+          <KPICard
+            title="Returning Customers"
+            value={`${stats.returningCustomers}%`}
+            change="+2.1%"
+            trend="up"
+            icon={Users}
+            color="purple"
+          />
+        </motion.div>
+      </motion.div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Sales Trend Chart */}
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Sales Trend</h3>
-            <p className="text-sm text-gray-500">Monthly sales performance</p>
-          </div>
-          <div style={{ height: '300px' }}>
-            <Line
-              data={{
-                labels: salesTrendData.map(d => d.month),
-                datasets: [{
-                  label: 'Sales',
-                  data: salesTrendData.map(d => d.sales),
-                  borderColor: '#3D7F57',
-                  backgroundColor: 'rgba(61, 127, 87, 0.1)',
-                  borderWidth: 3,
-                  tension: 0.4,
-                  fill: true
-                }]
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: true, position: 'top' },
-                  tooltip: { mode: 'index', intersect: false }
-                },
-                scales: {
-                  y: { beginAtZero: true }
-                }
-              }}
-            />
-          </div>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Sales Trend</h3>
+              <p className="text-sm text-gray-500">Monthly sales performance</p>
+            </div>
+            <div style={{ height: '300px' }}>
+              <Line
+                data={{
+                  labels: saleTrendData.map(d => d.month),
+                  datasets: [{
+                    label: 'Sales',
+                    data: saleTrendData.map(d => d.sales),
+                    borderColor: '#3D7F57',
+                    backgroundColor: 'rgba(61, 127, 87, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: true, position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                  },
+                  scales: {
+                    y: { beginAtZero: true }
+                  }
+                }}
+              />
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Revenue vs Orders Chart */}
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Revenue vs Orders</h3>
-            <p className="text-sm text-gray-500">Comparison over months</p>
-          </div>
-          <div style={{ height: '300px' }}>
-            <Bar
-              data={{
-                labels: salesTrendData.map(d => d.month),
-                datasets: [
-                  {
-                    label: 'Sales',
-                    data: salesTrendData.map(d => d.sales),
-                    backgroundColor: '#3D7F57',
-                    borderRadius: 8
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Card>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Revenue vs Orders</h3>
+              <p className="text-sm text-gray-500">Comparison over months</p>
+            </div>
+            <div style={{ height: '300px' }}>
+              <Bar
+                data={{
+                  labels: saleTrendData.map(d => d.month),
+                  datasets: [
+                    {
+                      label: 'Sales',
+                      data: saleTrendData.map(d => d.sales),
+                      backgroundColor: '#3D7F57',
+                      borderRadius: 8
+                    },
+                    {
+                      label: 'Orders',
+                      data: saleTrendData.map(d => d.orders),
+                      backgroundColor: '#5FAF78',
+                      borderRadius: 8
+                    }
+                  ]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: true, position: 'top' }
                   },
-                  {
-                    label: 'Orders',
-                    data: salesTrendData.map(d => d.orders),
-                    backgroundColor: '#5FAF78',
-                    borderRadius: 8
+                  scales: {
+                    y: { beginAtZero: true }
                   }
-                ]
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: true, position: 'top' }
-                },
-                scales: {
-                  y: { beginAtZero: true }
-                }
-              }}
-            />
-          </div>
-        </Card>
+                }}
+              />
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Category Performance */}
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Category Performance</h3>
-            <p className="text-sm text-gray-500">Sales distribution by category</p>
-          </div>
-          <div style={{ height: '300px' }}>
-            <Pie
-              data={{
-                labels: categoryData.map(d => `${d.name} (${d.percentage}%)`),
-                datasets: [{
-                  data: categoryData.map(d => d.value),
-                  backgroundColor: COLORS,
-                  borderWidth: 2,
-                  borderColor: '#fff'
-                }]
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: true, position: 'right' }
-                }
-              }}
-            />
-          </div>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Card>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Category Performance</h3>
+              <p className="text-sm text-gray-500">Sales distribution by category</p>
+            </div>
+            <div style={{ height: '300px' }}>
+              <Pie
+                data={{
+                  labels: categoryData.map(d => `${d.name} (${d.percentage}%)`),
+                  datasets: [{
+                    data: categoryData.map(d => d.value),
+                    backgroundColor: COLORS,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: true, position: 'right' }
+                  }
+                }}
+              />
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Customer Growth */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Card>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Customer Growth</h3>
+              <p className="text-sm text-gray-500">New customers over time</p>
+            </div>
+            <div style={{ height: '300px' }}>
+              <Line
+                data={{
+                  labels: saleTrendData.map(d => d.month),
+                  datasets: [{
+                    label: 'New Customers',
+                    data: saleTrendData.map(d => d.orders),
+                    borderColor: '#3D7F57',
+                    backgroundColor: 'rgba(61, 127, 87, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: true, position: 'top' }
+                  },
+                  scales: {
+                    y: { beginAtZero: true }
+                  }
+                }}
+              />
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Top Selling Products */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="mb-8"
+      >
         <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Customer Growth</h3>
-            <p className="text-sm text-gray-500">New customers over time</p>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Top Selling Products</h3>
+            <p className="text-sm text-gray-500">Best performing items</p>
           </div>
-          <div style={{ height: '300px' }}>
-            <Line
-              data={{
-                labels: salesTrendData.map(d => d.month),
-                datasets: [{
-                  label: 'New Customers',
-                  data: salesTrendData.map(d => d.orders),
-                  borderColor: '#3D7F57',
-                  backgroundColor: 'rgba(61, 127, 87, 0.2)',
-                  borderWidth: 2,
-                  tension: 0.4,
-                  fill: true
-                }]
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: true, position: 'top' }
-                },
-                scales: {
-                  y: { beginAtZero: true }
-                }
-              }}
-            />
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Product</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Category</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Sold</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topProducts.map((product, index) => (
+                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900 flex items-center gap-3">
+                      <div className="h-10 w-10 rounded bg-gray-100 overflow-hidden">
+                        {product.image ? (
+                             <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                        ) : (
+                             <div className="h-full w-full flex items-center justify-center text-gray-400">
+                                <Package size={20} />
+                             </div>
+                        )}
+                      </div>
+                      {product.name}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{product.category}</td>
+                    <td className="py-3 px-4 text-sm text-emerald-600 font-semibold google-sans-flex">{product.sold}</td>
+                    <td className="py-3 px-4 text-sm text-gray-900 google-sans-flex">₹{product.revenue.toLocaleString()}</td>
+                  </tr>
+                ))}
+                {topProducts.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="py-8 text-center text-gray-500">No sales data available</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Recent Orders Table */}
-      <Card className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-            <p className="text-sm text-gray-500">Latest customer orders</p>
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="mb-8"
+      >
+        <Card>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <p className="text-sm text-gray-500">Latest customer orders</p>
+            </div>
+            <button className="text-emerald-600 hover:text-emerald-700 font-medium text-sm">
+              View All →
+            </button>
           </div>
-          <button className="text-emerald-600 hover:text-emerald-700 font-medium text-sm">
-            View All →
-          </button>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Order ID</th>
-                <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Customer</th>
-                <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Amount</th>
-                <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Status</th>
-                <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.length > 0 ? (
-                recentOrders.map((order, index) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm font-medium text-gray-900">
-                      #{order._id?.slice(-6)}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{order.userName || 'Guest'}</td>
-                    <td className="py-3 px-4 text-sm font-semibold text-emerald-600">
-                      ₹{order.totalPrice?.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' :
-                        order.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {order.orderStatus || 'Pending'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
-                      {new Date(order.createdAt).toLocaleDateString()}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Order ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Customer</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Amount</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.length > 0 ? (
+                  recentOrders.map((order, index) => (
+                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 google-sans-flex">
+                        #{order._id?.slice(-6)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.userName || 'Guest'}</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-emerald-600 google-sans-flex">
+                        ₹{order.totalPrice?.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' :
+                          order.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {order.orderStatus || 'Pending'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 google-sans-flex">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-gray-500">
+                      No recent orders
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-8 text-center text-gray-500">
-                    No recent orders
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </motion.div>
 
       {/* Live Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-100">
-          <div className="flex items-center justify-between">
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Live Visitors</p>
+                <h3 className="text-3xl font-bold text-gray-900 google-sans-flex">24</h3>
+                <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1 google-sans-flex">
+                  <ArrowUp size={12} /> +3 from last hour
+                </p>
+              </div>
+              <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+            </div>
+          </Card>
+        </motion.div>
+
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-100">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Live Visitors</p>
-              <h3 className="text-3xl font-bold text-gray-900">24</h3>
-              <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1">
-                <ArrowUp size={12} /> +3 from last hour
+              <p className="text-sm text-gray-600 mb-1">Abandoned Carts</p>
+              <h3 className="text-3xl font-bold text-gray-900 google-sans-flex">12</h3>
+              <p className="text-xs text-orange-600 mt-2 flex items-center gap-1 google-sans-flex">
+                <ArrowDown size={12} /> -2 from yesterday
               </p>
             </div>
-            <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-          </div>
-        </Card>
+          </Card>
+        </motion.div>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-100">
-          <div>
-            <p className="text-sm text-gray-600 mb-1">Abandoned Carts</p>
-            <h3 className="text-3xl font-bold text-gray-900">12</h3>
-            <p className="text-xs text-orange-600 mt-2 flex items-center gap-1">
-              <ArrowDown size={12} /> -2 from yesterday
-            </p>
-          </div>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <div>
-            <p className="text-sm text-gray-600 mb-1">Refund Requests</p>
-            <h3 className="text-3xl font-bold text-gray-900">3</h3>
-            <p className="text-xs text-blue-600 mt-2 flex items-center gap-1">
-              Pending review
-            </p>
-          </div>
-        </Card>
-      </div>
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Refund Requests</p>
+              <h3 className="text-3xl font-bold text-gray-900 google-sans-flex">3</h3>
+              <p className="text-xs text-blue-600 mt-2 flex items-center gap-1">
+                Pending review
+              </p>
+            </div>
+          </Card>
+        </motion.div>
+      </motion.div>
     </AdminLayout>
   );
 };

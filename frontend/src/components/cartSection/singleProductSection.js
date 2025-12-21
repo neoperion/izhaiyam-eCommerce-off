@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleCartModification } from "../../utils/handleCartModification";
 import { setCart } from "../../features/wishlistAndCartSlice";
 import { useNavigate } from "react-router-dom";
+import { MdDelete } from "react-icons/md"; // Added MdDelete import
 
 export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
-  const { title, price, discountPercentValue, image, _id, stock } = cartData;
+  const { _id, title, price, image, quantity, discountPercentValue, selectedColor } = cartData;
+  const currentImage = selectedColor ? selectedColor.imageUrl : image;
+  const currentPrice = price; // Assuming price doesn't change with variant for now
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -16,74 +19,85 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
   // on load of the app set quantity to persisted quantity
   useEffect(() => {
     for (let key of cart) {
-      if (key._id === _id) {
+      // Check for both _id and selectedColor for uniqueness
+      if (key._id === _id && (key.selectedColor ? key.selectedColor._id === selectedColor?._id : !selectedColor)) {
         setProductQuantityInCart(key.quantity);
       }
     }
-  }, [cart]);
+  }, [cart, _id, selectedColor]);
 
   // on quantity change
+  // on quantity change
   useEffect(() => {
-    let newCart = [...cart];
+    // Prevent update if quantity hasn't really changed or is invalid
+    if(productQuantityInCart < 1) return;
+    
+    // Find if the quantity needs to be updated
+    const cartItem = cart.find(item => 
+        item._id === _id && 
+        (item.selectedColor ? item.selectedColor._id === selectedColor?._id : !selectedColor)
+    );
 
-    for (let key of newCart) {
-      if (key._id === _id) {
-        // the keys of newCart are still immutable so i modified the obj[index] instead of using key directly as it is still a reference to another obj due to shallow copy.i removed structuredClone due to it having few supported device
-        const index = newCart.indexOf(key);
-        newCart[index] = { ...key, quantity: parseInt(productQuantityInCart) };
-      }
+    if (cartItem && cartItem.quantity !== parseInt(productQuantityInCart)) {
+        let newCart = [...cart];
+        for (let i = 0; i < newCart.length; i++) {
+        const key = newCart[i];
+        if (key._id === _id && (key.selectedColor ? key.selectedColor._id === selectedColor?._id : !selectedColor)) {
+            newCart[i] = { ...key, quantity: parseInt(productQuantityInCart) };
+            break;
+        }
+        }
+        dispatch(setCart(newCart));
     }
-    dispatch(setCart(newCart));
-  }, [productQuantityInCart]);
+  }, [productQuantityInCart, _id, selectedColor, dispatch]); // Removed 'cart' from dependency array to prevent infinite loop
 
   // get the discount percent value if present so as to display it
-  let discountedPrice = price - (price * discountPercentValue) / 100;
+  let discountedPrice = currentPrice - (currentPrice * discountPercentValue) / 100;
 
   return (
     <div className="flex gap-4 border-b-[1px] border-LightSecondaryColor pb-4">
       <div
-        className="w-[40%] h-[120px] tablet:h-[160px] md:h-[160px] bg-neutralColor relative cursor-pointer product-img-container flex justify-center items-center"
+        className="w-[30%] h-[100%] bg-neutralColor relative cursor-pointer"
         onClick={() => {
           navigate(`/product/${_id}`);
           setIsCartSectionActive(false);
         }}
       >
-        <img src={image} alt="" className="rounded-sm w-[100%]  object-contain h-auto max-h-[90%] max-w-[90%]" />
+        <img src={currentImage} alt={title} className="w-[100%] h-[100%] object-cover" />
       </div>
-      <div className="flex flex-col gap-3 w-[45%] text-base">
-        <h2 className="font-inter md:text-[18px] font-normal capitalize">{title}</h2>
+      <div className="w-[70%] flex flex-col justify-between gap-2 text-base">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-bold text-[18px] leading-[1.2] font-RobotoSlab capitalize">{title}</h3>
+            {selectedColor && (
+                 <div className="flex items-center gap-1 mt-1">
+                    <div className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: selectedColor.hexCode }}></div>
+                    <span className="text-sm text-gray-500">{selectedColor.colorName}</span>
+                 </div>
+            )}
+          </div>
+          <MdDelete
+            className="w-6 h-6 cursor-pointer hover:text-red-500 transition-colors"
+            onClick={() => handleCartModification(_id, dispatch, null, true, selectedColor)}
+          />
+        </div>
         {discountPercentValue > 0 ? (
           <div className="flex gap-3">
-            <h3 className="font-inter font-bold   md:text-[18px] tracking-wide">${discountedPrice.toFixed(2)}</h3>
-            <h3 className="font-inter font-medium text-[14px] md:text-[16px]  tracking-wide text-lightBlack line-through">
-              ${price.toFixed(2)}
+            <h3 className="font-bold   md:text-[18px] tracking-wide">${discountedPrice.toFixed(2)}</h3>
+            <h3 className="font-medium text-[14px] md:text-[16px]  tracking-wide text-lightBlack line-through">
+              ${currentPrice.toFixed(2)}
             </h3>
           </div>
         ) : (
-          <h3 className="font-inter font-bold   md:text-[18px] tracking-wide ">${price.toFixed(2)}</h3>
+          <h3 className="font-bold   md:text-[18px] tracking-wide ">${currentPrice.toFixed(2)}</h3>
         )}
-        <span className="font-inter text-primaryColor tracking-[0.7px]">
-          {stock < 0 ? "Out of stock" : <strong>{stock}</strong>}
-          {stock >= 0 && " left in stock"}
-        </span>
-        <div className="flex items-center gap-1 cursor-pointer">
-          <FaTrash className="w-4 h-[0.9em] fill-primaryColor" />{" "}
-          <h3
-            className="font-inter font-semibold text-primaryColor"
-            onClick={() => handleCartModification(_id, dispatch, null, true)}
-          >
-            Remove
-          </h3>
-        </div>
       </div>
-      <input
-        className="font-inter w-[20%] h-[40px] focus:outline-secondaryColor border-[2px] border-secondaryColor mx-auto rounded-sm text-secondaryColor pl-3"
-        type="number"
-        name=""
-        id=""
-        value={productQuantityInCart}
-        onChange={(e) => setProductQuantityInCart(e.target.value)}
-      />
+        <input
+            className="w-[20%] h-[40px] focus:outline-secondaryColor border-[2px] border-secondaryColor mx-auto rounded-sm text-secondaryColor pl-3"
+            type="number"
+            value={productQuantityInCart}
+            onChange={(e) => setProductQuantityInCart(e.target.value)}
+        />
     </div>
   );
 };
