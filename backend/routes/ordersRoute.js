@@ -1,5 +1,5 @@
 const express = require("express");
-const { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser } = require("../controllers/Orders");
+const { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking } = require("../controllers/Orders");
 const { checkIfUserIsAnAdminMiddleware } = require("../middleware/adminAuthorisation");
 
 const router = express.Router();
@@ -11,5 +11,6 @@ router.route("/users/:id").get(checkIfUserIsAnAdminMiddleware, getSingleUser);
 router.route("/users/:id").patch(checkIfUserIsAnAdminMiddleware, updateUser);
 router.route("/users/:id/status").patch(checkIfUserIsAnAdminMiddleware, updateUserStatus);
 router.route("/users/:id").delete(checkIfUserIsAnAdminMiddleware, deleteUser);
+router.route("/updateTracking/:orderId").put(checkIfUserIsAnAdminMiddleware, updateOrderTracking);
 
 module.exports = router;

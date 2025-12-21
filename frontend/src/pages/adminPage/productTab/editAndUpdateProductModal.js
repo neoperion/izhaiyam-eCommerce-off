@@ -84,7 +84,7 @@ export const EditAndupdateProductModal = ({
         colorName: c.colorName, 
         hexCode: c.hexCode, 
         imageUrl: c.imageUrl, 
-        stock: parseInt(c.stock) 
+        stock: parseInt(c.stock) || 0
       })) : [],
     };
     console.log("Frontend Update Payload:", formData);
@@ -426,7 +426,7 @@ export const EditAndupdateProductModal = ({
                             <input 
                                 type="number" 
                                 value={newColor.stock}
-                                onChange={(e) => setNewColor({...newColor, stock: parseInt(e.target.value)})}
+                                onChange={(e) => setNewColor({...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
                                 className="w-full p-2 border rounded"
                             />
                         </div>

@@ -24,7 +24,7 @@ const isTokenvalid = async (req, res) => {
     if (!tokenVerification && !checkIfTokenExist) {
       throw new CustomErrorHandler(401, false);
     } else {
-      res.status(200).send(true);
+      res.status(200).json({ success: true, user: checkIfTokenExist });
     }
   }
 };

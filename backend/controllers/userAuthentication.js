@@ -29,19 +29,32 @@ const emailVerificationMessageDatas = (emailVerificationToken) => {
 //Register
 //Register
 const registerUser = async (req, res) => {
-  const { firstName, lastName, username, password } = req.body;
+  const { firstName, lastName, username, password, phone } = req.body;
   const email = req.body?.email?.toLowerCase();
 
+  // Validate phone
+  if (!phone) {
+    throw new CustomErrorHandler(400, "Please enter a phone number");
+  }
+
   let checkIfEmailExists = await User.findOne({ email });
+  let checkIfPhoneExists = await User.findOne({ phone });
+
   const hashedpassword = await bcryptjs.hash(password, 10);
 
   if (checkIfEmailExists) {
     throw new CustomErrorHandler(400, "Email has already been registered by another user");
   } 
+  
+  if (checkIfPhoneExists) {
+    throw new CustomErrorHandler(400, "Phone number has already been registered by another user");
+  }
+
   await User.create({
     firstName,
     lastName,
     email,
+    phone,
     username,
     password: hashedpassword,
     verificationStatus: "verified",
@@ -55,24 +68,48 @@ const registerUser = async (req, res) => {
 //LOGIN
 const loginUser = async (req, res) => {
   const { password } = req.body;
-  const email = req.body?.email?.toLowerCase();
+  
+  // Identifier can be email OR phone
+  // We check req.body.email (legacy/standard) OR req.body.identifier (new generic)
+  const identifier = (req.body.email || req.body.phone || req.body.identifier || "").toLowerCase();
 
-  let checkIfEmailExists = await User.findOne({ email }).lean();
-
-  if (!checkIfEmailExists) {
-    throw new CustomErrorHandler(400, "Incorect email or password");
-  } else if (checkIfEmailExists && !(await bcryptjs.compare(password, checkIfEmailExists.password))) {
-    throw new CustomErrorHandler(400, "Incorect email or password");
-  } else if (checkIfEmailExists && (await bcryptjs.compare(password, checkIfEmailExists.password))) {
-    let loginToken = generateToken(email, "verified", "30d");
-
-    await User.findByIdAndUpdate({ _id: checkIfEmailExists._id }, { verificationToken: loginToken });
-
-    res.json({
-      message: "You have sucessfully logged in",
-      userData: { ...checkIfEmailExists, loginToken },
-    });
+  if (!identifier) {
+    throw new CustomErrorHandler(400, "Please enter email or phone number");
   }
+
+  // Check if identifier is email-like or phone-like
+  const isEmail = identifier.includes("@");
+  
+  let user;
+  
+  if (isEmail) {
+    user = await User.findOne({ email: identifier }).lean();
+  } else {
+    // Determine if we need to search by phone
+    // Note: Assuming phone is stored as string in DB. 
+    user = await User.findOne({ phone: identifier }).lean();
+  }
+
+  if (!user) {
+    throw new CustomErrorHandler(400, "Incorect email/phone or password");
+  }
+
+  const isPasswordMatch = await bcryptjs.compare(password, user.password);
+
+  if (!isPasswordMatch) {
+    throw new CustomErrorHandler(400, "Incorect email/phone or password");
+  }
+
+  // If login success
+  let loginToken = generateToken(user.email, "verified", "30d");
+
+  // Update token in DB
+  await User.findByIdAndUpdate({ _id: user._id }, { verificationToken: loginToken });
+
+  res.json({
+    message: "You have sucessfully logged in",
+    userData: { ...user, loginToken },
+  });
 };
 
 // DELETE USERS

@@ -73,7 +73,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
         colorName: c.colorName, 
         hexCode: c.hexCode, 
         imageUrl: c.imageUrl, 
-        stock: parseInt(c.stock) 
+        stock: parseInt(c.stock) || 0
       })) : [],
     };
     console.log("Frontend Create Payload:", formData);
@@ -366,7 +366,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                         <input 
                             type="number" 
                             value={newColor.stock}
-                            onChange={(e) => setNewColor({...newColor, stock: parseInt(e.target.value)})}
+                            onChange={(e) => setNewColor({...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
                             className="w-full p-2 border rounded"
                             />
                     </div>

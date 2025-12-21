@@ -57,7 +57,14 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateEmail(loginDetails.email)) {
+    // Check if email (contains @) or generic identifier
+    if (!loginDetails.email) {
+      toast("Please enter your email or phone number", { type: "info" });
+      return; 
+    }
+    
+    // If it looks like an email, validate it
+    if (loginDetails.email.includes('@') && !validateEmail(loginDetails.email)) {
       toast("Enter a valid email", { type: "error" });
       return;
     }
@@ -144,12 +151,12 @@ export const LoginPage = () => {
 
           {/* FORM */}
           <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-            {/* Email */}
+            {/* Email/Phone */}
             <div>
-              <label className="text-xs text-gray-600 font-medium">Email Address</label>
+              <label className="text-xs text-gray-600 font-medium">Email or Phone Number</label>
               <input
-                type="email"
-                placeholder="you@domain.com"
+                type="text"
+                placeholder="Enter email or phone number"
                 value={loginDetails.email}
                 onChange={(e) =>
                   setLoginDetails({ ...loginDetails, email: e.target.value })

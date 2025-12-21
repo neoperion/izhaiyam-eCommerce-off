@@ -14,7 +14,9 @@ export const RegisterPage = () => {
     firstName: "",
     lastName: "",
     username: "",
+    username: "",
     email: "",
+    phone: "",
     password: "",
   });
 
@@ -33,6 +35,13 @@ export const RegisterPage = () => {
       toast.error("Please enter a valid email address");
       return;
     }
+    
+    // Simple phone validation: 10-15 digits
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(registerDetails.phone)) {
+        toast.error("Please enter a valid phone number (10-15 digits)");
+        return;
+    }
 
     const response = await dispatch(RegisterUser(registerDetails));
 
@@ -44,6 +53,7 @@ export const RegisterPage = () => {
         lastName: "",
         username: "",
         email: "",
+        phone: "",
         password: "",
       });
     } else {
@@ -151,6 +161,28 @@ export const RegisterPage = () => {
                 className="absolute left-4 top-1 text-[10px] text-[#93a267] font-semibold tracking-wider pointer-events-none transition-all duration-200"
               >
                 EMAIL ADDRESS
+              </label>
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="w-full">
+            <div className="relative w-full h-[56px] bg-stone-50 rounded-[12px] border border-stone-200 focus-within:border-[#93a267] focus-within:ring-1 focus-within:ring-[#93a267] transition-all duration-200">
+              <input
+                className="appearance-none absolute px-4 w-full h-full bg-transparent focus:outline-none text-stone-800 placeholder-transparent pt-3"
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Phone Number"
+                required
+                value={registerDetails.phone}
+                onChange={handleInputChange}
+              />
+              <label
+                htmlFor="phone"
+                className="absolute left-4 top-1 text-[10px] text-[#93a267] font-semibold tracking-wider pointer-events-none transition-all duration-200"
+              >
+                PHONE NUMBER
               </label>
             </div>
           </div>

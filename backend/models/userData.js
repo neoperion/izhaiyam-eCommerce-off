@@ -20,6 +20,11 @@ const userSchema = mongoose.Schema(
       unique: true,
       required: [true, "please enter an email"],
     },
+    phone: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     password: {
       type: String,
       required: [true, "please enter a password"],
@@ -66,9 +71,14 @@ const userSchema = mongoose.Schema(
         postalCode: Number,
         city: String,
         totalAmount: Number,
-        deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled"] },
+        deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled", "Shipped", "shipped"] },
         paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"] },
         date: { type: Date, default: Date.now },
+        tracking: {
+            carrier: String,
+            trackingId: String,
+            trackingUrl: String
+        }
       },
     ],
   },

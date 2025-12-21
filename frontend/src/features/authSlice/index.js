@@ -130,6 +130,9 @@ export const authSlice = createSlice({
     [fetchIsTokenValid.fulfilled]: (state, { payload }) => {
       state.isTokenValidLoader = false;
       state.isLoggedIn = true;
+      if (payload.user) {
+        state.userData = payload.user;
+      }
     },
     [fetchIsTokenValid.rejected]: (state, { payload }) => {
       state.isLoggedIn = false;

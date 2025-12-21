@@ -5,8 +5,8 @@ const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
 export const RegisterUser = createAsyncThunk("users/register", async (userParameter, thunkAPI) => {
   try {
-    const { email, password, username, firstName, lastName } = userParameter;
-    const { data } = await axios.post(serverUrl + "/api/v1/auth/register", { email, username, password, firstName, lastName });
+    const { email, password, username, firstName, lastName, phone } = userParameter;
+    const { data } = await axios.post(serverUrl + "/api/v1/auth/register", { email, username, password, firstName, lastName, phone });
     return data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data?.message || error.message);

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
@@ -213,8 +213,8 @@ const CategorySlider = () => {
                 key={index}
                 onClick={() => handleDotClick(index)}
                 className={`rounded-full transition-all duration-300 ${index === currentIndex
-                    ? 'w-8 h-2'
-                    : 'w-2 h-2 hover:opacity-70'
+                  ? 'w-8 h-2'
+                  : 'w-2 h-2 hover:opacity-70'
                   }`}
                 style={{
                   backgroundColor: index === currentIndex ? '#93a267' : '#cbd5e0',
@@ -223,6 +223,26 @@ const CategorySlider = () => {
               />
             ))}
           </div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={handlePrev}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-800 hover:bg-[#93a267] hover:text-white transition-all duration-300 z-10 ${currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              }`}
+            disabled={currentIndex === 0}
+            aria-label="Previous category"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={handleNext}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-800 hover:bg-[#93a267] hover:text-white transition-all duration-300 z-10 ${currentIndex === maxIndex ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              }`}
+            disabled={currentIndex === maxIndex}
+            aria-label="Next category"
+          >
+            <ChevronRight size={24} />
+          </button>
         </div>
       </div>
     </section>

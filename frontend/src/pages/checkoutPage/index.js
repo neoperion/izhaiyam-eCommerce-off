@@ -73,10 +73,20 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000/";
     e.preventDefault();
     try {
-      await axios.post(`${serverUrl}orders/placeOrders`, { orderDetails });
+      const { data } = await axios.post(`${serverUrl}orders/placeOrders`, { orderDetails });
 
-      toast("Order has successfully been placed,you can check profile page > orders to track order", {
-        type: "error",
+      // Update Redux state with new user data (containing the new order)
+      if (data.user) {
+        dispatch({ type: "authSlice/getUserData", payload: data.user });
+        
+        // Update local storage to persist the new order data
+        const currentData = JSON.parse(localStorage.getItem("UserData")) || {};
+        const updatedData = { ...currentData, ...data.user }; // Merge existing token etc with new user data
+        localStorage.setItem("UserData", JSON.stringify(updatedData));
+      }
+
+      toast("Order has successfully been placed, you can check profile page > orders to track order", {
+        type: "success",
         autoClose: 4000,
         position: "top-center",
       });
@@ -94,8 +104,8 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
         };
       });
     } catch (error) {
-      toast(error.response.data?.message || error.message, {
-        type: error.message,
+      toast(error.response?.data?.message || error.message, {
+        type: "error",
         autoClose: false,
         position: "top-center",
       });

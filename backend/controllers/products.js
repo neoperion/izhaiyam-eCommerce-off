@@ -6,7 +6,7 @@ const { title } = require("process");
 
 const createProducts = async (req, res) => {
   console.log("Create Product Request Body:", req.body);
-  const product = await Product.findOne({ _id: { $eq: productID } }, { __v: 0, createdAt: 0, updatedAt: 0, colorVariants: 1, isCustomizable: 1 });
+  const product = await Product.create(req.body);
   console.log("Created Product:", product);
   res.status(201).json(product);
 };

@@ -36,7 +36,7 @@ const postUserOrders = async (req, res) => {
   } else if (isOrderAboveLimit) {
     throw new CustomErrorHandler(403, "One or more product quantities selected is more than the amount in stock");
   } else {
-    await User.findOneAndUpdate({ email }, { $push: { orders: orderDetails } }, { new: true });
+    const updatedUser = await User.findOneAndUpdate({ email }, { $push: { orders: orderDetails } }, { new: true });
 
     for (let key of products) {
       const findProduct = await Product.findById(key.productId);
@@ -56,7 +56,7 @@ const postUserOrders = async (req, res) => {
       }
     }
 
-    res.status(201).send("order sucessful");
+    res.status(201).json({ message: "order sucessful", user: updatedUser });
   }
 };
 
@@ -75,6 +75,7 @@ const getAllOrders = async (req, res) => {
           id: order._id,
           customer: order.username,
           email: user.email,
+          phone: user.phone || 'N/A',
           product: firstProduct?.title || 'Multiple Products',
           productCount: order.products.length,
           amount: order.totalAmount,
@@ -89,7 +90,8 @@ const getAllOrders = async (req, res) => {
           country: order.country,
           postalCode: order.postalCode,
           shippingMethod: order.shippingMethod,
-          products: order.products
+          products: order.products,
+          tracking: order.tracking // Include tracking info
         });
       });
     });
@@ -273,4 +275,83 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser };
+// Update Order Tracking (Admin only)
+const updateOrderTracking = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { carrier, trackingId } = req.body;
+
+    if (!orderId || !carrier || !trackingId) {
+      throw new CustomErrorHandler(400, "Missing required fields");
+    }
+
+    // Find the user who has this order
+    const user = await User.findOne({ "orders._id": orderId });
+
+    if (!user) {
+      throw new CustomErrorHandler(404, "Order not found");
+    }
+
+    // Find the specific order index
+    const orderIndex = user.orders.findIndex(ord => ord._id.toString() === orderId);
+
+    if (orderIndex === -1) {
+       throw new CustomErrorHandler(404, "Order not found in user record");
+    }
+
+    // Generate Tracking URL
+    const trackingProviders = {
+      SPEEDPOST: {
+        type: "DIRECT",
+        url: "https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx?trackid="
+      },
+      DHL: {
+        type: "DIRECT",
+        url: "https://www.dhl.com/in-en/home/tracking.html?tracking-id="
+      },
+      BLUEDART: {
+        type: "DIRECT",
+        url: "https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo="
+      },
+      SPEEDEX: {
+        type: "LANDING",
+        url: "https://spdexp.com/"
+      }
+    };
+
+    const provider = trackingProviders[carrier];
+    
+    // Fallback if carrier not in list (though validation normally prevents this)
+    if (!provider) {
+       throw new CustomErrorHandler(400, "Invalid Carrier Selected");
+    }
+
+    let trackingUrl;
+    if (provider.type === "DIRECT") {
+      trackingUrl = provider.url + trackingId;
+    } else {
+      trackingUrl = provider.url; // NO trackingId appended
+    }
+
+    // Update order fields
+    user.orders[orderIndex].tracking = {
+        carrier,
+        trackingId,
+        trackingUrl
+    };
+    user.orders[orderIndex].deliveryStatus = "Shipped"; // Update status to Shipped
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Tracking details updated successfully",
+      trackingUrl
+    });
+
+  } catch (error) {
+     throw new CustomErrorHandler(500, error.message);
+  }
+};
+
+module.exports = { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking };

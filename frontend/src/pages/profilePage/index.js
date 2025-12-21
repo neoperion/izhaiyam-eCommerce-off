@@ -21,7 +21,7 @@ export const ProfilePage = () => {
     firstName: '',
     lastName: '',
     email: '',
-    mobile: '',
+    phone: '',
   });
   const [passwordData, setPasswordData] = useState({
     password: '',
@@ -41,7 +41,7 @@ export const ProfilePage = () => {
         firstName: names[0] || '',
         lastName: names[1] || '',
         email: userData.email || '',
-        mobile: userData.mobile || '',
+        phone: userData.phone || '',
       });
     }
   }, [userData]);
@@ -73,11 +73,30 @@ export const ProfilePage = () => {
         firstName: names[0] || '',
         lastName: names[1] || '',
         email: userData.email || '',
-        mobile: userData.mobile || '',
+        phone: userData.phone || '',
       });
     }
     setIsEditing(false);
   };
+// ... (skip unchanged lines) ...
+                      <div>
+                        <label className="font-inter block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          disabled={!isEditing}
+                          className={`font-inter w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#93a267] ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''
+                            }`}
+                          placeholder="Phone Number"
+                        />
+                        {!userData.phone && (
+                          <p className="text-xs text-[#93a267] mt-1 font-medium">
+                            Add phone number to enable phone login
+                          </p>
+                        )}
+                      </div>
 
   const handleUpdatePassword = () => {
     if (passwordData.password !== passwordData.confirmPassword) {
@@ -315,17 +334,22 @@ export const ProfilePage = () => {
                         />
                       </div>
                       <div>
-                        <label className="font-inter block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                        <label className="font-inter block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                         <input
                           type="tel"
-                          name="mobile"
-                          value={formData.mobile}
+                          name="phone"
+                          value={formData.phone}
                           onChange={handleInputChange}
                           disabled={!isEditing}
                           className={`font-inter w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#93a267] ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''
                             }`}
-                          placeholder="Mobile"
+                          placeholder="Phone Number"
                         />
+                         {!userData.phone && (
+                          <p className="text-xs text-[#93a267] mt-1 font-medium">
+                            Add phone number to enable phone login
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -358,6 +382,7 @@ export const ProfilePage = () => {
             )}
 
             {/* My Orders Tab */}
+            {/* My Orders Tab */}
             {activeTab === 'myOrders' && (
               <div className="bg-white rounded-lg p-8 shadow-sm">
                 <div className="flex justify-end mb-6">
@@ -370,19 +395,96 @@ export const ProfilePage = () => {
                     <Search className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="w-24 h-24 border-4 border-[#93a267] rounded-lg flex items-center justify-center mb-6">
-                    <Package className="w-12 h-12 text-[#93a267]" />
+
+                {userData?.orders && userData.orders.length > 0 ? (
+                  <div className="space-y-6">
+                    {/* Sort orders by date (newest first) and map */}
+                    {[...userData.orders]
+                      .sort((a, b) => new Date(b.date) - new Date(a.date))
+                      .map((order) => (
+                      <div key={order._id || Math.random()} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="bg-gray-50 p-4 border-b border-gray-200 flex flex-wrap justify-between items-center gap-4">
+                          <div className="flex gap-6">
+                            <div>
+                              <p className="text-xs text-gray-500 uppercase mb-1">Order Placed</p>
+                              <p className="text-sm font-medium text-gray-900">
+                                {new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 uppercase mb-1">Total</p>
+                              <p className="text-sm font-medium text-gray-900">₹{order.totalAmount?.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 uppercase mb-1">Order ID</p>
+                              <p className="text-sm font-medium text-gray-900">#{order._id?.slice(-8).toUpperCase() || 'N/A'}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2 mt-4 md:mt-0">
+                             {/* Display Tracking Details if Order is Shipped */}
+                             {order.tracking && order.tracking.trackingId && (
+                                <div className="text-right mb-1">
+                                  <p className="text-xs text-gray-500">Carrier: <span className="font-medium text-gray-800">{order.tracking.carrier}</span></p>
+                                  <p className="text-xs text-gray-500">Tracking ID: <span className="font-medium text-gray-800 select-all">{order.tracking.trackingId}</span></p>
+                                  <p className="text-[10px] text-gray-400 mt-0.5">Note: Paste this ID on the courier page if required</p>
+                                </div>
+                             )}
+
+                             <div className="flex gap-3">
+                               {order.tracking && order.tracking.trackingUrl && (
+                                 <button
+                                   onClick={() => window.open(order.tracking.trackingUrl, "_blank", "noopener")}
+                                   className="px-4 py-2 border border-[#93a267] text-[#93a267] rounded-lg text-sm font-medium hover:bg-[#93a267] hover:text-white transition-colors"
+                                 >
+                                   Track Order
+                                 </button>
+                               )}
+                               <div className={`px-4 py-2 rounded-full text-xs font-semibold
+                                ${order.deliveryStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                  order.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' :
+                                  order.deliveryStatus === 'shipped' || order.deliveryStatus === 'Shipped' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-red-100 text-red-800'}`}>
+                                {order.deliveryStatus?.charAt(0).toUpperCase() + order.deliveryStatus?.slice(1) || 'Pending'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4">
+                          {order.products.map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-4 py-4 border-b last:border-0 border-gray-100">
+                              <div className="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
+                                {item.productId?.image ? (
+                                   <img src={item.productId.image} alt="Product" className="w-full h-full object-cover" />
+                                ) : (
+                                   <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 line-clamp-1">{item.productId?.title || 'Product Name Unavailable'}</h4>
+                                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <h3 className="font-inter text-2xl font-bold text-gray-900 mb-2">You have no orders!</h3>
-                  <p className="font-inter text-gray-600 mb-8">There are no recent orders to show</p>
-                  <button
-                    onClick={() => navigate('/shop')}
-                    className="font-inter px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
-                  >
-                    START SHOPPING
-                  </button>
-                </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <div className="w-24 h-24 border-4 border-[#93a267] rounded-lg flex items-center justify-center mb-6">
+                      <Package className="w-12 h-12 text-[#93a267]" />
+                    </div>
+                    <h3 className="font-inter text-2xl font-bold text-gray-900 mb-2">You have no orders!</h3>
+                    <p className="font-inter text-gray-600 mb-8">There are no recent orders to show</p>
+                    <button
+                      onClick={() => navigate('/shop')}
+                      className="font-inter px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
+                    >
+                      START SHOPPING
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

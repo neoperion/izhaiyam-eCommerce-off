@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { getAllProductsData } from "./features/productSlice";
 import { Wishlist } from "./components/wishlistSection";
 import { Cart } from "./components/cartSection";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
@@ -86,7 +86,17 @@ function App() {
       <PagesRoute {...{ setIsCartSectionActive }} />
 
       <ToastContainer
-        position={isLargeScreen ? "top-right" : "bottom-center"}
+        position="top-center"
+        transition={Slide}
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
     </div>
   );

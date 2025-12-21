@@ -246,6 +246,7 @@ export const UserManagement = () => {
                 <tr>
                   <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Name</th>
                   <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Email</th>
+                  <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Phone</th>
                   <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Orders</th>
                   <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Total Spent</th>
                   <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Status</th>
@@ -256,7 +257,7 @@ export const UserManagement = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="p-8 text-center text-gray-500">
+                    <td colSpan="8" className="p-8 text-center text-gray-500">
                       Loading users...
                     </td>
                   </tr>
@@ -270,6 +271,7 @@ export const UserManagement = () => {
                         )}
                       </td>
                       <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{user.email}</td>
+                      <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{user.phone || '-'}</td>
                       <td className="p-3 md:p-4 text-sm md:text-base text-gray-600">{user.orders}</td>
                       <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{user.spent.toLocaleString()}</td>
                       <td className="p-3 md:p-4">
