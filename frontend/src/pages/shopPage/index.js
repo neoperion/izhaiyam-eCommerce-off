@@ -74,8 +74,8 @@ const Index = () => {
         }}
       />
 
-      {/* Mobile Trigger (Floating) */}
-      <div className="fixed left-4 bottom-6 md:hidden z-40">
+      {/* Mobile & Tablet Trigger (Floating) */}
+      <div className="fixed left-4 bottom-6 lg:hidden z-40">
         <button
           className="text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 animate-pulse"
           style={{ backgroundColor: '#93A267' }}

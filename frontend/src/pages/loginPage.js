@@ -82,7 +82,7 @@ export const LoginPage = () => {
           duration: 0.5,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="relative w-full max-w-[1000px] max-h-[92vh] 
+        className="relative w-full max-w-[450px] md:max-w-[900px] max-h-[92vh] 
                    overflow-y-auto rounded-[22px] bg-white/60 
                    backdrop-blur-xl shadow-[0_10px_50px_rgba(0,0,0,0.25)]
                    border border-white/20 flex flex-col md:flex-row"
@@ -95,12 +95,12 @@ export const LoginPage = () => {
           <FaTimes className="text-sm" />
         </button>
 
-        {/* LEFT PANEL - IMAGE */}
+        {/* LEFT PANEL - IMAGE (Desktop Only) */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
-          className="relative w-full md:w-[40%] h-[200px] md:h-auto"
+          className="hidden md:block relative w-full md:w-[40%]"
         >
           <img
             src={chairImg}
@@ -125,16 +125,16 @@ export const LoginPage = () => {
           </motion.div>
         </motion.div>
 
-        {/* RIGHT PANEL - FORM */}
+        {/* FORM PANEL - Full width on mobile, 60% on desktop */}
         <motion.div
           initial={{ opacity: 0, x: 15 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full md:w-[60%] bg-[#f9f7f2] px-4 md:px-6 py-4 overflow-y-auto"
+          className="w-full md:w-[60%] bg-[#f9f7f2] px-6 md:px-6 py-6 overflow-y-auto flex flex-col justify-center"
         >
           {/* Branding */}
           <h3 className="tracking-[0.25em] text-[#93a267] text-xl font-semibold mb-0">
-            IZHAIYAM 
+            IZHAIYAM
           </h3>
 
           <h1 className="text-4xl font-bold text-[#93a267]">Welcome Back</h1>
@@ -225,7 +225,7 @@ export const LoginPage = () => {
             </div>
 
             {/* Google Button */}
-            <button 
+            <button
               type="button"
               className="flex items-center justify-center gap-2 border border-gray-300 rounded-lg bg-white h-10 px-4 text-xs font-medium shadow-sm hover:shadow-md transition-all hover:bg-gray-50"
             >

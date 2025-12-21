@@ -19,12 +19,11 @@ export const Wishlist = ({ isWishlistActive, setIsWishlistActive }) => {
       initial={{ x: "100%" }}
       animate={{ x: isWishlistActive ? "0%" : "100%" }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`fixed top-0 left-0 bottom-0 w-[100%] h-[100vh] z-[1500] bg-opacity-60 bg-[#000000]  ${
-        isWishlistActive && "translate-x-[0%]"
-      }`}
+      className={`fixed top-0 left-0 bottom-0 w-[100%] h-[100vh] z-[1500] bg-opacity-60 bg-[#000000]  ${isWishlistActive && "translate-x-[0%]"
+        }`}
     >
       <section className="flex flex-col z-[2000] overflow-y-auto absolute top-0 bg-white items-start w-[98%] right-0 bottom-0 pt-4 pb-12 gap-7 tracking-[0.25px] text-lg h-[100%] md:max-w-[440px] lg:max-w-[480px]  tablet:max-w-[436px] ">
-        <h1 className=" text-center mt-[0.5em] w-[100%] text-[1.75rem] border-b-[2px] border-LightSecondaryColor pb-4 font-bold">
+        <h1 className="font-inter text-center mt-[0.5em] w-[100%] text-[1.75rem] border-b-[2px] border-LightSecondaryColor pb-4 font-bold">
           My Wishlist
         </h1>
         <IoCloseOutline
@@ -38,7 +37,7 @@ export const Wishlist = ({ isWishlistActive, setIsWishlistActive }) => {
             {wishlist.length < 1 ? (
               <div className="flex justify-center items-center w-[100%] h-[50vh]">
                 {" "}
-                <h2 className="font-bold text-xl">Your wishlist is currently empty</h2>{" "}
+                <h2 className="font-inter font-bold text-xl">Your wishlist is currently empty</h2>{" "}
               </div>
             ) : (
               <div className="w-[100%] flex flex-col px-[5%] gap-4">
@@ -53,7 +52,7 @@ export const Wishlist = ({ isWishlistActive, setIsWishlistActive }) => {
                   variants={primaryBtnVariant}
                   initial="initial"
                   whileTap="click"
-                  className="bg-primaryColor text-[#ffffff] h-[54px] rounded-md  w-[100%]"
+                  className="font-inter bg-primaryColor text-[#ffffff] h-[54px] rounded-md  w-[100%]"
                   onClick={() => {
                     navigate("/shop");
                     setIsWishlistActive(false);

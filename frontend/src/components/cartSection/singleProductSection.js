@@ -51,25 +51,25 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
         <img src={image} alt="" className="rounded-sm w-[100%]  object-contain h-auto max-h-[90%] max-w-[90%]" />
       </div>
       <div className="flex flex-col gap-3 w-[45%] text-base">
-        <h2 className="  md:text-[18px] font-normal font-RobotoSlab capitalize">{title}</h2>
+        <h2 className="font-inter md:text-[18px] font-normal capitalize">{title}</h2>
         {discountPercentValue > 0 ? (
           <div className="flex gap-3">
-            <h3 className="font-bold   md:text-[18px] tracking-wide">${discountedPrice.toFixed(2)}</h3>
-            <h3 className="font-medium text-[14px] md:text-[16px]  tracking-wide text-lightBlack line-through">
+            <h3 className="font-inter font-bold   md:text-[18px] tracking-wide">${discountedPrice.toFixed(2)}</h3>
+            <h3 className="font-inter font-medium text-[14px] md:text-[16px]  tracking-wide text-lightBlack line-through">
               ${price.toFixed(2)}
             </h3>
           </div>
         ) : (
-          <h3 className="font-bold   md:text-[18px] tracking-wide ">${price.toFixed(2)}</h3>
+          <h3 className="font-inter font-bold   md:text-[18px] tracking-wide ">${price.toFixed(2)}</h3>
         )}
-        <span className="text-primaryColor font-RobotoCondensed tracking-[0.7px]">
+        <span className="font-inter text-primaryColor tracking-[0.7px]">
           {stock < 0 ? "Out of stock" : <strong>{stock}</strong>}
           {stock >= 0 && " left in stock"}
         </span>
         <div className="flex items-center gap-1 cursor-pointer">
           <FaTrash className="w-4 h-[0.9em] fill-primaryColor" />{" "}
           <h3
-            className="font-semibold text-primaryColor"
+            className="font-inter font-semibold text-primaryColor"
             onClick={() => handleCartModification(_id, dispatch, null, true)}
           >
             Remove
@@ -77,7 +77,7 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
         </div>
       </div>
       <input
-        className="w-[20%] h-[40px] focus:outline-secondaryColor border-[2px] border-secondaryColor mx-auto rounded-sm text-secondaryColor pl-3"
+        className="font-inter w-[20%] h-[40px] focus:outline-secondaryColor border-[2px] border-secondaryColor mx-auto rounded-sm text-secondaryColor pl-3"
         type="number"
         name=""
         id=""

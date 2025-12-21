@@ -7,10 +7,10 @@ import React, { useState, useEffect, useRef } from 'react';
  * @param {string} brandName - Brand name to display (default: "IZHAIYAM")
  * @param {boolean} showOnMount - Whether to show modal on component mount (default: true)
  */
-const WelcomeModal = ({ 
+const WelcomeModal = ({
   logoSrc = require('../../assets/logo.jpg'), // Change logo path here if needed
   brandName = 'IZHAIYAM', // Change brand name here if needed
-  showOnMount = true 
+  showOnMount = true
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const enterButtonRef = useRef(null);
@@ -83,8 +83,7 @@ const WelcomeModal = ({
       {/* Modal Container - Responsive max width */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-2xl mx-auto my-auto transform transition-all duration-300 scale-100 animate-fadeIn"
-        style={{ maxWidth: '42rem' }}
+        className="relative w-full max-w-md md:max-w-2xl mx-auto my-auto transform transition-all duration-300 scale-100 animate-fadeIn"
       >
         {/* Close Button - Top Right */}
         <button
@@ -97,8 +96,8 @@ const WelcomeModal = ({
 
         {/* Modal Content Card */}
         <div className="bg-[#93a267] rounded-2xl shadow-2xl overflow-hidden">
-          {/* Desktop Layout - Reduced height, side-by-side on larger screens */}
-          <div className="hidden md:flex" style={{ height: '400px' }}>
+          {/* Desktop Layout - Compact square-ish design */}
+          <div className="hidden md:flex" style={{ height: '380px' }}>
             {/* Left Side - Logo */}
             <div className="w-1/2 flex items-center justify-center p-6">
               <img
@@ -130,19 +129,19 @@ const WelcomeModal = ({
             </div>
           </div>
 
-          {/* Mobile Layout - Reduced height, stacked vertically */}
-          <div className="md:hidden flex flex-col" style={{ height: '500px' }}>
-            {/* Logo Section */}
-            <div className="flex-1 flex items-center justify-center p-4 pt-12">
+          {/* Mobile Layout - Square-ish design with logo at top, content centered */}
+          <div className="md:hidden flex flex-col items-center justify-center" style={{ height: '420px', maxHeight: '85vh' }}>
+            {/* Logo Section - At Top */}
+            <div className="flex items-center justify-center pt-8 pb-4">
               <img
                 src={logoSrc}
                 alt={`${brandName} logo`}
-                className="w-full h-full object-contain max-w-[200px]"
+                className="w-32 h-32 object-contain"
               />
             </div>
 
-            {/* Content Section */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4 pb-6 text-center">
+            {/* Content Section - Centered */}
+            <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8 text-center">
               <h2 className="text-lg font-bold text-white mb-1">
                 Welcome to
               </h2>

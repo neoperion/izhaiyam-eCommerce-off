@@ -13,8 +13,8 @@ const FeaturedProducts = () => {
         const fetchFeaturedProducts = async () => {
             try {
                 setLoading(true);
-                // Fetch only featured products, limit to 4
-                const { data } = await axios.get('/api/v1/products?featured=true&limit=4');
+                // Fetch only featured products, limit to 6
+                const { data } = await axios.get('/api/v1/products?featured=true&limit=6');
                 setProducts(data.products || []);
             } catch (error) {
                 console.error('Failed to fetch featured products:', error);
@@ -65,19 +65,14 @@ const FeaturedProducts = () => {
                     </div>
                 </div>
 
-                {/* Grid / Swipeable Container */}
-                <div className="
-                    flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 -mx-4 px-4 
-                    sm:grid sm:grid-cols-2 sm:gap-6 sm:pb-0 sm:mx-0 sm:px-0
-                    lg:grid-cols-4 lg:gap-8
-                    scrollbar-hide
-                ">
+                {/* Grid Layout - 2 Rows x 3 Columns */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     {loading ? (
-                        // Skeleton Loading
-                        Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="min-w-[85%] sm:min-w-0 snap-center bg-white rounded-[20px] h-[400px] animate-pulse">
-                                <div className="h-2/3 bg-gray-200 w-full rounded-t-[20px]" />
-                                <div className="p-4 space-y-3">
+                        // Skeleton Loading - 6 cards for 2x3 grid
+                        Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="bg-white rounded-2xl h-[450px] animate-pulse">
+                                <div className="h-2/3 bg-gray-200 w-full rounded-t-2xl" />
+                                <div className="p-6 space-y-3">
                                     <div className="h-4 bg-gray-200 w-3/4 rounded" />
                                     <div className="h-4 bg-gray-200 w-1/2 rounded" />
                                 </div>
@@ -85,14 +80,14 @@ const FeaturedProducts = () => {
                         ))
                     ) : (
                         products.length > 0 ? (
-                            products.map((product) => (
-                                <div key={product._id} className="min-w-[85%] sm:min-w-auto snap-center h-full">
-                                    <FeaturedProductCard
-                                        product={product}
-                                        toggleWishlist={toggleWishlist}
-                                        isWishlisted={wishlist.includes(product._id)}
-                                    />
-                                </div>
+                            // Display only first 6 products for 2x3 grid
+                            products.slice(0, 6).map((product) => (
+                                <FeaturedProductCard
+                                    key={product._id}
+                                    product={product}
+                                    toggleWishlist={toggleWishlist}
+                                    isWishlisted={wishlist.includes(product._id)}
+                                />
                             ))
                         ) : (
                             <div className="col-span-full py-12 flex flex-col items-center justify-center text-center space-y-3">
