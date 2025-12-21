@@ -51,6 +51,11 @@ const userSchema = mongoose.Schema(
           {
             productId: { type: Schema.Types.ObjectId, ref: "Product" },
             quantity: { type: Number },
+            selectedColor: {
+              name: String,
+              hexCode: String,
+              imageUrl: String,
+            },
           },
         ],
         username: String,

@@ -11,7 +11,21 @@ const postUserOrders = async (req, res) => {
   let isOrderAboveLimit;
   for (let key of products) {
     const findProducts = await Product.findById(key.productId);
-    if (key.quantity > findProducts.stock) {
+    
+    // Check main stock first (default assumption)
+    let productStock = findProducts.stock;
+    
+    // If a specific color variant is selected, check that variant's stock
+    if (key.selectedColor && key.selectedColor.colorName && findProducts.colorVariants && findProducts.colorVariants.length > 0) {
+        const variant = findProducts.colorVariants.find(c => c.colorName === key.selectedColor.colorName);
+        if (variant) {
+            productStock = variant.stock;
+        } else {
+            productStock = 0; // Selected variant not found
+        }
+    }
+
+    if (key.quantity > productStock) {
       isOrderAboveLimit = true;
     }
   }
@@ -25,10 +39,21 @@ const postUserOrders = async (req, res) => {
     await User.findOneAndUpdate({ email }, { $push: { orders: orderDetails } }, { new: true });
 
     for (let key of products) {
-      const findProducts = await Product.findById(key.productId);
-      let newStock = findProducts.stock - key.quantity;
-      // update new stock
-      await findProducts.updateOne({ stock: newStock });
+      const findProduct = await Product.findById(key.productId);
+      
+      // Check if a specific color variant was selected
+      if (key.selectedColor && key.selectedColor.colorName && findProduct.colorVariants && findProduct.colorVariants.length > 0) {
+          // Update variant stock
+          const variantIndex = findProduct.colorVariants.findIndex(c => c.colorName === key.selectedColor.colorName);
+          if (variantIndex !== -1) {
+              findProduct.colorVariants[variantIndex].stock -= key.quantity;
+              await findProduct.save(); 
+          }
+      } else {
+           // Fallback to main stock (Standard product OR Customizable product bought as default)
+          let newStock = findProduct.stock - key.quantity;
+          await findProduct.updateOne({ stock: newStock });
+      }
     }
 
     res.status(201).send("order sucessful");

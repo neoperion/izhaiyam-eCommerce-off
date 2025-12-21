@@ -34,21 +34,27 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
           return (
             <article
               className="flex gap-4 w-[100%] border-b-[1px] justify-between border-LightSecondaryColor pb-4"
-              key={cartItem._id}
+              key={cartItem._id + (cartItem.selectedColor ? cartItem.selectedColor.name : "")}
             >
               <div className="w-[40%] tablet:w-[45%] md:w-[45%]  h-[110px]  tablet:h-[180px] md:h-[160px] bg-neutralColor relative cursor-pointer product-img-container flex justify-center items-center">
                 <img
-                  src={cartItem.image}
+                  src={cartItem.selectedColor ? cartItem.selectedColor.imageUrl : cartItem.image}
                   alt=""
                   className="rounded-sm w-[100%]  object-contain h-auto max-h-[90%] max-w-[90%]"
                 />
               </div>
               <div className="flex flex-col gap-2 w-[30%] text-[16px]">
                 <h2 className="text-[18px] font-normal font-RobotoSlab">{cartItem.title}</h2>
+                {cartItem.selectedColor && (
+                    <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: cartItem.selectedColor.hexCode }}></div>
+                        <span className="text-sm text-gray-500">{cartItem.selectedColor.name}</span>
+                     </div>
+                )}
                 <span className="font-normal">Quantity: {cartItem.quantity}</span>
               </div>
               <h4 className="font-bold tracking-wide text-[18px] md:text-[20px]">
-                ${cartItem.price.toFixed(2) * cartItem.quantity}
+                ${(cartItem.price * cartItem.quantity).toFixed(2)}
               </h4>
             </article>
           );

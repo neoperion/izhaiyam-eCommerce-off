@@ -2,7 +2,7 @@ import { store } from "../store";
 import { setCart } from "../features/wishlistAndCartSlice";
 import { toast } from "react-toastify";
 
-export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart) => {
+export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart, selectedColor = null) => {
   const { allProductsData } = store.getState().productsData;
   const { cart } = store.getState().wishlistAndCartSection;
 
@@ -12,7 +12,15 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
   switch (isObjInCart) {
     case true:
       if (!productQuantity) {
-        const filteredCart = cart.filter((productsData) => productsData._id !== _id);
+        // REMOVE FROM CART
+        const filteredCart = cart.filter((item) => {
+            // If deleting a specific variant
+            if (selectedColor) {
+                return !(item._id === _id && item.selectedColor?.colorName === selectedColor.colorName);
+            }
+            // If deleting non-variant product
+            return item._id !== _id;
+        });
         newCart = [...filteredCart];
         toast("Product has been removed from cart", {
           type: "success",
@@ -23,7 +31,11 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
         newCart = [...cart];
 
         for (let key of newCart) {
-          if (key._id === _id) {
+          const isSameVariant = selectedColor 
+            ? key._id === _id && key.selectedColor?.colorName === selectedColor.colorName 
+            : key._id === _id;
+
+          if (isSameVariant) {
             const index = newCart.indexOf(key);
             newCart[index] = { ...key, quantity: newCart[index].quantity + parseInt(productQuantity) };
           }
@@ -38,6 +50,11 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
     case false:
       if (!productQuantity) {
         let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
+        
+        // Clone and add selectedColor if exists
+        if (selectedColor) {
+            currentCartedProduct = { ...currentCartedProduct, selectedColor };
+        }
 
         currentCartedProduct = {
           ...currentCartedProduct,
@@ -51,6 +68,11 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
         });
       } else if (productQuantity) {
         let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
+        
+         // Clone and add selectedColor if exists
+        if (selectedColor) {
+            currentCartedProduct = { ...currentCartedProduct, selectedColor };
+        }
 
         currentCartedProduct = {
           ...currentCartedProduct,
