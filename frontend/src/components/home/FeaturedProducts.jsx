@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import FeaturedProductCard from './FeaturedProductCard';
 
 const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [wishlist, setWishlist] = useState([]);
+    const scrollContainerRef = useRef(null);
 
     useEffect(() => {
         const fetchFeaturedProducts = async () => {
@@ -33,9 +34,24 @@ const FeaturedProducts = () => {
         );
     };
 
-    // if (!loading && products.length === 0) {
-    //     return null; 
-    // }
+    // Scroll functions for arrow navigation
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({
+                left: -400,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({
+                left: 400,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     console.log('Featured Products:', products);
 
@@ -54,7 +70,7 @@ const FeaturedProducts = () => {
                             Featured Products
                         </h2>
                     </div>
-                    <div className="flex justify-end">
+                    <div className="hidden md:flex justify-end">
                         <NavLink
                             to="/shop"
                             className="group inline-flex items-center gap-2 text-[#93a267] font-semibold tracking-wide hover:text-[#7a8a55] transition-colors"
@@ -65,37 +81,62 @@ const FeaturedProducts = () => {
                     </div>
                 </div>
 
-                {/* Grid Layout - 2 Rows x 3 Columns */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                    {loading ? (
-                        // Skeleton Loading - 6 cards for 2x3 grid
-                        Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className="bg-white rounded-2xl h-[450px] animate-pulse">
-                                <div className="h-2/3 bg-gray-200 w-full rounded-t-2xl" />
-                                <div className="p-6 space-y-3">
-                                    <div className="h-4 bg-gray-200 w-3/4 rounded" />
-                                    <div className="h-4 bg-gray-200 w-1/2 rounded" />
+                {/* Horizontal Slider with Arrow Navigation */}
+                <div className="relative">
+                    {/* Left Arrow */}
+                    <button
+                        onClick={scrollLeft}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all -ml-4 hidden md:flex items-center justify-center"
+                        aria-label="Scroll left"
+                    >
+                        <ChevronLeft size={24} className="text-gray-800" />
+                    </button>
+
+                    {/* Right Arrow */}
+                    <button
+                        onClick={scrollRight}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all -mr-4 hidden md:flex items-center justify-center"
+                        aria-label="Scroll right"
+                    >
+                        <ChevronRight size={24} className="text-gray-800" />
+                    </button>
+
+                    {/* Scrollable Container */}
+                    <div
+                        ref={scrollContainerRef}
+                        className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide scroll-smooth"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                        {loading ? (
+                            // Skeleton Loading
+                            Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="flex-shrink-0 w-[280px] sm:w-[320px] bg-white rounded-lg p-4 animate-pulse">
+                                    <div className="aspect-square bg-gray-200 rounded-lg mb-4" />
+                                    <div className="space-y-3">
+                                        <div className="h-4 bg-gray-200 w-3/4 rounded" />
+                                        <div className="h-4 bg-gray-200 w-1/2 rounded" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))
-                    ) : (
-                        products.length > 0 ? (
-                            // Display only first 6 products for 2x3 grid
-                            products.slice(0, 6).map((product) => (
-                                <FeaturedProductCard
-                                    key={product._id}
-                                    product={product}
-                                    toggleWishlist={toggleWishlist}
-                                    isWishlisted={wishlist.includes(product._id)}
-                                />
                             ))
                         ) : (
-                            <div className="col-span-full py-12 flex flex-col items-center justify-center text-center space-y-3">
-                                <p className="text-gray-400 italic font-medium">No featured products found.</p>
-                                <p className="text-sm text-gray-400">Mark items as "Featured" in the Admin Panel to display them here.</p>
-                            </div>
-                        )
-                    )}
+                            products.length > 0 ? (
+                                products.map((product) => (
+                                    <div key={product._id} className="flex-shrink-0 w-[280px] sm:w-[320px]">
+                                        <FeaturedProductCard
+                                            product={product}
+                                            toggleWishlist={toggleWishlist}
+                                            isWishlisted={wishlist.includes(product._id)}
+                                        />
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="w-full py-12 flex flex-col items-center justify-center text-center space-y-3">
+                                    <p className="text-gray-400 italic font-medium">No featured products found.</p>
+                                    <p className="text-sm text-gray-400">Mark items as "Featured" in the Admin Panel to display them here.</p>
+                                </div>
+                            )
+                        )}
+                    </div>
                 </div>
 
                 {/* Mobile "View All" Button */}
@@ -109,8 +150,16 @@ const FeaturedProducts = () => {
                 </div>
 
             </div>
+
+            {/* Hide scrollbar CSS */}
+            <style jsx>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+            `}</style>
         </section>
     );
 };
 
 export default FeaturedProducts;
+

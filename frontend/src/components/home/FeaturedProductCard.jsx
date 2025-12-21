@@ -1,98 +1,120 @@
-import React from 'react';
-import { Heart, Star, ArrowDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const FeaturedProductCard = ({ product, toggleWishlist, isWishlisted }) => {
     const { _id, title, price, image, discountPercentValue, rating, reviews, description, material, seatingCapacity, finish } = product;
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Calculate discounted price
     const discountedPrice = discountPercentValue > 0
         ? price - (price * discountPercentValue) / 100
         : price;
 
+    // For now, using single image, but structure supports multiple images
+    const images = [image];
+
+    const handlePrevImage = (e) => {
+        e.preventDefault();
+        setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    };
+
+    const handleNextImage = (e) => {
+        e.preventDefault();
+        setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    };
+
     // Generate full description
     const fullDescription = description ||
         `${material || 'Premium Quality'} • ${seatingCapacity || 'Comfortable Seating'} • ${finish || 'Elegant Finish'}`;
 
     return (
-        <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-            {/* Image Container - Square with Framed Effect */}
-            <div className="relative aspect-square overflow-hidden bg-gray-50 p-4">
-                <Link to={`/product/${_id}`} className="block h-full">
+        <div className="w-full bg-white rounded-lg p-4">
+            {/* Image Section with Navigation */}
+            <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4 aspect-square">
+                <Link to={`/product/${_id}`}>
                     <img
-                        src={image}
+                        src={images[currentImageIndex]}
                         alt={title}
-                        className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover"
                     />
                 </Link>
 
-                {/* Discount Badge - Sage Green with Arrow */}
-                {discountPercentValue > 0 && (
-                    <div className="absolute top-6 left-6 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-md" style={{ backgroundColor: '#93a267' }}>
-                        <ArrowDown size={14} className="stroke-2 text-white" />
-                        <span className="font-inter text-xs font-bold text-white">-{discountPercentValue}%</span>
-                    </div>
+                {/* Navigation Arrows - Only show if multiple images */}
+                {images.length > 1 && (
+                    <>
+                        <button
+                            onClick={handlePrevImage}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 transition-all"
+                        >
+                            <ChevronLeft size={20} className="text-gray-800" />
+                        </button>
+                        <button
+                            onClick={handleNextImage}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 transition-all"
+                        >
+                            <ChevronRight size={20} className="text-gray-800" />
+                        </button>
+                    </>
                 )}
 
                 {/* Wishlist Heart */}
                 <button
                     onClick={() => toggleWishlist(_id)}
-                    className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md hover:shadow-lg transition-all"
+                    className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-all"
                     aria-label="Add to wishlist"
                 >
                     <Heart
-                        size={20}
+                        size={18}
                         className={`transition-colors ${isWishlisted
-                            ? 'fill-red-500 stroke-red-500'
-                            : 'stroke-gray-600 hover:stroke-red-500'
+                                ? 'fill-red-500 stroke-red-500'
+                                : 'stroke-gray-600 hover:stroke-red-500'
                             }`}
                     />
                 </button>
             </div>
 
-            {/* Product Info */}
-            <div className="p-6 flex-1 flex flex-col">
-                {/* Product Name */}
-                <Link to={`/product/${_id}`}>
-                    <h3 className="font-inter text-xl font-semibold text-gray-900 mb-2 hover:text-[#93a267] transition-colors">
-                        {title}
-                    </h3>
-                </Link>
+            {/* Product Title */}
+            <Link to={`/product/${_id}`}>
+                <h3 className="text-gray-800 text-sm font-medium mb-3 leading-tight hover:text-[#93a267] transition-colors line-clamp-2">
+                    {title}
+                </h3>
+            </Link>
 
-                {/* Full Description */}
-                <p className="font-inter text-sm text-gray-600 mb-4 line-clamp-2">
-                    {fullDescription}
-                </p>
+            {/* Rating Section */}
+            <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                        <Star
+                            key={i}
+                            size={16}
+                            className={
+                                i < Math.floor(rating || 4.5)
+                                    ? 'fill-orange-400 text-orange-400'
+                                    : 'fill-orange-300 text-orange-300'
+                            }
+                        />
+                    ))}
+                </div>
+                <span className="text-gray-600 text-sm">({reviews || 0})</span>
+            </div>
 
-                {/* Star Rating with Review Count */}
-                <div className="flex items-center gap-2 mb-4">
-                    <div className="flex items-center gap-1">
-                        <Star size={16} className="fill-amber-400 stroke-amber-400" />
-                        <span className="font-inter text-sm font-semibold text-gray-900">
-                            {rating || 4.5}
-                        </span>
-                    </div>
-                    <span className="font-inter text-xs text-gray-500">
-                        ({reviews || 0} reviews)
+            {/* Discount and Price Section */}
+            <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                    {discountPercentValue > 0 && (
+                        <span className="text-green-600 text-sm font-semibold">↓ {discountPercentValue}%</span>
+                    )}
+                    <span className="text-gray-800 text-xl font-bold">
+                        ₹{discountedPrice.toLocaleString('en-IN')}
                     </span>
                 </div>
-
-                {/* Price Section */}
-                <div className="mt-auto">
-                    <div className="flex items-baseline gap-3">
-                        {/* Final Price - Bold and Large */}
-                        <span className="font-inter text-2xl font-bold text-gray-900">
-                            ₹{discountedPrice.toLocaleString('en-IN')}
-                        </span>
-
-                        {/* Original Price - Grey Strikethrough */}
-                        {discountPercentValue > 0 && (
-                            <span className="font-inter text-base text-gray-400 line-through">
-                                ₹{price.toLocaleString('en-IN')}
-                            </span>
-                        )}
-                    </div>
-                </div>
+                {discountPercentValue > 0 && (
+                    <span className="text-gray-400 text-sm line-through">
+                        ₹{price.toLocaleString('en-IN')}
+                    </span>
+                )}
             </div>
         </div>
     );

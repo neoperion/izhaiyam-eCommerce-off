@@ -12,8 +12,8 @@ const Homepage = () => {
       <HeroSection />
       <CategorySlider />
       <FeaturedProducts />
-      <TestimonialsSection />
       <FAQSection />
+      <TestimonialsSection />
       <FooterSection />
     </>
   );

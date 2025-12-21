@@ -28,19 +28,11 @@ const CategorySlider = () => {
     { name: 'Balcony', image: balconyImg, products: 14, type: 'location', value: 'balcony' },
   ];
 
-  // ... (keep existing state logic)
-
   const handleCategoryClick = (category) => {
-    // Set the main category (features/location)
     dispatch(setSelectedCategory(category.type));
-    // Set the sub-category (cot/sofa/etc)
     dispatch(setSelectedSubCategoryForFilter(category.value));
-    // Navigate to shop
     navigate('/shop');
   };
-
-  // ... (keep existing handlePrev, handleNext, etc)
-
 
   const cardsToShow = 3;
   const maxIndex = Math.max(0, categories.length - cardsToShow);
@@ -68,12 +60,9 @@ const CategorySlider = () => {
 
   const handleTouchEnd = () => {
     if (touchStart - touchEnd > 75) {
-      // Swipe left - go next
       handleNext();
     }
-
     if (touchStart - touchEnd < -75) {
-      // Swipe right - go prev
       handlePrev();
     }
   };
@@ -81,7 +70,9 @@ const CategorySlider = () => {
   // Mouse/Trackpad handlers
   const handleMouseDown = (e) => {
     setTouchStart(e.clientX);
-    sliderRef.current.style.cursor = 'grabbing';
+    if (sliderRef.current) {
+      sliderRef.current.style.cursor = 'grabbing';
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -101,14 +92,18 @@ const CategorySlider = () => {
     }
     setTouchStart(0);
     setTouchEnd(0);
-    sliderRef.current.style.cursor = 'grab';
+    if (sliderRef.current) {
+      sliderRef.current.style.cursor = 'grab';
+    }
   };
 
   const handleMouseLeave = () => {
     if (touchStart !== 0) {
       setTouchStart(0);
       setTouchEnd(0);
-      sliderRef.current.style.cursor = 'grab';
+      if (sliderRef.current) {
+        sliderRef.current.style.cursor = 'grab';
+      }
     }
   };
 
@@ -125,8 +120,39 @@ const CategorySlider = () => {
           </h2>
         </div>
 
-        {/* Slider Container */}
-        <div className="relative">
+        {/* Mobile Grid Layout - 3 rows x 2 columns */}
+        <div className="grid grid-cols-2 gap-4 md:hidden">
+          {categories.map((category, index) => (
+            <div
+              key={index}
+              onClick={() => handleCategoryClick(category)}
+              className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group cursor-pointer aspect-square"
+            >
+              {/* Image */}
+              <img
+                src={category.image}
+                alt={category.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+              {/* Content */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <h3 className="text-base font-bold mb-1">{category.name}</h3>
+                <p className="text-xs text-white/90 mb-2">{category.products} Products</p>
+                <div className="flex items-center gap-2 text-xs font-medium group-hover:gap-3 transition-all">
+                  <span>Explore</span>
+                  <ArrowRight size={12} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Slider - Hidden on mobile */}
+        <div className="hidden md:block relative">
           {/* Cards Container */}
           <div
             ref={sliderRef}
@@ -153,7 +179,7 @@ const CategorySlider = () => {
                 >
                   <div
                     onClick={() => handleCategoryClick(category)}
-                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[200px] md:h-[350px] pointer-events-auto"
+                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[350px] pointer-events-auto"
                   >
                     {/* Image */}
                     <img
@@ -179,24 +205,24 @@ const CategorySlider = () => {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Pagination Dots */}
-        <div className="flex justify-center items-center gap-2 mt-8">
-          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleDotClick(index)}
-              className={`rounded-full transition-all duration-300 ${index === currentIndex
-                  ? 'w-8 h-2'
-                  : 'w-2 h-2 hover:opacity-70'
-                }`}
-              style={{
-                backgroundColor: index === currentIndex ? '#93a267' : '#cbd5e0',
-              }}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          {/* Pagination Dots - Desktop only */}
+          <div className="flex justify-center items-center gap-2 mt-8">
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`rounded-full transition-all duration-300 ${index === currentIndex
+                    ? 'w-8 h-2'
+                    : 'w-2 h-2 hover:opacity-70'
+                  }`}
+                style={{
+                  backgroundColor: index === currentIndex ? '#93a267' : '#cbd5e0',
+                }}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
