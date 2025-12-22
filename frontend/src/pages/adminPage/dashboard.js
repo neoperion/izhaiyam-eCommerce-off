@@ -232,7 +232,7 @@ export const AdminDashboard = () => {
         <motion.div variants={fadeInUp}>
           <KPICard
             title="Total Revenue"
-            value={`₹${stats.totalRevenue.toLocaleString()}`}
+            value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`}
             change="+15.3%"
             trend="up"
             icon={DollarSign}
@@ -270,7 +270,7 @@ export const AdminDashboard = () => {
         <motion.div variants={fadeInUp}>
           <KPICard
             title="Avg Order Value"
-            value={`₹${Math.round(stats.avgOrderValue).toLocaleString()}`}
+            value={`₹${Math.round(stats.avgOrderValue).toLocaleString("en-IN")}`}
             change="+₹124"
             trend="up"
             icon={DollarSign}

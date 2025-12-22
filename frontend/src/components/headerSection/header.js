@@ -33,10 +33,15 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
         autoClose: 3000,
       });
     } else if (allProductsData.length > 0) {
+      const searchValue =
+        e.currentTarget.tagName === "INPUT"
+          ? e.currentTarget.value
+          : e.currentTarget.previousElementSibling.value;
+
       navigateToSearchPage(
         {
           pathname: "/search",
-          search: `?searchedProduct=${e.currentTarget.previousElementSibling.value}`,
+          search: `?searchedProduct=${searchValue}`,
         },
         {
           state: location.pathname,

@@ -54,7 +54,7 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
                 <span className="font-normal">Quantity: {cartItem.quantity}</span>
               </div>
               <h4 className="font-bold tracking-wide text-[18px] md:text-[20px]">
-                ${(cartItem.price * cartItem.quantity).toFixed(2)}
+                ₹{(cartItem.price * cartItem.quantity).toLocaleString("en-IN")}
               </h4>
             </article>
           );
@@ -63,7 +63,7 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
       <div className="pt-4 flex flex-col gap-4 border-t-[2px] border-LightSecondaryColor  mt-20 w-[100%] ">
         <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-LightSecondaryColor pb-4">
           <h2 className="font-normal  text-[18px] md:text-[20px]">SubTotal</h2>
-          <span className="text-lg tracking-wide ">${totalProductPrice.toFixed(2)} USD</span>
+          <span className="text-lg tracking-wide ">₹{totalProductPrice.toLocaleString("en-IN")}</span>
         </div>
         <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-LightSecondaryColor pb-4">
           <div className="flex flex-col gap-2">
@@ -72,13 +72,13 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
             <span className=" text-lg font-RobotoCondensed">{shippingMethod} rate</span>
           </div>
 
-          <span className=" tracking-wide  text-lg">${shippingMethodValue * productTotalQuantity}.00 USD</span>
+          <span className=" tracking-wide  text-lg">₹{(shippingMethodValue * productTotalQuantity).toLocaleString("en-IN")}</span>
         </div>
         <div className="flex items-center mx-[5%] justify-between ">
           <h2 className="font-bold text-[20px] md:text-[24px]">Total</h2>
           <h2 className="font-bold tracking-wide  text-[20px] md:text-[24px]">
             {" "}
-            ${(totalProductPrice + productTotalQuantity * shippingMethodValue).toFixed(2)} USD
+            ₹{(totalProductPrice + productTotalQuantity * shippingMethodValue).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
           </h2>
         </div>
       </div>

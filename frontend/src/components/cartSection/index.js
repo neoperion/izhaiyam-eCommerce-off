@@ -96,7 +96,7 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
                 <div className="pt-4 flex flex-col gap-4 border-t-[1px] border-gray-100 mt-20 w-[100%]">
                   <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-gray-100 pb-4">
                     <h2 className="font-inter font-medium text-[18px] md:text-[20px] text-gray-700">Subtotal</h2>
-                    <span className="font-inter text-lg tracking-wide font-semibold text-gray-900">${totalProductPrice.toFixed(2)} USD</span>
+                    <span className="font-inter text-lg tracking-wide font-semibold text-gray-900">₹{totalProductPrice.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-gray-100 pb-4">
                     <div className="flex flex-col gap-2">
@@ -105,12 +105,12 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
                       <span className="font-inter md:text-base text-sm text-gray-500">{shippingMethod} rate</span>
                     </div>
 
-                    <span className="font-inter tracking-wide  md:text-lg font-semibold text-gray-900">${shippingMethodValue * productTotalQuantity}.00 USD</span>
+                    <span className="font-inter tracking-wide  md:text-lg font-semibold text-gray-900">₹{(shippingMethodValue * productTotalQuantity).toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex  items-center mx-[5%] justify-between ">
                     <h2 className="font-inter font-semibold text-[20px] md:text-[24px] text-gray-900">Total</h2>
                     <h2 className="font-inter font-semibold tracking-wide  text-[20px] md:text-[24px] text-gray-900">
-                      ${(totalProductPrice + productTotalQuantity * shippingMethodValue).toFixed(2)} USD
+                      ₹{(totalProductPrice + productTotalQuantity * shippingMethodValue).toLocaleString("en-IN")}
                     </h2>
                   </div>
                   <div className=" mx-[5%] mt-6">

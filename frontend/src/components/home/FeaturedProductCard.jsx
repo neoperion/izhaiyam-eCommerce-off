@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 
-const FeaturedProductCard = ({ product, isWishlisted }) => {
+const FeaturedProductCard = ({ product, isWishlisted }) =>
+{
     const { _id, title, price, image, discountPercentValue, rating, reviews, description, material, seatingCapacity, finish } = product;
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -18,12 +19,14 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
     // For now, using single image, but structure supports multiple images
     const images = [image];
 
-    const handlePrevImage = (e) => {
+    const handlePrevImage = (e) =>
+    {
         e.preventDefault();
         setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     };
 
-    const handleNextImage = (e) => {
+    const handleNextImage = (e) =>
+    {
         e.preventDefault();
         setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     };

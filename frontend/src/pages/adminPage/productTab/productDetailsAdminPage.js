@@ -40,7 +40,7 @@ export const ProductDetailsModal = ({
               <h4 className=" mb-2">Product Title</h4> <span className=" text-lg font-bold capitalize">{title}</span>
             </div>
             <div className="flex flex-col items-center mb-4">
-              <h4 className=" ">Price</h4> <span className=" text-lg font-bold">{price} USD</span>
+              <h4 className=" ">Price</h4> <span className=" text-lg font-bold">₹{price}</span>
             </div>
             <div className="flex flex-col items-center mb-4">
               <h4 className=" ">sub-categories</h4>{" "}

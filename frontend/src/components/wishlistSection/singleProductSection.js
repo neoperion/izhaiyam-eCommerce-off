@@ -30,7 +30,7 @@ export const SingleProductSection = ({ wishlistData, setIsWishlistActive }) => {
       </div>
       <div className="flex flex-col gap-2 w-[50%] text-base">
         <h2 className="font-inter md:text-[18px] font-medium capitalize">{title}</h2>
-        <h3 className="font-inter font-bold md:text-[18px] tracking-wide">${price.toFixed(2)}</h3>
+        <h3 className="font-inter font-bold md:text-[18px] tracking-wide">₹{price.toLocaleString("en-IN")}</h3>
         <span className="font-inter text-primaryColor tracking-[0.7px]">
           {stock < 0 ? "Out of stock" : <strong>{stock}</strong>}
           {stock >= 0 && " left in stock"}

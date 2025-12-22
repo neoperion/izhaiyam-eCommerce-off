@@ -27,12 +27,12 @@ export const AboutUsPage = () => {
         <div>
           <h2 className="text-[28px] md:text-[32px] lg:text-[36px] mb-2">Our Story</h2>
           <p className="leading-[180%] first-letter:float-left first-letter:mr-4 first-letter:text-7xl  first-letter:text-secondaryColor first-letter:font-bold">
-            Welcome to our e-furniture store,Auffur, where we offer a wide selection of high-quality, affordable
+            Welcome to our e-furniture store,Izhiyam, where we offer a wide selection of high-quality, affordable
             furniture for every room in your home. Our online platform allows you to shop for furniture at your
             convenience, with easy-to-use filters that help you find the perfect piece for your style and budget. We
             believe that everyone deserves to have a beautiful, comfortable home, and we're committed to making that a
             reality for our customers. Our furniture is designed and crafted by experts using only the best components,
-            ensuring that you get furniture that is both stylish and durable. At Auffur, we're passionate about creating
+            ensuring that you get furniture that is both stylish and durable. At Izhiyam, we're passionate about creating
             beautiful spaces and providing excellent customer service, and we look forward to helping you create your
             dream home.
           </p>

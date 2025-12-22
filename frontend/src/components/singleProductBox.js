@@ -123,18 +123,19 @@ export const SingleProductBox = ({ productsData }) => {
         </div>
 
         {/* Price */}
+        {/* Price */}
         {discountPercentValue > 0 ? (
           <div className="flex items-baseline gap-2 mb-4">
             <span className="font-bold text-xl text-foreground">
-              ₹{discountedPrice.toFixed(2)}
+              ₹{discountedPrice.toLocaleString("en-IN")}
             </span>
             <span className="text-sm text-muted-foreground line-through">
-              ₹{price.toFixed(2)}
+              ₹{price.toLocaleString("en-IN")}
             </span>
           </div>
         ) : (
           <span className="font-bold text-xl text-foreground mb-4 block">
-            ₹{price.toFixed(2)}
+            ₹{price.toLocaleString("en-IN")}
           </span>
         )}
 

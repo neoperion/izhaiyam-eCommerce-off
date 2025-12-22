@@ -162,7 +162,7 @@ const OrdersManagement = () => {
                           <span className="text-xs text-gray-500 ml-1">+{order.productCount - 1} more</span>
                         )}
                       </td>
-                      <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString()}</td>
+                      <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString("en-IN")}</td>
                       <td className="p-3 md:p-4">
                         <span className={`px-2 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusColor(order.status)}`}>
                           {order.status}
@@ -221,7 +221,7 @@ const OrdersManagement = () => {
           <div className="bg-white rounded-lg shadow-md border p-4">
             <p className="text-xs md:text-sm text-gray-500">Total Revenue</p>
             <p className="text-xl md:text-2xl font-bold text-primaryColor mt-1">
-              ₹{orders.reduce((sum, order) => sum + order.amount, 0).toLocaleString()}
+              ₹{orders.reduce((sum, order) => sum + order.amount, 0).toLocaleString("en-IN")}
             </p>
           </div>
         </div>

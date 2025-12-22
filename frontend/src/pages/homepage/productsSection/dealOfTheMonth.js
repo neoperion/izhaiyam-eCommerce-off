@@ -87,11 +87,11 @@ export const DealOfTheMonth = () => {
             <span className="text-primaryColor font-bold">
               {isOfferOn ? `${discountPercentValue}% discount` : "a huge discount"}
             </span>
-            &nbsp; from this Furniture set
+            &nbsp; on this Furniture Set
           </h2>
           <h3 className="text-primaryColor mt-2 font-RobotoSlab  font-medium  text-xl tablet:text-2xl md:text-2xl xl:text-3xl">
             {" "}
-            {isOfferOn ? "Offer ends by :" : "Offer begins by :"}{" "}
+            {isOfferOn ? "Offer ends in :" : "Offer starts in :"}{" "}
           </h3>
           <div className="flex gap-[0.9rem] lg:[0.8rem] w-[96%] lg:gap-[0.9rem] lg:w-[100%] tablet:w-[88%]  md:w[92%] tablet:py-4 max-w-[372px]  md:max-w-[392px] lg:max-w-[400px] items-start bg-primaryColor text-white font-bold font-RobotoCondensed py-2 justify-center mr-auto">
             <div className="flex flex-col gap-[2px] items-center">
@@ -134,15 +134,15 @@ export const DealOfTheMonth = () => {
                   {discountPercentValue > 0 ? (
                     <div className="flex gap-3">
                       <h3 className="font-bold text-[20px] md:text-[28px] font-RobotoSlab tracking-[1px]">
-                        ${discountedPrice.toFixed(2)}
+                        ₹{discountedPrice.toLocaleString("en-IN")}
                       </h3>
                       <h3 className="line-through tracking-[1px] text-[18px] md:text-[20px] font-RobotoSlab">
-                        ${price.toFixed(2)}
+                        ₹{price.toLocaleString("en-IN")}
                       </h3>
                     </div>
                   ) : (
                     <h3 className="font-bold text-[20px] md:text-[28px] tracking-[1px] font-RobotoSlab">
-                      ${price.toFixed(2)}
+                      ₹{price.toLocaleString("en-IN")}
                     </h3>
                   )}
                 </>
