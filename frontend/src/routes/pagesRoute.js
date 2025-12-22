@@ -17,6 +17,7 @@ import { Orders } from "../pages/profilePage/Orders";
 import { Navigate } from "react-router-dom";
 import { ContactUsPage } from "../pages/contactUsPage";
 import { AboutUsPage } from "../pages/aboutUsPage";
+import GalleryPage from "../pages/galleryPage";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { AdminDashboard } from "../pages/adminPage/dashboard";
@@ -39,6 +40,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="/contactUs" element={<ContactUsPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
 
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/search" element={<SearchPage />} />
