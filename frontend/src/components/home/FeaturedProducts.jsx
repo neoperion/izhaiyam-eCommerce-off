@@ -3,12 +3,15 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import FeaturedProductCard from './FeaturedProductCard';
+import { useSelector } from 'react-redux';
 
 const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [wishlist, setWishlist] = useState([]);
     const scrollContainerRef = useRef(null);
+
+    // Get wishlist from Redux (same as shop page)
+    const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
 
     useEffect(() => {
         const fetchFeaturedProducts = async () => {
@@ -27,12 +30,7 @@ const FeaturedProducts = () => {
         fetchFeaturedProducts();
     }, []);
 
-    const toggleWishlist = (id) => {
-        // This is a local toggle for now, usually needs API call to update user wishlist
-        setWishlist((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-        );
-    };
+
 
     // Scroll functions for arrow navigation
     const scrollLeft = () => {
@@ -124,8 +122,7 @@ const FeaturedProducts = () => {
                                     <div key={product._id} className="flex-shrink-0 w-[280px] sm:w-[320px]">
                                         <FeaturedProductCard
                                             product={product}
-                                            toggleWishlist={toggleWishlist}
-                                            isWishlisted={wishlist.includes(product._id)}
+                                            isWishlisted={wishlist.some(item => item._id === product._id)}
                                         />
                                     </div>
                                 ))

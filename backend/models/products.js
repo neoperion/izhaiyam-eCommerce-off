@@ -14,6 +14,11 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 100,
     },
+    status: {
+      type: String,
+      enum: ["In Stock", "Out of Stock"],
+      default: "In Stock"
+    },
     isFeatured: {
       type: Boolean,
       default: false,

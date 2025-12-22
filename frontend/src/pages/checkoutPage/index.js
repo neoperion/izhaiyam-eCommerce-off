@@ -5,6 +5,7 @@ import { OrderSummary } from "./orderSummary";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
+import { getAllProductsData } from "../../features/productSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
@@ -83,6 +84,9 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
         const currentData = JSON.parse(localStorage.getItem("UserData")) || {};
         const updatedData = { ...currentData, ...data.user }; // Merge existing token etc with new user data
         localStorage.setItem("UserData", JSON.stringify(updatedData));
+        
+        // Refetch products to show updated stock immediately
+        dispatch(getAllProductsData());
       }
 
       toast("Order has successfully been placed, you can check profile page > orders to track order", {
