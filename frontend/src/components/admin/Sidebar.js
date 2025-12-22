@@ -22,9 +22,6 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
     { icon: ShoppingCart, label: 'Orders', path: '/administrator/orders-Management' },
     { icon: Package, label: 'Products', path: '/administrator/products' },
     { icon: Users, label: 'Customers', path: '/administrator/user-Management' },
-    { icon: BarChart3, label: 'Analytics', path: '/administrator/analytics' },
-    { icon: Tag, label: 'Coupons', path: '/administrator/coupons' },
-    { icon: MessageSquare, label: 'Support', path: '/administrator/support' },
     { icon: Settings, label: 'Settings', path: '/administrator/settings' }
   ];
 

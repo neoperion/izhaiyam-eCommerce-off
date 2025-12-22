@@ -24,9 +24,6 @@ import { ProductManagement } from "../pages/adminPage/productTab/";
 import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
 import OrdersManagement from "../pages/adminPage/OrdersManagement";
-import { AnalyticsPage } from "../pages/adminPage/analytics";
-import { CouponsPage } from "../pages/adminPage/coupons";
-import { SupportPage } from "../pages/adminPage/support";
 import { SettingsPage } from "../pages/adminPage/settings";
 
 
@@ -64,9 +61,6 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="orders-Management" element={<OrdersManagement />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="coupons" element={<CouponsPage />} />
-          <Route path="support" element={<SupportPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
