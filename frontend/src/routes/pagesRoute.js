@@ -4,7 +4,7 @@ import Homepage from "../pages/homepage/homepage";
 import ShopPage from "../pages/shopPage";
 import AdminPage from "../pages/adminPage";
 import { SearchPage } from "../pages/searchPage/searchPage";
-import { ProductDetailsPage } from "../pages/productDetailsPage";
+import { ProductDetailsPage } from "../pages/productDetailsPage.js";
 import { CheckoutPage } from "../pages/checkoutPage";
 import { LoginPage } from "../pages/loginPage";
 import { RegisterPage } from "../pages/RegisterPage";

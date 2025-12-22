@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { handleWishlistModification } from '../../utils/handleWishlistModification';
 
-const FeaturedProductCard = ({ product, toggleWishlist, isWishlisted }) => {
+const FeaturedProductCard = ({ product, isWishlisted }) => {
     const { _id, title, price, image, discountPercentValue, rating, reviews, description, material, seatingCapacity, finish } = product;
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const dispatch = useDispatch();
 
     // Calculate discounted price
     const discountedPrice = discountPercentValue > 0
@@ -61,15 +64,13 @@ const FeaturedProductCard = ({ product, toggleWishlist, isWishlisted }) => {
 
                 {/* Wishlist Heart */}
                 <button
-                    onClick={() => toggleWishlist(_id)}
-                    className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-all"
+                    className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"
+                        }`}
+                    onClick={() => handleWishlistModification(_id, dispatch)}
                     aria-label="Add to wishlist"
                 >
                     <Heart
-                        size={18}
-                        className={`transition-colors ${isWishlisted
-                                ? 'fill-red-500 stroke-red-500'
-                                : 'stroke-gray-600 hover:stroke-red-500'
+                        className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"
                             }`}
                     />
                 </button>

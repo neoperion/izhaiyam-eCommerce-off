@@ -63,7 +63,7 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
         }`}
     >
       <section className="flex flex-col z-[2000] overflow-y-auto absolute top-0 bg-white items-start w-[98%] right-0 bottom-0 pt-4 pb-12 gap-7 tracking-[0.25px] text-lg h-[100%] lg:max-w-[520px] md:max-w-[480px] tablet:max-w-[480px]">
-        <h1 className="font-inter text-center mt-[0.5em] w-[100%] text-[1.75rem] border-b-[2px] border-LightSecondaryColor pb-4 font-bold">
+        <h1 className="font-inter text-center mt-[0.5em] w-[100%] text-[1.75rem] border-b-[1px] border-gray-100 pb-4 font-semibold text-gray-800">
           My Cart
         </h1>
         <IoCloseOutline
@@ -77,47 +77,56 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
             {cart.length < 1 ? (
               <div className="flex justify-center items-center w-[100%] h-[50vh]">
                 {" "}
-                <h2 className="font-inter font-bold text-xl">Your Cart is currently empty</h2>{" "}
+                <h2 className="font-inter font-medium text-lg text-gray-600">Your Cart is currently empty</h2>{" "}
               </div>
             ) : (
-              <div className="w-[100%] flex flex-col px-[5%] gap-4">
-                {cart.map((cartData) => {
-                  return <SingleProductSection {...{ cartData, setIsCartSectionActive }} key={cartData._id} />;
-                })}
-              </div>
-            )}
-            <div className="pt-4 flex flex-col gap-4 border-t-[2px] border-LightSecondaryColor mt-20 w-[100%]">
-              <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-LightSecondaryColor pb-4">
-                <h2 className="font-inter font-normal text-[18px] md:text-[20px]">SubTotal</h2>
-                <span className="font-inter text-lg tracking-wide ">${totalProductPrice.toFixed(2)} USD</span>
-              </div>
-              <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-LightSecondaryColor pb-4">
-                <div className="flex flex-col gap-2">
-                  {" "}
-                  <h2 className="font-inter font-normal  md:text-[20px] text-[18px]">Shipping option</h2>
-                  <span className="font-inter md:text-lg">{shippingMethod} rate</span>
+              <>
+                <div className="w-[100%] flex flex-col px-[5%] gap-4">
+                  {cart.map((cartData) => {
+                    // Create unique key for customized products
+                    const uniqueKey = cartData.selectedColor
+                      ? `${cartData._id}-${cartData.selectedColor.colorName}`
+                      : cartData._id;
+
+                    return <SingleProductSection {...{ cartData, setIsCartSectionActive }} key={uniqueKey} />;
+                  })}
                 </div>
 
-                <span className="font-inter tracking-wide  md:text-lg">${shippingMethodValue * productTotalQuantity}.00 USD</span>
-              </div>
-              <div className="flex  items-center mx-[5%] justify-between ">
-                <h2 className="font-inter font-bold text-[20px] md:text-[24px]">Total</h2>
-                <h2 className="font-inter font-bold tracking-wide  text-[20px] md:text-[24px]">
-                  ${(totalProductPrice + productTotalQuantity * shippingMethodValue).toFixed(2)} USD
-                </h2>
-              </div>
-              <div className=" mx-[5%] mt-6">
-                <motion.button
-                  variants={primaryBtnVariant}
-                  initial="initial"
-                  whileTap="click"
-                  className="font-inter bg-primaryColor text-[#ffffff] w-[100%] h-[54px] rounded-md  "
-                  onClick={proceedToCheckoutPage}
-                >
-                  Proceed to Checkout
-                </motion.button>
-              </div>
-            </div>
+                {/* Subtotal and Checkout Section - Only show when cart has items */}
+                <div className="pt-4 flex flex-col gap-4 border-t-[1px] border-gray-100 mt-20 w-[100%]">
+                  <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-gray-100 pb-4">
+                    <h2 className="font-inter font-medium text-[18px] md:text-[20px] text-gray-700">Subtotal</h2>
+                    <span className="font-inter text-lg tracking-wide font-semibold text-gray-900">${totalProductPrice.toFixed(2)} USD</span>
+                  </div>
+                  <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-gray-100 pb-4">
+                    <div className="flex flex-col gap-2">
+                      {" "}
+                      <h2 className="font-inter font-medium  md:text-[20px] text-[18px] text-gray-700">Shipping</h2>
+                      <span className="font-inter md:text-base text-sm text-gray-500">{shippingMethod} rate</span>
+                    </div>
+
+                    <span className="font-inter tracking-wide  md:text-lg font-semibold text-gray-900">${shippingMethodValue * productTotalQuantity}.00 USD</span>
+                  </div>
+                  <div className="flex  items-center mx-[5%] justify-between ">
+                    <h2 className="font-inter font-semibold text-[20px] md:text-[24px] text-gray-900">Total</h2>
+                    <h2 className="font-inter font-semibold tracking-wide  text-[20px] md:text-[24px] text-gray-900">
+                      ${(totalProductPrice + productTotalQuantity * shippingMethodValue).toFixed(2)} USD
+                    </h2>
+                  </div>
+                  <div className=" mx-[5%] mt-6">
+                    <motion.button
+                      variants={primaryBtnVariant}
+                      initial="initial"
+                      whileTap="click"
+                      className="font-inter bg-[#93a267] hover:bg-[#7d8c56] text-white font-bold w-[100%] h-[54px] rounded-md transition-colors"
+                      onClick={proceedToCheckoutPage}
+                    >
+                      Proceed to Checkout
+                    </motion.button>
+                  </div>
+                </div>
+              </>
+            )}
           </PersistGate>
         )}
       </section>
