@@ -56,6 +56,20 @@ const productSchema = new mongoose.Schema(
         stock: { type: Number, default: 0 },
       },
     ],
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
+    isPinned: {
+      type: Boolean,
+      default: false,
+    },
+    displayRow: {
+      type: Number,
+    },
+    displayColumn: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

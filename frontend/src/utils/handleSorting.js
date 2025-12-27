@@ -11,7 +11,9 @@ export const handleSorting = (
   let sortedArr;
   switch (sortingCriteria) {
     case "Default: Latest":
-      sortedArr = [...allProductsData].sort((a, z) => a.updatedAt.localeCompare(z.updatedAt));
+      // Backend now sends data sorted by Pinned > DisplayOrder > CreatedAt. 
+      // So we just use the array as is.
+      sortedArr = [...allProductsData];
       break;
     case "Oldest":
       sortedArr = [...allProductsData].sort((a, z) => z.updatedAt.localeCompare(a.updatedAt));

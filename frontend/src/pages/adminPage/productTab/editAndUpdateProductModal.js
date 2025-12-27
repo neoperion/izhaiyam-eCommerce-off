@@ -11,10 +11,11 @@ export const EditAndupdateProductModal = ({
   setProductDetails,
   setIsFetchingUpdatedDataLoading,
   isFetchingUpdatedDataLoading,
+  fetchProductData,
 }) => {
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
-  const { _id, title, stock, price, discountPercentValue, categories, image, isFeatured, description, isCustomizable: initialIsCustomizable, colorVariants: initialColorVariants } = productDetails;
+  const { _id, title, stock, price, discountPercentValue, categories, image, isFeatured, description, isCustomizable: initialIsCustomizable, colorVariants: initialColorVariants, displayOrder, isPinned } = productDetails;
   
   // Color Variants State
   const [isCustomizable, setIsCustomizable] = useState(initialIsCustomizable || false);
@@ -79,7 +80,10 @@ export const EditAndupdateProductModal = ({
       stock: parseInt(stock),
       discountPercentValue,
       isFeatured,
+
       isCustomizable,
+      displayOrder: parseInt(productDetails.displayOrder),
+      isPinned: productDetails.isPinned,
       colorVariants: isCustomizable ? colorVariants.map(c => ({ 
         colorName: c.colorName, 
         hexCode: c.hexCode, 
@@ -109,7 +113,10 @@ export const EditAndupdateProductModal = ({
         price: "",
         discountPercentValue: "",
         isFeatured: false,
+
         isCustomizable: false,
+        displayOrder: "",
+        isPinned: false,
         description: "",
         categories: {
           "Featured Categories": [],
@@ -134,6 +141,7 @@ export const EditAndupdateProductModal = ({
 
       setIsFetchingUpdatedDataLoading(false);
       setIsEditAndUpdateModal(false);
+      fetchProductData && fetchProductData();
     } catch (error) {
       let errMessage;
 
@@ -349,6 +357,42 @@ export const EditAndupdateProductModal = ({
                 </label>
               </div>
             </div>
+
+            
+            <div className="mb-6 flex gap-[2%] items-end justify-between">
+                <div className="w-[30%]">
+                    <label htmlFor="displayOrder" className="font-bold">
+                    Display Order
+                    </label>
+                    <input
+                    type="number"
+                    id="displayOrder"
+                    value={productDetails.displayOrder || ""}
+                    onChange={(e) => {
+                        setProductDetails((prevData) => {
+                        return { ...prevData, displayOrder: e.target.value };
+                        });
+                    }}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                    />
+                </div>
+                <div className="w-[30%] flex items-center justify-center pb-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            checked={productDetails.isPinned || false} 
+                            onChange={(e) => {
+                                setProductDetails((prevData) => {
+                                    return { ...prevData, isPinned: e.target.checked };
+                                });
+                            }}
+                            className="w-5 h-5 accent-[#fca311]"
+                        />
+                        <span className="font-bold">Pin to Top</span>
+                    </label>
+                </div>
+            </div>
+
             <section>
               <h2 className="text-lg font-bold mb-2">Select product categories</h2>
               <div className="mb-6">

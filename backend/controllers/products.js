@@ -6,6 +6,21 @@ const { title } = require("process");
 
 const createProducts = async (req, res) => {
   console.log("Create Product Request Body:", req.body);
+  
+  // Auto-assign displayOrder if not provided
+  if (req.body.displayOrder !== undefined && req.body.displayOrder !== null && req.body.displayOrder !== "") {
+      const newOrder = parseInt(req.body.displayOrder);
+      // Shift existing products down to make space: displayOrder >= newOrder -> +1
+      await Product.updateMany(
+          { displayOrder: { $gte: newOrder } },
+          { $inc: { displayOrder: 1 } }
+      );
+      req.body.displayOrder = newOrder;
+  } else {
+      const lastProduct = await Product.findOne().sort({ displayOrder: -1 });
+      req.body.displayOrder = lastProduct && lastProduct.displayOrder ? lastProduct.displayOrder + 1 : 1;
+  }
+
   const product = await Product.create(req.body);
   console.log("Created Product:", product);
   res.status(201).json(product);
@@ -19,7 +34,8 @@ const getAllProducts = async (req, res) => {
     queryObject.isFeatured = featured === "true";
   }
 
-  let result = Product.find(queryObject);
+  // Default Sort: Pinned first, then by displayOrder (ASC), then by createdAt (newest fallback)
+  let result = Product.find(queryObject).sort({ isPinned: -1, displayOrder: 1, createdAt: -1 });
 
   if (limit) {
     const limitVal = Number(limit) || 10;
@@ -68,6 +84,8 @@ const getAspecificProduct = async (req, res) => {
     colors: 1,
     isCustomizable: 1,
     colorVariants: 1,
+    displayOrder: 1,
+    isPinned: 1,
   });
   if (!checkIfProductExist) {
     throw new CustomErrorHandler(404, "Products not found");
@@ -82,10 +100,23 @@ const deleteAspecificProduct = async (req, res) => {
     throw new CustomErrorHandler(401, "parameters missing");
   }
 
-  const product = await Product.findByIdAndDelete(id);
-  if (!product) {
+  const productToDelete = await Product.findById(id);
+  if (!productToDelete) {
     throw new CustomErrorHandler(404, "Products not found");
   }
+
+  const deletedOrder = productToDelete.displayOrder;
+
+  const product = await Product.findByIdAndDelete(id);
+  
+  // Reindex: Shift items > deletedOrder UP (-1) to close gap
+  if (deletedOrder) {
+      await Product.updateMany(
+          { displayOrder: { $gt: deletedOrder } },
+          { $inc: { displayOrder: -1 } }
+      );
+  }
+
   res.status(201).json({ message: "success", product });
 };
 
@@ -95,6 +126,37 @@ const updateAspecificProduct = async (req, res) => {
   if (!id || !updatedData) {
     throw new CustomErrorHandler(401, "parameters missing");
   }
+
+  // Fetch current product to find old displayOrder
+  const currentProduct = await Product.findById(id);
+  if (!currentProduct) {
+      throw new CustomErrorHandler(404, "Product not found");
+  }
+
+  // Handle Display Order Reindexing if changed
+  if (updatedData.displayOrder !== undefined && updatedData.displayOrder !== null && updatedData.displayOrder !== "") {
+      const newOrder = parseInt(updatedData.displayOrder);
+      const oldOrder = currentProduct.displayOrder;
+
+      // Only reindex if the order actually changed
+      if (oldOrder !== undefined && newOrder !== oldOrder) {
+          if (newOrder < oldOrder) {
+              // Moving UP: Shift items in [newOrder, oldOrder - 1] DOWN (+1)
+              await Product.updateMany(
+                  { displayOrder: { $gte: newOrder, $lt: oldOrder } },
+                  { $inc: { displayOrder: 1 } }
+              );
+          } else {
+              // Moving DOWN: Shift items in [oldOrder + 1, newOrder] UP (-1)
+              await Product.updateMany(
+                  { displayOrder: { $gt: oldOrder, $lte: newOrder } },
+                  { $inc: { displayOrder: -1 } }
+              );
+          }
+      }
+      updatedData.displayOrder = newOrder;
+  }
+
   console.log("Update Product Request Body:", updatedData);
   const Updatedproduct = await Product.findByIdAndUpdate(id, updatedData, { runValidators: true, new: true });
   console.log("Updated Product Result:", Updatedproduct);
@@ -140,4 +202,37 @@ module.exports = {
   updateAspecificProduct,
   searchProducts,
   sortByLowStockProducts,
+};
+
+const reindexAllProducts = async (req, res) => {
+  // Fetch all products, sorted by Pinned > DisplayOrder > UpdatedAt
+  const products = await Product.find({}).sort({ isPinned: -1, displayOrder: 1, createdAt: -1 });
+
+  // Update each product to have displayOrder = index + 1
+  const bulkOps = products.map((product, index) => {
+      return {
+          updateOne: {
+              filter: { _id: product._id },
+              update: { $set: { displayOrder: index + 1 } }
+          }
+      };
+  });
+
+  if (bulkOps.length > 0) {
+      await Product.bulkWrite(bulkOps);
+  }
+
+  res.status(200).json({ message: "All products reindexed successfully" });
+};
+
+module.exports = {
+  getAllProducts,
+  createProducts,
+  uploadProductImages,
+  getAspecificProduct,
+  deleteAspecificProduct,
+  updateAspecificProduct,
+  searchProducts,
+  sortByLowStockProducts,
+  reindexAllProducts,
 };

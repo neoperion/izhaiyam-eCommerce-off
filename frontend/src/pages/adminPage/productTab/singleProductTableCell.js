@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit, AiFillPushpin } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { DeleteProductModal } from "./deleteProductModal";
 import { EditAndupdateProductModal } from "./editAndUpdateProductModal";
 import { ProductDetailsModal } from "./productDetailsAdminPage";
 
-export const SingleProductTableCell = ({ products }) => {
+export const SingleProductTableCell = ({ products, fetchProductData }) => {
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isEditAndUpdateModalOn, setIsEditAndUpdateModal] = useState(false);
   const [isProductDetailsModalOn, setIsProductDetailsModalOn] = useState(false);
@@ -26,7 +26,7 @@ export const SingleProductTableCell = ({ products }) => {
   });
   const [isFetchingUpdatedDataLoading, setIsFetchingUpdatedDataLoading] = useState(false);
 
-  const { _id, stock, title, price } = products;
+  const { _id, stock, title, price, displayOrder, isPinned } = products;
 
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
@@ -70,6 +70,7 @@ export const SingleProductTableCell = ({ products }) => {
           setProductDetails,
           setIsFetchingUpdatedDataLoading,
           isFetchingUpdatedDataLoading,
+          fetchProductData,
         }}
       />
       <DeleteProductModal {...{ isDeleteModalOn, setIsDeleteModalOn, _id }} />
@@ -81,6 +82,12 @@ export const SingleProductTableCell = ({ products }) => {
         <td className="p-2  border border-b-0 border-LightSecondaryColor">{title}</td>
         <td className="p-2  border border-b-0 border-LightSecondaryColor">{price}</td>
         <td className="p-2  border border-b-0 border-LightSecondaryColor">{stock}</td>
+        <td className="p-2  border border-b-0 border-LightSecondaryColor">
+            <div className="flex items-center gap-1">
+                {isPinned && <AiFillPushpin className="text-[#fca311]" />}
+                <span>{displayOrder}</span>
+            </div>
+        </td>
         <td className="p-2  border border-b-0 border-LightSecondaryColor  ">
           <div className="flex items-center justify-center gap-2">
             {" "}

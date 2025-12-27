@@ -3,14 +3,17 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 
-export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicked }) => {
+export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicked, fetchProductData }) => {
   const [imgUrl, setImgUrl] = useState("");
   const [productTitle, setProductTitle] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productDiscountPercentValue, setProductDiscountPercentValue] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [productStock, setProductStock] = useState(0);
+
   const [isFeatured, setIsFeatured] = useState(false);
+  const [displayOrder, setDisplayOrder] = useState("");
+  const [isPinned, setIsPinned] = useState(false);
   const [categories, setCategories] = useState({
     "Featured Categories": [],
     location: [],
@@ -68,7 +71,10 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       stock: productStock,
       discountPercentValue: productDiscountPercentValue,
       isFeatured: isFeatured,
+
       isCustomizable: isCustomizable,
+      displayOrder: displayOrder ? parseInt(displayOrder) : undefined,
+      isPinned: isPinned,
       colorVariants: isCustomizable ? colorVariants.map(c => ({ 
         colorName: c.colorName, 
         hexCode: c.hexCode, 
@@ -101,7 +107,10 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       setProductPrice("");
       setProductStock(0);
       setProductDiscountPercentValue(0);
+
       setIsFeatured(false);
+      setDisplayOrder("");
+      setIsPinned(false);
       setIsCustomizable(false);
       setColorVariants([]);
       setNewColor({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
@@ -115,6 +124,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
         isLoading: false,
         autoClose: 3000,
       });
+      fetchProductData && fetchProductData();
     } catch (error) {
       let errMessage;
       if (!error.response.data) errMessage = error.message;
@@ -295,6 +305,33 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                         className="w-5 h-5 accent-[#fca311]"
                     />
                     <span className="font-bold">Featured</span>
+                </label>
+            </div>
+          </div>
+
+          <div className="mb-6 flex gap-[2%] items-end justify-between">
+            <div className="w-[30%]">
+                 <label htmlFor="displayOrder" className="font-bold">
+                  Display order
+                </label>
+                <input
+                  type="number"
+                  id="displayOrder"
+                  value={displayOrder}
+                  onChange={(e) => setDisplayOrder(e.currentTarget.value)}
+                  className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  placeholder="Auto-assigned if empty"
+                />
+            </div>
+            <div className="w-[30%] flex items-center justify-center pb-2">
+                 <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        checked={isPinned} 
+                        onChange={(e) => setIsPinned(e.target.checked)}
+                        className="w-5 h-5 accent-[#fca311]"
+                    />
+                    <span className="font-bold">Pin to Top</span>
                 </label>
             </div>
           </div>

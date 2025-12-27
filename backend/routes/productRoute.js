@@ -8,6 +8,7 @@ const {
   searchProducts,
   updateAspecificProduct,
   sortByLowStockProducts,
+  reindexAllProducts
 } = require("../controllers/products");
 const { checkIfUserIsAnAdminMiddleware } = require("../middleware/adminAuthorisation");
 
@@ -20,5 +21,6 @@ router.route("/deleteProduct/:id").delete(checkIfUserIsAnAdminMiddleware, delete
 router.route("/editAndupdateProduct/:id").patch(checkIfUserIsAnAdminMiddleware, updateAspecificProduct);
 router.route("/searchProducts").get(searchProducts);
 router.route("/sortByLowStockProducts").get(sortByLowStockProducts);
+router.route("/reindex").patch(checkIfUserIsAnAdminMiddleware, reindexAllProducts);
 
 module.exports = router;

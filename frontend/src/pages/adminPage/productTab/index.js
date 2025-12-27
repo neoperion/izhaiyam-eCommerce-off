@@ -84,7 +84,7 @@ export const ProductManagement = () => {
   };
 
   return (    <AdminLayout>    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
-      <AddNewProduct {...{ isAddNewProductClicked, setIsAddNewProductClicked }} />
+      <AddNewProduct {...{ isAddNewProductClicked, setIsAddNewProductClicked, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} />
       <div className="container mx-auto">
         <div className="flex  rounded-md items-center justify-between bg-neutralColor w-full p-5">
           <h2 className="text-lg md:text-xl">Add New Product</h2>
@@ -98,7 +98,27 @@ export const ProductManagement = () => {
       <div className="my-20">
         <div className="flex justify-between items-start">
           {" "}
-          <h2 className="text-black text-xl md:text-2xl font-medium mb-4">Products</h2>
+          <div className="flex gap-4 items-center mb-4">
+            <h2 className="text-black text-xl md:text-2xl font-medium">Products</h2>
+            <button
+                className="bg-black text-white px-3 py-1 rounded text-sm hover:bg-gray-800"
+                onClick={async () => {
+                    if(!window.confirm("This will regenerate display order numbers for ALL products to remove duplicates and gaps. Continue?")) return;
+                    try {
+                        const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || " ";
+                        await axios.patch(`${serverUrl}/api/v1/products/reindex`, {}, {
+                             headers: { authorization: `Bearer ${LoginToken}` }
+                        });
+                        alert("Reindexing complete!");
+                        fetchLowStockProducts(lowStockProductsParams);
+                    } catch(e) {
+                        alert("Reindexing failed: " + (e.response?.data?.message || e.message));
+                    }
+                }}
+            >
+                Fix Order
+            </button>
+          </div>
           {!closeSearchList && (
             <span
               className="text-[#fca311] font-medium hover:text-lightPrimaryColor cursor-pointer"
@@ -139,6 +159,7 @@ export const ProductManagement = () => {
                   <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Name</th>
                   <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Price</th>
                   <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Stock</th>
+                  <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Order</th>
                   <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Modify</th>
                 </tr>
               </thead>
@@ -149,7 +170,7 @@ export const ProductManagement = () => {
                 <>
                   <tbody>
                     {productsSearchedFor.map((products) => {
-                      return <SingleProductTableCell {...{ products }} key={products._id} />;
+                      return <SingleProductTableCell {...{ products, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
                     })}{" "}
                   </tbody>
                 </>
@@ -181,6 +202,7 @@ export const ProductManagement = () => {
               <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Name</th>
               <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Price</th>
               <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Stock</th>
+              <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Order</th>
               <th className="text-sm font-medium text-gray-600 p-2 bg-gray-100">Modify</th>
             </tr>
           </thead>
@@ -191,7 +213,7 @@ export const ProductManagement = () => {
             <>
               <tbody>
                 {lowStockProductsParams.lowStockProducts.map((products) => {
-                  return <SingleProductTableCell {...{ products }} key={products._id} />;
+                  return <SingleProductTableCell {...{ products, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
                 })}
               </tbody>
             </>
