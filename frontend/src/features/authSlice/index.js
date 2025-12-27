@@ -43,8 +43,6 @@ export const authSlice = createSlice({
 
       toast(payload, {
         type: "success",
-        autoClose: 3000,
-        position: "top-center",
       });
     },
     [RegisterUser.rejected]: (state, { payload }) => {
@@ -52,8 +50,6 @@ export const authSlice = createSlice({
 
       toast(payload, {
         type: "error",
-        autoClose: 4000,
-        position: "top-center",
       });
     },
 
@@ -70,8 +66,6 @@ export const authSlice = createSlice({
       state.userData = payload.userData;
       toast(payload.message, {
         type: "success",
-        autoClose: 3000,
-        position: "top-center",
       });
     },
     [loginUser.rejected]: (state, { payload }) => {
@@ -79,8 +73,6 @@ export const authSlice = createSlice({
 
       toast(payload, {
         type: "error",
-        autoClose: 3000,
-        position: "top-center",
       });
     },
     // fetch forgotpasssword click controller from server
@@ -91,16 +83,12 @@ export const authSlice = createSlice({
       state.isLoading = false;
       toast(payload, {
         type: "success",
-        autoClose: 3000,
-        position: "top-center",
       });
     },
     [fetchForgotPasswordClick.rejected]: (state, { payload }) => {
       state.isLoading = false;
       toast(payload, {
         type: "error",
-        autoClose: 3000,
-        position: "top-center",
       });
     },
     //resend email verification
@@ -111,16 +99,12 @@ export const authSlice = createSlice({
       state.isLoading = false;
       toast(payload, {
         type: "success",
-        autoClose: 4000,
-        position: "top-center",
       });
     },
     [fetchResendEmailVerificationLink.rejected]: (state, { payload }) => {
       state.isLoading = false;
       toast(payload, {
         type: "error",
-        autoClose: 4000,
-        position: "top-center",
       });
     },
     // fetch isTokenValid controller from servers

@@ -6,24 +6,24 @@ export const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 lato-regular" style={{ margin: 0, padding: 0 }}>
+    <div className="min-h-screen bg-gray-50 font-inter" style={{ margin: 0, padding: 0 }}>
       {/* Admin Sidebar - Fixed Left */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-      
+
       {/* Admin Main Content Area - Starts after sidebar */}
-      <div 
+      <div
         className="min-h-screen flex flex-col lg:ml-[260px]"
-        style={{ 
+        style={{
           padding: 0
         }}
       >
         {/* Admin Topbar - Sticky at top */}
         <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        
+
         {/* Admin Content - Scrollable area below topbar */}
-        <main 
+        <main
           className="flex-1 overflow-y-auto bg-gray-50"
-          style={{ 
+          style={{
             padding: 0,
             margin: 0
           }}
@@ -33,7 +33,7 @@ export const AdminLayout = ({ children }) => {
           </div>
         </main>
 
-        
+
       </div>
     </div>
   );

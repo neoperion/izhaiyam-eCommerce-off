@@ -35,12 +35,12 @@ export const RegisterPage = () => {
       toast.error("Please enter a valid email address");
       return;
     }
-    
+
     // Simple phone validation: 10-15 digits
     const phoneRegex = /^\d{10,15}$/;
     if (!phoneRegex.test(registerDetails.phone)) {
-        toast.error("Please enter a valid phone number (10-15 digits)");
-        return;
+      toast.error("Please enter a valid phone number (10-15 digits)");
+      return;
     }
 
     const response = await dispatch(RegisterUser(registerDetails));

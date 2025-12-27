@@ -60,9 +60,9 @@ export const LoginPage = () => {
     // Check if email (contains @) or generic identifier
     if (!loginDetails.email) {
       toast("Please enter your email or phone number", { type: "info" });
-      return; 
+      return;
     }
-    
+
     // If it looks like an email, validate it
     if (loginDetails.email.includes('@') && !validateEmail(loginDetails.email)) {
       toast("Enter a valid email", { type: "error" });

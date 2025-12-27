@@ -14,12 +14,12 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
       if (!productQuantity) {
         // REMOVE FROM CART
         const filteredCart = cart.filter((item) => {
-            // If deleting a specific variant
-            if (selectedColor) {
-                return !(item._id === _id && item.selectedColor?.colorName === selectedColor.colorName);
-            }
-            // If deleting non-variant product
-            return item._id !== _id;
+          // If deleting a specific variant
+          if (selectedColor) {
+            return !(item._id === _id && item.selectedColor?.colorName === selectedColor.colorName);
+          }
+          // If deleting non-variant product
+          return item._id !== _id;
         });
         newCart = [...filteredCart];
         toast("Product has been removed from cart", {
@@ -31,8 +31,8 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
         newCart = [...cart];
 
         for (let key of newCart) {
-          const isSameVariant = selectedColor 
-            ? key._id === _id && key.selectedColor?.colorName === selectedColor.colorName 
+          const isSameVariant = selectedColor
+            ? key._id === _id && key.selectedColor?.colorName === selectedColor.colorName
             : key._id === _id;
 
           if (isSameVariant) {
@@ -50,10 +50,10 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
     case false:
       if (!productQuantity) {
         let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
-        
+
         // Clone and add selectedColor if exists
         if (selectedColor) {
-            currentCartedProduct = { ...currentCartedProduct, selectedColor };
+          currentCartedProduct = { ...currentCartedProduct, selectedColor };
         }
 
         currentCartedProduct = {
@@ -68,10 +68,10 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
         });
       } else if (productQuantity) {
         let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
-        
-         // Clone and add selectedColor if exists
+
+        // Clone and add selectedColor if exists
         if (selectedColor) {
-            currentCartedProduct = { ...currentCartedProduct, selectedColor };
+          currentCartedProduct = { ...currentCartedProduct, selectedColor };
         }
 
         currentCartedProduct = {

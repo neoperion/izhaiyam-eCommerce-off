@@ -42,9 +42,8 @@ export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id })
       {isDeleteLoading && <FullpageSpinnerLoader />}
 
       <div
-        className={`fixed top-[30%] sm:top-0 inset-x-0 h-[100vh] px-4 pb-4 sm:inset-0  sm:items-center sm:justify-center z-[3000]  ${
-          isDeleteModalOn ? "sm:flex  block" : "hidden"
-        }`}
+        className={`fixed top-[30%] sm:top-0 inset-x-0 h-[100vh] px-4 pb-4 sm:inset-0  sm:items-center sm:justify-center z-[3000]  ${isDeleteModalOn ? "sm:flex  block" : "hidden"
+          }`}
       >
         <div className="fixed inset-0 transition-opacity">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>

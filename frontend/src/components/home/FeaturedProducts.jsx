@@ -102,7 +102,7 @@ const FeaturedProducts = () => {
                     {/* Scrollable Container */}
                     <div
                         ref={scrollContainerRef}
-                        className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide scroll-smooth"
+                        className="flex overflow-x-auto gap-20 pb-4 scrollbar-hide scroll-smooth"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {loading ? (

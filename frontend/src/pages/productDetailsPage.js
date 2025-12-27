@@ -161,17 +161,17 @@ export const ProductDetailsPage = () => {
                 </div>
                 <span className="font-inter text-gray-600 text-sm">(243 Reviews)</span>
               </div>
-                <div className="flex items-baseline gap-3 mb-4">
-                  {discountPercentValue > 0 ? (
-                    <>
-                      <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{discountedPrice.toLocaleString("en-IN")}</span>
-                      <span className="font-inter text-lg md:text-xl text-gray-400 line-through">₹{price.toLocaleString("en-IN")}</span>
-                      <span className="font-inter text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">{discountPercentValue}% OFF</span>
-                    </>
-                  ) : (
-                    <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{price.toLocaleString("en-IN")}</span>
-                  )}
-                </div>
+              <div className="flex items-baseline gap-3 mb-4">
+                {discountPercentValue > 0 ? (
+                  <>
+                    <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{discountedPrice.toLocaleString("en-IN")}</span>
+                    <span className="font-inter text-lg md:text-xl text-gray-400 line-through">₹{price.toLocaleString("en-IN")}</span>
+                    <span className="font-inter text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">{discountPercentValue}% OFF</span>
+                  </>
+                ) : (
+                  <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{price.toLocaleString("en-IN")}</span>
+                )}
+              </div>
             </div>
 
             {description && description.trim() !== "" && (

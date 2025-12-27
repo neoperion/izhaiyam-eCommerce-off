@@ -22,10 +22,7 @@ function App() {
   const location = useLocation();
 
   const isAdminRoute = useMemo(() => {
-    return (
-      location.pathname.startsWith("/administrator") ||
-      location.pathname.startsWith("/admin")
-    );
+    return location.pathname.startsWith("/admin");
   }, [location.pathname]);
 
   useEffect(() => {
@@ -60,7 +57,7 @@ function App() {
 
   return (
     <div className="App-container lg:text-[18px]">
-      
+
       {/* Show PUBLIC HEADER only when NOT on admin pages */}
       {!isAdminRoute && (
         <>
@@ -86,10 +83,10 @@ function App() {
       <PagesRoute {...{ setIsCartSectionActive }} />
 
       <ToastContainer
-        position="top-center"
+        position="top-right"
         transition={Slide}
-        autoClose={3000}
-        hideProgressBar={false}
+        autoClose={2000}
+        hideProgressBar={true}
         newestOnTop={true}
         closeOnClick
         rtl={false}

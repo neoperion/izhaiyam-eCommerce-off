@@ -11,9 +11,9 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
   const [productPrice, setProductPrice] = useState("");
   const [productStock, setProductStock] = useState(0);
 
-  const [isFeatured, setIsFeatured] = useState(false);
+  const [isFeatured, setIsFeatured] = useState("no");
   const [displayOrder, setDisplayOrder] = useState("");
-  const [isPinned, setIsPinned] = useState(false);
+  const [isPinned, setIsPinned] = useState("no");
   const [categories, setCategories] = useState({
     "Featured Categories": [],
     location: [],
@@ -21,7 +21,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
     others: [],
   });
   // Color Variants State
-  const [isCustomizable, setIsCustomizable] = useState(false);
+  const [isCustomizable, setIsCustomizable] = useState("no");
   const [colorVariants, setColorVariants] = useState([]);
   const [newColor, setNewColor] = useState({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
@@ -35,25 +35,19 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
 
   const imgRef = useRef(null);
 
-  const handleCheckedCategories = (e) => {
-    if (e.target.checked) {
-      setCategories((categories) => {
-        return {
-          ...categories,
-          [e.target.name]: [...categories[e.target.name], e.target.value],
-        };
-      });
+  const handleCategoryChange = (categoryName, selectedValue) => {
+    if (selectedValue === "") {
+      // If empty option selected, remove the category
+      setCategories((prev) => ({
+        ...prev,
+        [categoryName]: [],
+      }));
     } else {
-      if (categories[e.target.name].length === 0) {
-        setCategories((categories) => {
-          delete categories[e.target.name];
-          return categories;
-        });
-      }
-      setCategories((categories) => {
-        let uncheckedCategory = categories[e.target.name].filter((category) => category !== e.target.value);
-        return { ...categories, [e.target.name]: uncheckedCategory };
-      });
+      // Set single selected value for that category
+      setCategories((prev) => ({
+        ...prev,
+        [categoryName]: [selectedValue],
+      }));
     }
   };
 
@@ -70,15 +64,15 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       price: productPrice,
       stock: productStock,
       discountPercentValue: productDiscountPercentValue,
-      isFeatured: isFeatured,
+      isFeatured: isFeatured === "yes",
 
-      isCustomizable: isCustomizable,
+      isCustomizable: isCustomizable === "yes",
       displayOrder: displayOrder ? parseInt(displayOrder) : undefined,
-      isPinned: isPinned,
-      colorVariants: isCustomizable ? colorVariants.map(c => ({ 
-        colorName: c.colorName, 
-        hexCode: c.hexCode, 
-        imageUrl: c.imageUrl, 
+      isPinned: isPinned === "yes",
+      colorVariants: isCustomizable === "yes" ? colorVariants.map(c => ({
+        colorName: c.colorName,
+        hexCode: c.hexCode,
+        imageUrl: c.imageUrl,
         stock: parseInt(c.stock) || 0
       })) : [],
     };
@@ -108,16 +102,14 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
       setProductStock(0);
       setProductDiscountPercentValue(0);
 
-      setIsFeatured(false);
+      setIsFeatured("no");
       setDisplayOrder("");
-      setIsPinned(false);
-      setIsCustomizable(false);
+      setIsPinned("no");
+      setIsCustomizable("no");
       setColorVariants([]);
       setNewColor({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
       imgRef.current.nextElementSibling.style.display = "none";
-      for (let key of e.target) {
-        key.checked = false;
-      }
+
       toast.update(asyncCreateProductToastId, {
         render: "Product data has sucessfully been uploaded",
         type: "success",
@@ -212,8 +204,8 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
 
   const addColorVariant = () => {
     if (!newColor.colorName || !newColor.imageUrl) {
-        toast.error("Please provide color name and image");
-        return;
+      toast.error("Please provide color name and image");
+      return;
     }
     setColorVariants([...colorVariants, newColor]);
     setNewColor({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
@@ -227,22 +219,21 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
 
   return (
     <div
-      className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 flex items-center justify-center overflow-y-auto  h-[100vh]  z-[3000] translate-y-[100%] ${
-        isAddNewProductClicked && "translate-y-0"
-      } `}
+      className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 flex items-center justify-center overflow-y-auto  h-[100vh]  z-[3000] translate-y-[100%] ${isAddNewProductClicked && "translate-y-0"
+        } `}
     >
       <div className="fixed inset-0 transition-opacity">
         <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
       </div>
-      <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-[99%] h-[98%] shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-        <h2 className="text-xl sm:text-2xl font-bold text-center">Create a new product</h2>
+      <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-[99%] h-[98%] shadow-xl transform transition-all sm:max-w-3xl sm:w-full">
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-black">Create a new product</h2>
         <AiOutlineClose
           className="w-9 h-9 fill-primaryColor absolute right-5 cursor-pointer top-5"
           onClick={() => setIsAddNewProductClicked(false)}
         />
         <form action="" className="pt-8" onSubmit={createProduct}>
           <div className="mb-6">
-            <label className="block font-medium mb-2">Title</label>
+            <label className="block font-medium mb-2 text-black">Title</label>
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded-lg"
@@ -251,7 +242,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
             />
           </div>
           <div className="mb-6">
-            <label className="block font-medium mb-2">Description</label>
+            <label className="block font-medium mb-2 text-black">Description</label>
             <textarea
               className="w-full p-2 border border-gray-300 rounded-lg"
               value={productDescription}
@@ -261,7 +252,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
           </div>
           <div className="mb-6 flex gap-[2%] items-end justify-between">
             <div className="w-[30%]">
-              <label htmlFor="price" className="font-bold">
+              <label htmlFor="price" className="font-bold text-black">
                 Price
               </label>
               <input
@@ -273,7 +264,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
               />
             </div>
             <div className="w-[20%]">
-              <label htmlFor="stock" className="font-bold">
+              <label htmlFor="stock" className="font-bold text-black">
                 Stock
               </label>
               <input
@@ -285,7 +276,7 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
               />
             </div>
             <div className="w-[20%]">
-              <label htmlFor="discount" className="font-bold">
+              <label htmlFor="discount" className="font-bold text-black">
                 Discount(%)
               </label>
               <input
@@ -296,63 +287,85 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
                 className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
               />
             </div>
-            <div className="w-[20%] flex items-center justify-center pb-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                        type="checkbox" 
-                        checked={isFeatured} 
-                        onChange={(e) => setIsFeatured(e.target.checked)}
-                        className="w-5 h-5 accent-[#fca311]"
-                    />
-                    <span className="font-bold">Featured</span>
-                </label>
+            <div className="w-[20%]">
+              <label htmlFor="featured" className="font-bold block mb-2 text-black">Featured</label>
+              <select
+                id="featured"
+                value={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
             </div>
           </div>
 
           <div className="mb-6 flex gap-[2%] items-end justify-between">
             <div className="w-[30%]">
-                 <label htmlFor="displayOrder" className="font-bold">
-                  Display order
-                </label>
-                <input
-                  type="number"
-                  id="displayOrder"
-                  value={displayOrder}
-                  onChange={(e) => setDisplayOrder(e.currentTarget.value)}
-                  className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                  placeholder="Auto-assigned if empty"
-                />
+              <label htmlFor="displayOrder" className="font-bold">
+                Display order
+              </label>
+              <input
+                type="number"
+                id="displayOrder"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(e.currentTarget.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                placeholder="Auto-assigned if empty"
+              />
             </div>
-            <div className="w-[30%] flex items-center justify-center pb-2">
-                 <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                        type="checkbox" 
-                        checked={isPinned} 
-                        onChange={(e) => setIsPinned(e.target.checked)}
-                        className="w-5 h-5 accent-[#fca311]"
-                    />
-                    <span className="font-bold">Pin to Top</span>
-                </label>
+            <div className="w-[30%]">
+              <label htmlFor="pinned" className="font-bold block mb-2 text-black">Pin to Top</label>
+              <select
+                id="pinned"
+                value={isPinned}
+                onChange={(e) => setIsPinned(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div className="w-[35%]">
+              <label htmlFor="customizable" className="font-bold block mb-2 text-black">Color Customization</label>
+              <select
+                id="customizable"
+                value={isCustomizable}
+                onChange={(e) => setIsCustomizable(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="no">Disabled</option>
+                <option value="yes">Enabled</option>
+              </select>
             </div>
           </div>
-          <section onChange={handleCheckedCategories}>
-            <h2 className="text-lg font-bold mb-2">Select product categories</h2>
+
+          <section>
+            <h2 className="text-lg font-bold mb-2 text-black">Select product categories</h2>
             <div className="mb-6">
-              <div className="flex flex-wrap">
+              <div className="grid grid-cols-1 gap-4">
                 {Object.keys(productCategories).map((categoryTitle) => {
                   return (
-                    <div key={categoryTitle} className="pb-2 border border-gray-300 p-2">
-                      <h2 className="font-medium text-[18px] mb-2">{categoryTitle} :</h2>
-                      <div className="flex ml-4 gap-4 flex-wrap items-center">
-                        {productCategories[categoryTitle].map((subCategoryTitle, index) => {
+                    <div key={categoryTitle} className="border border-gray-300 p-3 rounded-lg">
+                      <label htmlFor={categoryTitle} className="font-medium text-base mb-2 block text-black">
+                        {categoryTitle}
+                      </label>
+                      <select
+                        id={categoryTitle}
+                        value={categories[categoryTitle][0] || ""}
+                        onChange={(e) => handleCategoryChange(categoryTitle, e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      >
+                        <option value="">-- Select {categoryTitle} --</option>
+                        {productCategories[categoryTitle].map((subCategoryTitle) => {
                           return (
-                            <label key={subCategoryTitle} htmlFor="">
+                            <option key={subCategoryTitle} value={subCategoryTitle}>
                               {subCategoryTitle}
-                              <input className="ml-1" type="checkbox" name={categoryTitle} value={subCategoryTitle} />
-                            </label>
+                            </option>
                           );
                         })}
-                      </div>
+                      </select>
                     </div>
                   );
                 })}
@@ -360,110 +373,98 @@ export const AddNewProduct = ({ isAddNewProductClicked, setIsAddNewProductClicke
             </div>
           </section>
 
-           {/* Customization Toggle */}
-           <div className="mb-6 flex items-center gap-2">
-              <input 
-                  type="checkbox" 
-                  id="isCustomizable"
-                  checked={isCustomizable} 
-                  onChange={(e) => setIsCustomizable(e.target.checked)}
-                  className="w-5 h-5 accent-[#fca311] cursor-pointer"
-              />
-              <label htmlFor="isCustomizable" className="font-bold cursor-pointer select-none">Enable Color Customization</label>
-           </div>
-
           {/* Color Variants Section - Conditionally Rendered */}
-          {isCustomizable && (
+          {isCustomizable === "yes" && (
             <div className="mb-6 p-4 border border-gray-300 rounded-lg">
-                <h2 className="text-lg font-bold mb-4">Product Color Variants</h2>
-                
-                {/* Add New Variant */}
-                <div className="flex flex-wrap gap-4 items-end mb-4 p-4 bg-gray-50 rounded">
-                    <div className="flex-1 min-w-[150px]">
-                        <label className="block text-sm font-medium mb-1">Color Name</label>
-                        <input 
-                            type="text" 
-                            value={newColor.colorName}
-                            onChange={(e) => setNewColor({...newColor, colorName: e.target.value})}
-                            className="w-full p-2 border rounded"
-                            placeholder="e.g. Red, Blue"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Hex Code</label>
-                        <input 
-                            type="color" 
-                            value={newColor.hexCode}
-                            onChange={(e) => setNewColor({...newColor, hexCode: e.target.value})}
-                            className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
-                        />
-                    </div>
-                    <div className="w-[100px]">
-                        <label className="block text-sm font-medium mb-1">Stock</label>
-                        <input 
-                            type="number" 
-                            value={newColor.stock}
-                            onChange={(e) => setNewColor({...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-                            className="w-full p-2 border rounded"
-                            />
-                    </div>
-                        <div className="flex-1">
-                        <label className="block text-sm font-medium mb-1">Image</label>
-                        <input 
-                            type="file" 
-                            onChange={handleVariantImageUpload}
-                            className="w-full text-sm"
-                            />
-                            {uploadingVariantImage && <span className="text-xs text-blue-500">Uploading...</span>}
-                            {newColor.imageUrl && <span className="text-xs text-green-500">Image Ready</span>}
-                    </div>
-                    <button 
-                        type="button" 
-                        onClick={addColorVariant}
-                        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-                    >
-                        Add Variant
-                    </button>
-                </div>
+              <h2 className="text-lg font-bold mb-4 text-black">Product Color Variants</h2>
 
-                {/* List Variants */}
-                {colorVariants.length > 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {colorVariants.map((variant, index) => (
-                            <div key={index} className="flex items-center gap-4 p-3 border rounded relative">
-                                <div className="w-12 h-12 rounded border" style={{ backgroundColor: variant.hexCode }}></div>
-                                <img src={variant.imageUrl} alt={variant.colorName} className="w-12 h-12 object-cover rounded" />
-                                <div className="flex-1">
-                                    <p className="font-bold">{variant.colorName}</p>
-                                    <p className="text-sm">Stock: {variant.stock}</p>
-                                </div>
-                                <button 
-                                    type="button" 
-                                    onClick={() => removeColorVariant(index)}
-                                    className="text-red-500 hover:text-red-700 font-bold px-2"
-                                >
-                                    X
-                                </button>
-                            </div>
-                        ))}
+              {/* Add New Variant */}
+              <div className="flex flex-wrap gap-4 items-end mb-4 p-4 bg-gray-50 rounded">
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block text-sm font-medium mb-1 text-black">Color Name</label>
+                  <input
+                    type="text"
+                    value={newColor.colorName}
+                    onChange={(e) => setNewColor({ ...newColor, colorName: e.target.value })}
+                    className="w-full p-2 border rounded"
+                    placeholder="e.g. Red, Blue"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-black">Hex Code</label>
+                  <input
+                    type="color"
+                    value={newColor.hexCode}
+                    onChange={(e) => setNewColor({ ...newColor, hexCode: e.target.value })}
+                    className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
+                  />
+                </div>
+                <div className="w-[100px]">
+                  <label className="block text-sm font-medium mb-1 text-black">Stock</label>
+                  <input
+                    type="number"
+                    value={newColor.stock}
+                    onChange={(e) => setNewColor({ ...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value) })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1 text-black">Image</label>
+                  <input
+                    type="file"
+                    onChange={handleVariantImageUpload}
+                    className="w-full text-sm"
+                  />
+                  {uploadingVariantImage && <span className="text-xs text-blue-500">Uploading...</span>}
+                  {newColor.imageUrl && <span className="text-xs text-green-500">Image Ready</span>}
+                </div>
+                <button
+                  type="button"
+                  onClick={addColorVariant}
+                  className="bg-[#93a267] text-white px-4 py-2 rounded hover:bg-[#7a8856] transition-colors"
+                >
+                  Add Variant
+                </button>
+              </div>
+
+              {/* List Variants */}
+              {colorVariants.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {colorVariants.map((variant, index) => (
+                    <div key={index} className="flex items-center gap-4 p-3 border rounded relative">
+                      <div className="w-12 h-12 rounded border" style={{ backgroundColor: variant.hexCode }}></div>
+                      <img src={variant.imageUrl} alt={variant.colorName} className="w-12 h-12 object-cover rounded" />
+                      <div className="flex-1">
+                        <p className="font-bold text-black">{variant.colorName}</p>
+                        <p className="text-sm text-black">Stock: {variant.stock}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeColorVariant(index)}
+                        className="text-red-500 hover:text-red-700 font-bold px-2"
+                      >
+                        X
+                      </button>
                     </div>
-                )}
+                  ))}
+                </div>
+              )}
             </div>
           )}
           <div className="mb-6 relative">
-            <label className="block font-bold mb-2">Image</label>
+            <label className="block font-bold mb-2 text-black">Image</label>
             <input
               type="file"
               ref={imgRef}
               className="w-full p-4 border border-gray-300 rounded-lg "
               onChange={handleImageUpload}
             />
-            <h1 className="italics absolute left-[45%] sm:left-[55%] top-[38%]  hidden text-[#fca311] bottom-4 font-bold ">
+            <h1 className="italics absolute left-[45%] sm:left-[55%] top-[38%]  hidden text-[#93a267] bottom-4 font-bold ">
               {" "}
             </h1>
           </div>
           <div className="flex items-center justify-end">
-            <button type="submit" className="text-[#ffffff] bg-[#fca311]  p-2 rounded-lg">
+            <button type="submit" className="text-white bg-[#93a267] hover:bg-[#7a8856] px-6 py-2 rounded-lg transition-colors font-medium">
               Submit
             </button>
           </div>

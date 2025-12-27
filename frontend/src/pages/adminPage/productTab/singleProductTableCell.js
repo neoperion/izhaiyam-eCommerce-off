@@ -6,7 +6,7 @@ import { DeleteProductModal } from "./deleteProductModal";
 import { EditAndupdateProductModal } from "./editAndUpdateProductModal";
 import { ProductDetailsModal } from "./productDetailsAdminPage";
 
-export const SingleProductTableCell = ({ products, fetchProductData }) => {
+export const SingleProductTableCell = ({ products, serialNo, fetchProductData }) => {
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isEditAndUpdateModalOn, setIsEditAndUpdateModal] = useState(false);
   const [isProductDetailsModalOn, setIsProductDetailsModalOn] = useState(false);
@@ -78,15 +78,16 @@ export const SingleProductTableCell = ({ products, fetchProductData }) => {
         {...{ isProductDetailsModalOn, setIsProductDetailsModalOn, productDetails, isFetchingUpdatedDataLoading }}
       />
       <tr className="hover:bg-lightestSecondaryColor cursor-pointer" onClick={handleShowProductDetails}>
-        <td className="p-2  border border-b-0  border-LightSecondaryColor">{_id}</td>
-        <td className="p-2  border border-b-0 border-LightSecondaryColor">{title}</td>
-        <td className="p-2  border border-b-0 border-LightSecondaryColor">{price}</td>
-        <td className="p-2  border border-b-0 border-LightSecondaryColor">{stock}</td>
-        <td className="p-2  border border-b-0 border-LightSecondaryColor">
-            <div className="flex items-center gap-1">
-                {isPinned && <AiFillPushpin className="text-[#fca311]" />}
-                <span>{displayOrder}</span>
-            </div>
+        <td className="p-2 text-black font-inter border border-b-0 border-LightSecondaryColor">{serialNo}</td>
+        <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">{_id}</td>
+        <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">{title}</td>
+        <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">{price}</td>
+        <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">{stock}</td>
+        <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">
+          <div className="flex items-center gap-1">
+            {isPinned && <AiFillPushpin className="text-[#fca311]" />}
+            <span>{displayOrder}</span>
+          </div>
         </td>
         <td className="p-2  border border-b-0 border-LightSecondaryColor  ">
           <div className="flex items-center justify-center gap-2">

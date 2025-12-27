@@ -37,15 +37,15 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="/contactUs" element={<ContactUsPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="gallery" element={<GalleryPage />} />
 
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/product/:productId" element={<ProductDetailsPage />} />
-        <Route path="/checkout" element={<CheckoutPage {...{ setIsCartSectionActive }} />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/changeMyPassword" element={<EnterNewPassword />} />
+        {/* Admin Routes - consolidated under /admin */}
+        <Route path="search" element={<SearchPage />} />
+        <Route path="product/:productId" element={<ProductDetailsPage />} />
+        <Route path="checkout" element={<CheckoutPage {...{ setIsCartSectionActive }} />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="changeMyPassword" element={<EnterNewPassword />} />
 
         <Route path="profilePage" element={<ProfilePage />}>
           <Route index element={<Navigate to="accountInformation" />} />
@@ -55,7 +55,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="accountSettings" element={<AccountSettings />} />
         </Route>
 
-        <Route path="administrator" element={<AdminPage />}>
+        <Route path="admin" element={<AdminPage />}>
           <Route index element={<Navigate to="dashboard" />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="product-Management" element={<ProductManagement />} />

@@ -26,7 +26,7 @@ export const AccountInformation = () => {
               <p className="text-cream-100 text-sm">Manage products, orders, and site settings</p>
             </div>
             <button
-              onClick={() => navigate("/administrator/product-management")}
+              onClick={() => navigate("/admin/product-management")}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white text-sage-700 rounded-lg font-semibold hover:bg-cream-50 transition-all"
             >
               Admin Panel

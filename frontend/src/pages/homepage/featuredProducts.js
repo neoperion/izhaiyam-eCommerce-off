@@ -3,7 +3,7 @@ import { Heart, Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import bedImg from '../../assets/product-bed-1.jpg';
 import sofaImg from '../../assets/product-sofa-1.jpg';
-import diwanImg from '../../assets/category-diwan.jpg';
+import diwanImg from '../../assets/category-diwan.png';
 import chairImg from '../../assets/category-chair.jpg';
 import swingImg from '../../assets/category-swing.jpg';
 import balconyImg from '../../assets/category-balcony.jpg';
@@ -166,7 +166,7 @@ const FeaturedProducts = () => {
                   alt={product.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                
+
                 {/* Badge */}
                 <div className="absolute top-4 left-4">
                   <span
@@ -191,11 +191,10 @@ const FeaturedProducts = () => {
                 >
                   <Heart
                     size={20}
-                    className={`transition-colors ${
-                      wishlist.includes(product.id)
+                    className={`transition-colors ${wishlist.includes(product.id)
                         ? 'fill-red-500 stroke-red-500'
                         : 'stroke-gray-600 group-hover/heart:stroke-red-500'
-                    }`}
+                      }`}
                   />
                 </button>
               </div>

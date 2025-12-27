@@ -22,13 +22,12 @@ export const ProductDetailsModal = ({
       {" "}
       {isFetchingUpdatedDataLoading && <FullpageSpinnerLoader />}
       <div
-        className={`fixed top-[30%] sm:top-0 inset-x-0 h-[100vh] px-4 pb-4 sm:inset-0  sm:items-center sm:justify-center z-[3000]  ${
-          isProductDetailsModalOn ? "sm:flex  block" : "hidden"
-        }`}
+        className={`fixed top-[30%] sm:top-0 inset-x-0 h-[100vh] px-4 pb-4 sm:inset-0  sm:items-center sm:justify-center z-[3000]  ${isProductDetailsModalOn ? "sm:flex  block" : "hidden"
+          }`}
       >
         <div className="fixed inset-0 transition-opacity flex justify-center items-center">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-          <div className=" bg-white w-[90%] tablet:w-[90%] max-w-[400px] p-6 rounded-lg shadow-lg flex flex-col items-center relative">
+          <div className=" bg-white w-[90%] tablet:w-[90%] sm:max-w-3xl p-6 rounded-lg shadow-lg flex flex-col items-center relative">
             <AiOutlineClose
               className="w-8 h-8 fill-primaryColor absolute right-5 cursor-pointer top-5"
               onClick={() => setIsProductDetailsModalOn(false)}
@@ -37,23 +36,23 @@ export const ProductDetailsModal = ({
               <img src={image} className="w-full  max-h-full h-auto object-contain " alt="Product" />
             </div>
             <div className="flex flex-col items-center mb-4">
-              <h4 className=" mb-2">Product Title</h4> <span className=" text-lg font-bold capitalize">{title}</span>
+              <h4 className="mb-2 text-black font-medium">Product Title</h4> <span className="text-lg font-bold capitalize text-black">{title}</span>
             </div>
             <div className="flex flex-col items-center mb-4">
-              <h4 className=" ">Price</h4> <span className=" text-lg font-bold">₹{price}</span>
+              <h4 className="text-black font-medium">Price</h4> <span className="text-lg font-bold text-black">₹{price}</span>
             </div>
             <div className="flex flex-col items-center mb-4">
-              <h4 className=" ">sub-categories</h4>{" "}
-              <span className=" text-lg font-bold text-center">
+              <h4 className="text-black font-medium">Sub-categories</h4>{" "}
+              <span className="text-lg font-bold text-center text-black">
                 {" "}
                 {subCategoriesArr.map((categories) => categories).join(", ")}
               </span>
             </div>
-            <h4 className="  text-lg font-bold mb-4">{stock} in Stock</h4>
+            <h4 className="text-lg font-bold mb-4 text-black">{stock} in Stock</h4>
             {discountPercentValue > 0 && (
               <div className="flex flex-col items-center mb-4">
-                <h4 className=" ">Discount percent</h4>{" "}
-                <span className=" text-lg font-bold">-{discountPercentValue}%</span>
+                <h4 className="text-black font-medium">Discount percent</h4>{" "}
+                <span className="text-lg font-bold text-black">-{discountPercentValue}%</span>
               </div>
             )}
           </div>

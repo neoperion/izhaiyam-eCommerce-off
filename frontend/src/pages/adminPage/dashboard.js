@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  TrendingUp, 
-  Package, 
+import {
+  TrendingUp,
+  Package,
   ShoppingCart,
   Users,
   DollarSign,
@@ -56,7 +56,7 @@ ChartJS.register(
 );
 
 // Set default font for Chart.js
-ChartJS.defaults.font.family = "'Google Sans Flex', 'Lato', sans-serif";
+ChartJS.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
 
 export const AdminDashboard = () => {
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
@@ -102,17 +102,17 @@ export const AdminDashboard = () => {
         const orders = ordersRes.data.orders || [];
         const totalRevenue = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
         const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
-        
+
         // Calculate order status counts - Backend uses: 'Processing', 'Delivered', 'Cancelled'
         const pendingOrders = orders.filter(o => o.status === 'Processing').length;
         const deliveredOrders = orders.filter(o => o.status === 'Delivered').length;
         const cancelledOrders = orders.filter(o => o.status === 'Cancelled').length;
-        
+
         // Generate monthly sales trend from orders
         const monthlySales = generateMonthlySalesData(orders);
         setSalesTrendData(monthlySales);
-        
-        
+
+
         setStats(prev => ({
           ...prev,
           totalOrders: orders.length,
@@ -130,7 +130,7 @@ export const AdminDashboard = () => {
         const users = usersRes.data.users || [];
         const verifiedCount = usersRes.data.verifiedUsers || users.filter(u => u.status === 'Verified').length;
         const returningRate = users.length > 0 ? ((verifiedCount / users.length) * 100).toFixed(1) : 0;
-        
+
         setStats(prev => ({
           ...prev,
           totalVisits: users.length * 15, // Estimate based on user count
@@ -143,7 +143,7 @@ export const AdminDashboard = () => {
       if (productsRes.data.products) {
         const products = productsRes.data.products;
         const lowStock = products.filter(p => p.stock <= 5).length;
-        
+
         setStats(prev => ({
           ...prev,
           totalProducts: products.length,
@@ -170,16 +170,16 @@ export const AdminDashboard = () => {
         const orderMonth = orderDate.getMonth();
         return orderMonth === monthIndex;
       });
-      
+
       const monthSales = monthOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
-      
+
       monthlyData.push({
         month: months[monthIndex],
         sales: monthSales,
         orders: monthOrders.length
       });
     }
-    
+
     return monthlyData;
   };
 
@@ -191,7 +191,7 @@ export const AdminDashboard = () => {
         <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading dashboard data...</p>
+            <p className="font-inter text-gray-600">Loading dashboard data...</p>
           </div>
         </div>
       </AdminLayout>
@@ -201,18 +201,18 @@ export const AdminDashboard = () => {
   return (
     <AdminLayout>
       {/* Page Header */}
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="text-gray-500 mt-1">Welcome back! Here's what's happening with your store today.</p>
+        <h1 className="font-inter text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+        <p className="font-inter text-gray-500 mt-1">Welcome back! Here's what's happening with your store today.</p>
       </motion.div>
 
       {/* KPI Cards Grid */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -252,7 +252,7 @@ export const AdminDashboard = () => {
       </motion.div>
 
       {/* Secondary KPIs */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -300,8 +300,8 @@ export const AdminDashboard = () => {
         >
           <Card>
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Sales Trend</h3>
-              <p className="text-sm text-gray-500">Monthly sales performance</p>
+              <h3 className="font-inter text-lg font-semibold text-gray-900">Sales Trend</h3>
+              <p className="font-inter text-sm text-gray-500">Monthly sales performance</p>
             </div>
             <div style={{ height: '300px' }}>
               <Line
@@ -342,8 +342,8 @@ export const AdminDashboard = () => {
         >
           <Card>
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Revenue vs Orders</h3>
-              <p className="text-sm text-gray-500">Comparison over months</p>
+              <h3 className="font-inter text-lg font-semibold text-gray-900">Revenue vs Orders</h3>
+              <p className="font-inter text-sm text-gray-500">Comparison over months</p>
             </div>
             <div style={{ height: '300px' }}>
               <Bar

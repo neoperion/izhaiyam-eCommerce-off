@@ -1,36 +1,77 @@
+import React from "react";
+
 export const PaginationSectionForProductsAdminPage = ({
-  productsLength,
-  asyncFnParamState,
-  asyncFn,
-  setAsyncFnParamState,
+    productsLength,
+    asyncFnParamState,
+    asyncFn,
+    setAsyncFnParamState,
 }) => {
-  const { perPage, pageNo } = asyncFnParamState;
+    const { pageNo, perPage } = asyncFnParamState;
 
-  let pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(productsLength / perPage); i++) {
-    pageNumbers.push(i);
-  }
+    // Calculate total number of pages
+    const totalPages = Math.ceil(productsLength / perPage);
 
-  return (
-    <div className="grid grid-cols-5 tablet:grid-cols-5 md:grid-cols-7 mr-[10%] mt-16 mb-24 md:mr-[12%] lg:mr-[15%] gap-4 lg:gap-6">
-      <h3 className="self-center">Page no : </h3>
-      {pageNumbers.map((number, index) => {
-        return (
-          <li
-            key={index}
-            className={`p-1 flex items-center justify-center border-[2px] transition-all duration-500 bg-white text-secondaryColor border-LightSecondaryColor ${
-              pageNo === number ? "active-product-page-no" : ""
-            } `}
-            data-id={number}
-            onClick={() => {
-              asyncFn({ ...asyncFnParamState, pageNo: number });
-              setAsyncFnParamState({ ...asyncFnParamState, pageNo: number });
-            }}
-          >
-            {number}
-          </li>
-        );
-      })}
-    </div>
-  );
+    // Generate page numbers array
+    let pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+
+    const handleChangePageNo = (number) => {
+        const updatedParams = { ...asyncFnParamState, pageNo: number };
+        setAsyncFnParamState(updatedParams);
+        asyncFn(updatedParams);
+    };
+
+    const handlePrevious = () => {
+        if (pageNo > 1) {
+            handleChangePageNo(pageNo - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (pageNo < totalPages) {
+            handleChangePageNo(pageNo + 1);
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center gap-2 lg:gap-3 mt-8 mb-8">
+            <button
+                className="font-inter px-4 py-2 rounded-full font-medium text-sm lg:text-base transition-all duration-300 cursor-pointer bg-white text-black border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handlePrevious}
+                disabled={pageNo === 1}
+            >
+                Previous
+            </button>
+
+            <span className="font-inter text-sm lg:text-base font-medium text-black mx-2">
+                Page:
+            </span>
+
+            {pageNumbers.map((number, index) => {
+                return (
+                    <button
+                        key={index}
+                        className={`font-inter w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full font-semibold text-sm lg:text-base transition-all duration-300 cursor-pointer ${pageNo === number
+                            ? "text-white shadow-lg"
+                            : "bg-white text-black border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                            }`}
+                        style={pageNo === number ? { backgroundColor: '#93a267' } : {}}
+                        onClick={() => handleChangePageNo(number)}
+                    >
+                        {number}
+                    </button>
+                );
+            })}
+
+            <button
+                className="font-inter px-4 py-2 rounded-full font-medium text-sm lg:text-base transition-all duration-300 cursor-pointer bg-white text-black border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleNext}
+                disabled={pageNo === totalPages}
+            >
+                Next
+            </button>
+        </div>
+    );
 };

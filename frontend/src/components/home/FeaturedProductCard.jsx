@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 
-const FeaturedProductCard = ({ product, isWishlisted }) =>
-{
-    const { _id, title, price, image, discountPercentValue, rating, reviews, description, material, seatingCapacity, finish } = product;
+const FeaturedProductCard = ({ product, isWishlisted }) => {
+    const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const dispatch = useDispatch();
 
     // Calculate discounted price
@@ -16,109 +14,75 @@ const FeaturedProductCard = ({ product, isWishlisted }) =>
         ? price - (price * discountPercentValue) / 100
         : price;
 
-    // For now, using single image, but structure supports multiple images
-    const images = [image];
-
-    const handlePrevImage = (e) =>
-    {
-        e.preventDefault();
-        setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    };
-
-    const handleNextImage = (e) =>
-    {
-        e.preventDefault();
-        setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    };
-
-    // Generate full description
-    const fullDescription = description ||
-        `${material || 'Premium Quality'} • ${seatingCapacity || 'Comfortable Seating'} • ${finish || 'Elegant Finish'}`;
+    const originalPrice = price;
 
     return (
-        <div className="w-full bg-white rounded-lg p-4">
-            {/* Image Section with Navigation */}
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4 aspect-square">
-                <Link to={`/product/${_id}`}>
+        <div className="w-80 bg-white rounded-lg shadow-lg overflow-hidden font-sans flex-shrink-0">
+            {/* Image Container */}
+            <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 h-80 flex items-center justify-center overflow-hidden">
+                <Link to={`/product/${_id}`} className="w-full h-full">
                     <img
-                        src={images[currentImageIndex]}
+                        src={image}
                         alt={title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     />
                 </Link>
 
-                {/* Navigation Arrows - Only show if multiple images */}
-                {images.length > 1 && (
-                    <>
-                        <button
-                            onClick={handlePrevImage}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 transition-all"
-                        >
-                            <ChevronLeft size={20} className="text-gray-800" />
-                        </button>
-                        <button
-                            onClick={handleNextImage}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 transition-all"
-                        >
-                            <ChevronRight size={20} className="text-gray-800" />
-                        </button>
-                    </>
+                {/* Best Seller Badge */}
+                {isFeatured && (
+                    <div className="absolute top-3 left-3 text-white px-3 py-1 text-sm font-bold rounded font-inter" style={{ backgroundColor: '#93a267' }}>
+                        Best Seller
+                    </div>
                 )}
 
-                {/* Wishlist Heart */}
-                <button
-                    className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"
-                        }`}
+                {/* Heart Icon */}
+                <div
                     onClick={() => handleWishlistModification(_id, dispatch)}
-                    aria-label="Add to wishlist"
+                    className="absolute top-3 right-3 bg-white rounded-full p-2 cursor-pointer shadow-md hover:shadow-lg transition"
                 >
-                    <Heart
-                        className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"
-                            }`}
-                    />
-                </button>
-            </div>
-
-            {/* Product Title */}
-            <Link to={`/product/${_id}`}>
-                <h3 className="text-gray-800 text-sm font-medium mb-3 leading-tight hover:text-[#93a267] transition-colors line-clamp-2">
-                    {title}
-                </h3>
-            </Link>
-
-            {/* Rating Section */}
-            <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                        <Star
-                            key={i}
-                            size={16}
-                            className={
-                                i < Math.floor(rating || 4.5)
-                                    ? 'fill-orange-400 text-orange-400'
-                                    : 'fill-orange-300 text-orange-300'
-                            }
-                        />
-                    ))}
+                    <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
                 </div>
-                <span className="text-gray-600 text-sm">({reviews || 0})</span>
             </div>
 
-            {/* Discount and Price Section */}
-            <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
+            {/* Content Container */}
+            <div className="p-4">
+                {/* Title */}
+                <Link to={`/product/${_id}`}>
+                    <h3 className="font-inter text-sm font-semibold text-gray-800 leading-tight mb-1 line-clamp-3 hover:text-orange-500 transition-colors">
+                        {title}
+                    </h3>
+                </Link>
+
+                {/* Brand */}
+                <p className="font-inter text-xs text-gray-600 mb-3">By Wooden Street</p>
+
+                {/* Rating */}
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="flex gap-0.5">
+                        {[...Array(Math.floor(rating || 4))].map((_, i) => (
+                            <svg key={i} className="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                        ))}
+                        {(rating || 4) % 1 !== 0 && (
+                            <svg className="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" opacity="0.5" />
+                            </svg>
+                        )}
+                    </div>
+                    <span className="font-inter text-xs text-gray-600">({reviews || 0})</span>
+                </div>
+
+                {/* Price Section */}
+                <div className="flex items-center gap-3">
+                    <span className="font-inter text-lg font-bold text-gray-900">₹{discountedPrice.toLocaleString()}</span>
                     {discountPercentValue > 0 && (
-                        <span className="text-green-600 text-sm font-semibold">↓ {discountPercentValue}%</span>
+                        <>
+                            <span className="font-inter text-sm text-gray-500 line-through">₹{originalPrice.toLocaleString()}</span>
+                            <span className="font-inter text-sm font-semibold text-green-600">{discountPercentValue}% Off</span>
+                        </>
                     )}
-                    <span className="text-gray-800 text-xl font-bold">
-                        ₹{discountedPrice.toLocaleString('en-IN')}
-                    </span>
                 </div>
-                {discountPercentValue > 0 && (
-                    <span className="text-gray-400 text-sm line-through">
-                        ₹{price.toLocaleString('en-IN')}
-                    </span>
-                )}
             </div>
         </div>
     );

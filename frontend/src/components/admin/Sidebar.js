@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  BarChart3,
   Settings,
   Tag,
   MessageSquare,
@@ -18,11 +18,11 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
 
   const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/administrator/dashboard' },
-    { icon: ShoppingCart, label: 'Orders', path: '/administrator/orders-Management' },
-    { icon: Package, label: 'Products', path: '/administrator/products' },
-    { icon: Users, label: 'Customers', path: '/administrator/user-Management' },
-    { icon: Settings, label: 'Settings', path: '/administrator/settings' }
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
+    { icon: ShoppingCart, label: 'Orders', path: '/admin/orders-Management' },
+    { icon: Package, label: 'Products', path: '/admin/products' },
+    { icon: Users, label: 'Customers', path: '/admin/user-Management' },
+    { icon: Settings, label: 'Settings', path: '/admin/settings' }
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -57,9 +57,8 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
 
       {/* Sidebar - Fixed Left */}
       <aside
-        className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-50 transition-transform duration-300 flex flex-col ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
+        className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-50 transition-transform duration-300 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0`}
         style={{ width: '260px' }}
       >
         {/* Logo */}
@@ -81,11 +80,10 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
                 navigate(item.path);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                isActive(item.path)
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive(item.path)
                   ? 'bg-emerald-50 text-emerald-700 font-semibold'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
+                }`}
             >
               <item.icon size={20} />
               <span>{item.label}</span>
@@ -95,7 +93,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Bottom Section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all"
           >
