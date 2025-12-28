@@ -36,7 +36,7 @@ const Index = () => {
     (state) => state.filterByCategoryAndPrice
   );
 
-  let NoOfProductsPerPage = 10;
+  let NoOfProductsPerPage = 20;
   const [currentPageNo, setCurrentPageNo] = useState(1);
 
   // HANDLE SORTING WHEN THE APP STARTS AND ALSO WHEN SORTING CRITERIA CHANGES
@@ -53,6 +53,11 @@ const Index = () => {
       placeholderOfproductsDataCurrentlyRequested
     );
   }, [currentPageNo, NoOfProductsPerPage, placeholderOfproductsDataCurrentlyRequested, dispatch]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPageNo]);
 
   const handleSortingCriteriaSelection = (e) => {
     if (e.target.dataset.list) {

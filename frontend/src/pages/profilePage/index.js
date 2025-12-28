@@ -6,11 +6,14 @@ import { toast } from "react-toastify";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
 import FooterSection from "../../components/footerSection";
+import { Adresses } from "./Adresses";
+import { handleWishlistModification } from "../../utils/handleWishlistModification";
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isTokenValidLoader, userData } = useSelector((state) => state.userAuth);
+  const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
 
   const [activeTab, setActiveTab] = useState('myProfile');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -78,25 +81,25 @@ export const ProfilePage = () => {
     }
     setIsEditing(false);
   };
-// ... (skip unchanged lines) ...
-                      <div>
-                        <label className="font-inter block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                          className={`font-inter w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#93a267] ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''
-                            }`}
-                          placeholder="Phone Number"
-                        />
-                        {!userData.phone && (
-                          <p className="text-xs text-[#93a267] mt-1 font-medium">
-                            Add phone number to enable phone login
-                          </p>
-                        )}
-                      </div>
+  // ... (skip unchanged lines) ...
+  <div>
+    <label className="font-inter block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+    <input
+      type="tel"
+      name="phone"
+      value={formData.phone}
+      onChange={handleInputChange}
+      disabled={!isEditing}
+      className={`font-inter w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#93a267] ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''
+        }`}
+      placeholder="Phone Number"
+    />
+    {!userData.phone && (
+      <p className="text-xs text-[#93a267] mt-1 font-medium">
+        Add phone number to enable phone login
+      </p>
+    )}
+  </div>
 
   const handleUpdatePassword = () => {
     if (passwordData.password !== passwordData.confirmPassword) {
@@ -345,7 +348,7 @@ export const ProfilePage = () => {
                             }`}
                           placeholder="Phone Number"
                         />
-                         {!userData.phone && (
+                        {!userData.phone && (
                           <p className="text-xs text-[#93a267] mt-1 font-medium">
                             Add phone number to enable phone login
                           </p>
@@ -384,9 +387,9 @@ export const ProfilePage = () => {
             {/* My Orders Tab */}
             {/* My Orders Tab */}
             {activeTab === 'myOrders' && (
-              <div className="bg-white rounded-lg p-8 shadow-sm">
-                <div className="flex justify-end mb-6">
-                  <div className="relative w-64">
+              <div className="bg-white rounded-lg p-4 md:p-8 shadow-sm">
+                <div className="flex justify-end mb-4 md:mb-6">
+                  <div className="relative w-full md:w-64">
                     <input
                       type="text"
                       placeholder="Search..."
@@ -397,89 +400,108 @@ export const ProfilePage = () => {
                 </div>
 
                 {userData?.orders && userData.orders.length > 0 ? (
-                  <div className="space-y-6">
+                  <div className="space-y-3 md:space-y-6">
                     {/* Sort orders by date (newest first) and map */}
                     {[...userData.orders]
                       .sort((a, b) => new Date(b.date) - new Date(a.date))
                       .map((order) => (
-                      <div key={order._id || Math.random()} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="bg-gray-50 p-4 border-b border-gray-200 flex flex-wrap justify-between items-center gap-4">
-                          <div className="flex gap-6">
-                            <div>
-                              <p className="text-xs text-gray-500 uppercase mb-1">Order Placed</p>
-                              <p className="text-sm font-medium text-gray-900">
-                                {new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                              </p>
+                        <div key={order._id || Math.random()} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="bg-gray-50 p-3 md:p-4 border-b border-gray-200">
+                            {/* Mobile: Total at top-right */}
+                            <div className="flex justify-between items-start mb-3 md:hidden">
+                              <div>
+                                <p className="text-[10px] text-gray-500 uppercase mb-0.5">Order Placed</p>
+                                <p className="text-xs font-medium text-gray-900">
+                                  {new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-[10px] text-gray-500 uppercase mb-0.5">Total</p>
+                                <p className="text-sm font-semibold text-[#93a267]">₹{order.totalAmount?.toLocaleString()}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-xs text-gray-500 uppercase mb-1">Total</p>
-                              <p className="text-sm font-medium text-gray-900">₹{order.totalAmount?.toLocaleString()}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 uppercase mb-1">Order ID</p>
-                              <p className="text-sm font-medium text-gray-900">#{order._id?.slice(-8).toUpperCase() || 'N/A'}</p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-2 mt-4 md:mt-0">
-                             {/* Display Tracking Details if Order is Shipped */}
-                             {order.tracking && order.tracking.trackingId && (
-                                <div className="text-right mb-1">
-                                  <p className="text-xs text-gray-500">Carrier: <span className="font-medium text-gray-800">{order.tracking.carrier}</span></p>
-                                  <p className="text-xs text-gray-500">Tracking ID: <span className="font-medium text-gray-800 select-all">{order.tracking.trackingId}</span></p>
-                                  <p className="text-[10px] text-gray-400 mt-0.5">Note: Paste this ID on the courier page if required</p>
-                                </div>
-                             )}
 
-                             <div className="flex gap-3">
-                               {order.tracking && order.tracking.trackingUrl && (
-                                 <button
-                                   onClick={() => window.open(order.tracking.trackingUrl, "_blank", "noopener")}
-                                   className="px-4 py-2 border border-[#93a267] text-[#93a267] rounded-lg text-sm font-medium hover:bg-[#93a267] hover:text-white transition-colors"
-                                 >
-                                   Track Order
-                                 </button>
-                               )}
-                               <div className={`px-4 py-2 rounded-full text-xs font-semibold
-                                ${order.deliveryStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                  order.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' :
-                                  order.deliveryStatus === 'shipped' || order.deliveryStatus === 'Shipped' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-red-100 text-red-800'}`}>
-                                {order.deliveryStatus?.charAt(0).toUpperCase() + order.deliveryStatus?.slice(1) || 'Pending'}
+                            {/* Desktop: Original layout */}
+                            <div className="hidden md:flex md:flex-wrap md:justify-between md:items-center md:gap-4 md:mb-3">
+                              <div className="flex gap-6 flex-wrap">
+                                <div>
+                                  <p className="text-xs text-gray-500 uppercase mb-1">Order Placed</p>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500 uppercase mb-1">Total</p>
+                                  <p className="text-sm font-medium text-gray-900">₹{order.totalAmount?.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500 uppercase mb-1">Order ID</p>
+                                  <p className="text-sm font-medium text-gray-900">#{order._id?.slice(-8).toUpperCase() || 'N/A'}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Status and Track button */}
+                            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2">
+                              {/* Tracking Details */}
+                              {order.tracking && order.tracking.trackingId && (
+                                <div className="w-full md:w-auto text-right md:text-right mb-1">
+                                  <p className="text-[10px] md:text-xs text-gray-500">Carrier: <span className="font-medium text-gray-800">{order.tracking.carrier}</span></p>
+                                  <p className="text-[10px] md:text-xs text-gray-500">Tracking ID: <span className="font-medium text-gray-800 select-all">{order.tracking.trackingId}</span></p>
+                                  <p className="text-[9px] md:text-[10px] text-gray-400 mt-0.5">Note: Paste this ID on the courier page if required</p>
+                                </div>
+                              )}
+
+                              <div className="flex gap-2 md:gap-3 w-full md:w-auto justify-end">
+                                {order.tracking && order.tracking.trackingUrl && (
+                                  <button
+                                    onClick={() => window.open(order.tracking.trackingUrl, "_blank", "noopener")}
+                                    className="px-3 md:px-4 py-1.5 md:py-2 border border-[#93a267] text-[#93a267] rounded-lg text-xs md:text-sm font-medium hover:bg-[#93a267] hover:text-white transition-colors"
+                                  >
+                                    Track
+                                  </button>
+                                )}
+                                <div className={`px-2 md:px-4 py-1 md:py-2 rounded-full text-[10px] md:text-xs font-semibold
+                                ${order.deliveryStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    order.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' :
+                                      order.deliveryStatus === 'shipped' || order.deliveryStatus === 'Shipped' ? 'bg-blue-100 text-blue-800' :
+                                        'bg-red-100 text-red-800'}`}>
+                                  {order.deliveryStatus?.charAt(0).toUpperCase() + order.deliveryStatus?.slice(1) || 'Pending'}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        
-                        <div className="p-4">
-                          {order.products.map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-4 py-4 border-b last:border-0 border-gray-100">
-                              <div className="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                {item.productId?.image ? (
-                                   <img src={item.productId.image} alt="Product" className="w-full h-full object-cover" />
-                                ) : (
-                                   <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
-                                )}
+
+                          <div className="p-3 md:p-4">
+                            {order.products.map((item, idx) => (
+                              <div key={idx} className="flex items-center gap-2 md:gap-4 py-2 md:py-4 border-b last:border-0 border-gray-100">
+                                <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
+                                  {item.productId?.image ? (
+                                    <img src={item.productId.image} alt="Product" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-medium text-sm md:text-base text-gray-900 line-clamp-1">{item.productId?.title || 'Product Name Unavailable'}</h4>
+                                  <p className="text-xs md:text-sm text-gray-500">Qty: {item.quantity}</p>
+                                </div>
                               </div>
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 line-clamp-1">{item.productId?.title || 'Product Name Unavailable'}</h4>
-                                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-16">
                     <div className="w-24 h-24 border-4 border-[#93a267] rounded-lg flex items-center justify-center mb-6">
                       <Package className="w-12 h-12 text-[#93a267]" />
                     </div>
-                    <h3 className="font-inter text-2xl font-bold text-gray-900 mb-2">You have no orders!</h3>
-                    <p className="font-inter text-gray-600 mb-8">There are no recent orders to show</p>
+                    <h3 className="font-inter text-xl md:text-2xl font-bold text-gray-900 mb-2">You have no orders!</h3>
+                    <p className="font-inter text-sm md:text-base text-gray-600 mb-6 md:mb-8">There are no recent orders to show</p>
                     <button
                       onClick={() => navigate('/shop')}
-                      className="font-inter px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
+                      className="font-inter px-6 md:px-8 py-2 md:py-3 bg-[#93a267] text-white text-sm md:text-base font-semibold rounded hover:bg-[#7d8c56] transition-all"
                     >
                       START SHOPPING
                     </button>
@@ -490,29 +512,70 @@ export const ProfilePage = () => {
 
             {/* Address Book Tab */}
             {activeTab === 'addressBook' && (
+              <Adresses />
+            )}
+
+            {/* Wishlist Tab */}
+            {activeTab === 'wishlist' && (
               <div className="bg-white rounded-lg p-8 shadow-sm">
-                <div className="flex justify-end mb-6">
-                  <button className="font-inter px-6 py-2 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all flex items-center gap-2">
-                    <Plus className="w-4 h-4" /> Add New Address
-                  </button>
-                </div>
-                {addresses.length === 0 ? (
+                {!wishlist || wishlist.length === 0 ? (
                   <div className="text-center py-12">
-                    <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <p className="font-inter text-gray-600 text-lg">No address found</p>
+                    <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="font-inter text-gray-600 text-lg">No items in your wishlist</p>
+                    <button
+                      onClick={() => navigate('/shop')}
+                      className="font-inter mt-6 px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
+                    >
+                      BROWSE PRODUCTS
+                    </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-6">
-                    {addresses.map((addr) => (
-                      <div key={addr.id} className="border border-gray-300 rounded-lg p-6 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start mb-4">
-                          <h4 className="font-inter font-semibold text-gray-900">{addr.type}</h4>
-                          <button className="text-red-600 hover:bg-red-50 p-2 rounded transition-colors">
-                            <Trash2 className="w-4 h-4" />
+                  <div className="space-y-3">
+                    {wishlist.map((product) => (
+                      <div
+                        key={product._id}
+                        className="flex items-center gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                      >
+                        {/* Product Image */}
+                        <div className="w-16 h-16 md:w-24 md:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-inter font-semibold text-sm md:text-base text-gray-900 mb-1 truncate">
+                            {product.title}
+                          </h3>
+                          <p className="font-inter text-xs md:text-sm text-gray-600 mb-1 md:mb-2 line-clamp-1 md:line-clamp-2 hidden sm:block">
+                            {product.description || 'No description available'}
+                          </p>
+                          <p className="font-inter text-base md:text-lg font-semibold text-[#93a267]">
+                            ₹{product.price?.toLocaleString()}
+                          </p>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={() => navigate(`/product/${product._id}`)}
+                            className="px-3 md:px-6 py-1.5 md:py-2 bg-[#93a267] text-white font-inter font-medium rounded hover:bg-[#7d8c56] transition-all text-xs md:text-sm whitespace-nowrap"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleWishlistModification(product._id, dispatch);
+                            }}
+                            className="px-3 md:px-6 py-1.5 md:py-2 border-2 border-red-500 text-red-500 font-inter font-medium rounded hover:bg-red-50 transition-all text-xs md:text-sm whitespace-nowrap flex items-center justify-center gap-1 md:gap-2"
+                          >
+                            <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+                            <span className="hidden sm:inline">Remove</span>
                           </button>
                         </div>
-                        <p className="font-inter text-gray-700 text-sm mb-2">{addr.street}</p>
-                        <p className="font-inter text-gray-600 text-sm">{addr.city}, {addr.state} {addr.zip}</p>
                       </div>
                     ))}
                   </div>
@@ -520,32 +583,16 @@ export const ProfilePage = () => {
               </div>
             )}
 
-            {/* Wishlist Tab */}
-            {activeTab === 'wishlist' && (
-              <div className="bg-white rounded-lg p-8 shadow-sm">
-                <div className="text-center py-12">
-                  <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="font-inter text-gray-600 text-lg">No items in your wishlist</p>
-                  <button
-                    onClick={() => navigate('/shop')}
-                    className="font-inter mt-6 px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
-                  >
-                    BROWSE PRODUCTS
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Help Desk Tab */}
             {activeTab === 'helpDesk' && (
-              <div className="bg-white rounded-lg p-8 shadow-sm">
-                <div className="text-center py-12">
-                  <HelpCircle className="w-16 h-16 text-[#93a267] mx-auto mb-4" />
-                  <h3 className="font-inter text-2xl font-bold text-gray-900 mb-2">Help & Support Center</h3>
-                  <p className="font-inter text-gray-600 mb-8">Need assistance? We're here to help!</p>
+              <div className="bg-white rounded-lg p-4 md:p-8 shadow-sm">
+                <div className="text-center py-8 md:py-12">
+                  <HelpCircle className="w-12 h-12 md:w-16 md:h-16 text-[#93a267] mx-auto mb-3 md:mb-4" />
+                  <h3 className="font-inter text-xl md:text-2xl font-bold text-gray-900 mb-2">Help & Support Center</h3>
+                  <p className="font-inter text-sm md:text-base text-gray-600 mb-6 md:mb-8">Need assistance? We're here to help!</p>
                   <button
                     onClick={() => navigate('/contact')}
-                    className="font-inter px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
+                    className="font-inter px-6 md:px-8 py-2 md:py-3 bg-[#93a267] text-white text-sm md:text-base font-semibold rounded hover:bg-[#7d8c56] transition-all"
                   >
                     CONTACT US
                   </button>

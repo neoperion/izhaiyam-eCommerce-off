@@ -50,6 +50,18 @@ const userSchema = mongoose.Schema(
       default: "standard",
       enum: ["standard", "express", "free shipping"],
     },
+    savedAddresses: [
+      {
+        addressType: { type: String, enum: ["Home", "Office"], default: "Home" },
+        addressLine1: String,
+        addressLine2: String,
+        city: String,
+        state: String,
+        country: String,
+        postalCode: String,
+        isDefault: { type: Boolean, default: false }
+      }
+    ],
     orders: [
       {
         products: [
@@ -66,18 +78,23 @@ const userSchema = mongoose.Schema(
         username: String,
         shippingMethod: String,
         email: String,
-        address: String,
-        country: String,
-        postalCode: Number,
+        phone: String,
+        addressType: { type: String, enum: ["Home", "Office"], default: "Home" },
+        addressLine1: String,
+        addressLine2: String,
+        address: String, // Keep for backward compatibility
         city: String,
+        state: String,
+        country: String,
+        postalCode: String,
         totalAmount: Number,
         deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled", "Shipped", "shipped"] },
         paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"] },
         date: { type: Date, default: Date.now },
         tracking: {
-            carrier: String,
-            trackingId: String,
-            trackingUrl: String
+          carrier: String,
+          trackingId: String,
+          trackingUrl: String
         }
       },
     ],

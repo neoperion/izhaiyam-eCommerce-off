@@ -23,10 +23,15 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
   const [checkoutFormData, setCheckoutFormData] = useState({
     username: username || "",
     email: email,
-    country: country || "",
+    phone: "",
+    addressType: "Home",
+    addressLine1: "",
+    addressLine2: "",
     city: city || "",
-    address: address || "",
+    state: "",
+    country: country || "India",
     postalCode: postalCode || "",
+    address: address || "",
     shippingMethod: shippingMethod || "",
   });
 
@@ -56,13 +61,22 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
   const orderDetails = {
     products: cart.map((products) => {
-      return { productId: products._id, quantity: products.quantity };
+      return {
+        productId: products._id,
+        quantity: products.quantity,
+        selectedColor: products.selectedColor || null
+      };
     }),
     username: checkoutFormData.username,
-    address: checkoutFormData.address,
     email: checkoutFormData.email,
-    country: checkoutFormData.country,
+    phone: checkoutFormData.phone,
+    addressType: checkoutFormData.addressType,
+    addressLine1: checkoutFormData.addressLine1,
+    addressLine2: checkoutFormData.addressLine2,
+    address: checkoutFormData.address || `${checkoutFormData.addressLine1}, ${checkoutFormData.addressLine2}`,
     city: checkoutFormData.city,
+    state: checkoutFormData.state,
+    country: checkoutFormData.country,
     postalCode: checkoutFormData.postalCode,
     shippingMethod: checkoutFormData.shippingMethod,
     deliveryStatus: "pending",
@@ -73,18 +87,21 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
   const placeOrderFn = async (e) => {
     const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000/";
     e.preventDefault();
+
+    console.log('🛒 Placing order with details:', JSON.stringify(orderDetails, null, 2));
+
     try {
       const { data } = await axios.post(`${serverUrl}orders/placeOrders`, { orderDetails });
 
       // Update Redux state with new user data (containing the new order)
       if (data.user) {
         dispatch({ type: "authSlice/getUserData", payload: data.user });
-        
+
         // Update local storage to persist the new order data
         const currentData = JSON.parse(localStorage.getItem("UserData")) || {};
         const updatedData = { ...currentData, ...data.user }; // Merge existing token etc with new user data
         localStorage.setItem("UserData", JSON.stringify(updatedData));
-        
+
         // Refetch products to show updated stock immediately
         dispatch(getAllProductsData());
       }
@@ -100,8 +117,13 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
           ...prevData,
           username: "",
           email: email,
-          country: "",
+          phone: "",
+          addressType: "Home",
+          addressLine1: "",
+          addressLine2: "",
           city: "",
+          state: "",
+          country: "India",
           address: "",
           postalCode: "",
           shippingMethod: shippingMethod || "",
@@ -121,21 +143,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
   } else {
     return (
       <>
-        <div className="mt-12 w-[100%] h-[54px] bg-neutralColor text-secondaryColor tablet:px-[6%] xl:px-[4%] px-[4%] lg:px-[2%]  flex items-center justify-between font-bold  font-RobotoCondensed lg:col-span-full lg:row-span-1">
-          <div className="flex gap-[4px] items-center text-[15px]">
-            <IoIosArrowBack />
-            <li onClick={() => navigate("/")} className="hover:underline capitalize">
-              Home
-            </li>
-            <IoIosArrowBack />
-            <li onClick={() => navigate("/shop")} className="hover:underline capitalize">
-              Shop
-            </li>
-            <IoIosArrowBack />
-            <span className=" capitalize">Checkout</span>
-          </div>
-        </div>
-        <div className="flex flex-col-reverse lg:flex-row lg:flex lg:w-[96%] xl:w-[92%] lg:mx-auto lg:justify-between mb-20 lg:items-start">
+        <div className="flex flex-col-reverse lg:flex-row lg:flex lg:w-[96%] xl:w-[92%] lg:mx-auto lg:justify-between mb-20 lg:items-start pt-20">
           <CheckoutForm {...{ placeOrderFn, checkoutFormData, setCheckoutFormData }} />
           <OrderSummary {...{ setTotalAmountToBePaid }} />
         </div>

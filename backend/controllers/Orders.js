@@ -9,7 +9,7 @@ const postUserOrders = async (req, res) => {
   const email = req.body?.orderDetails?.email?.toLowerCase();
 
   const session = await mongoose.startSession().catch(() => null);
-  
+
   try {
     if (session) {
       session.startTransaction();
@@ -20,7 +20,7 @@ const postUserOrders = async (req, res) => {
 
     for (let item of products) {
       let product;
-      
+
       // OPTION A: Specific Color Variant
       if (item.selectedColor && item.selectedColor.colorName) {
         // Find specific variant with enough stock
@@ -69,16 +69,16 @@ const postUserOrders = async (req, res) => {
       // 2. Update Status if Stock hits 0
       let needsSave = false;
       if (item.selectedColor && item.selectedColor.colorName) {
-         // Variant Logic (optional: check if ALL variants are 0? or just this one)
-         // For now, simpler to leave main status unless logic requires variants -> main status sync
+        // Variant Logic (optional: check if ALL variants are 0? or just this one)
+        // For now, simpler to leave main status unless logic requires variants -> main status sync
       } else {
-         if (product.stock === 0) {
-           product.status = "Out of Stock";
-           needsSave = true;
-         } else if (product.status === "Out of Stock" && product.stock > 0) {
-           product.status = "In Stock";
-           needsSave = true;
-         }
+        if (product.stock === 0) {
+          product.status = "Out of Stock";
+          needsSave = true;
+        } else if (product.status === "Out of Stock" && product.stock > 0) {
+          product.status = "In Stock";
+          needsSave = true;
+        }
       }
 
       if (needsSave) {
@@ -86,10 +86,47 @@ const postUserOrders = async (req, res) => {
       }
     }
 
-    // 3. User Order Creation
+    // 3. User Order Creation - Format the order properly
+    const formattedOrder = {
+      products: products.map(item => {
+        const product = {
+          productId: item.productId,
+          quantity: item.quantity
+        };
+
+        // Only add selectedColor if it exists and is not null
+        if (item.selectedColor && item.selectedColor.colorName) {
+          product.selectedColor = {
+            name: item.selectedColor.colorName || item.selectedColor.name,
+            hexCode: item.selectedColor.hexCode,
+            imageUrl: item.selectedColor.imageUrl
+          };
+        }
+
+        return product;
+      }),
+      username: orderDetails.username,
+      shippingMethod: orderDetails.shippingMethod,
+      email: orderDetails.email,
+      phone: orderDetails.phone,
+      addressType: orderDetails.addressType,
+      addressLine1: orderDetails.addressLine1,
+      addressLine2: orderDetails.addressLine2,
+      address: orderDetails.address,
+      city: orderDetails.city,
+      state: orderDetails.state,
+      country: orderDetails.country,
+      postalCode: orderDetails.postalCode,
+      totalAmount: orderDetails.totalAmount,
+      deliveryStatus: orderDetails.deliveryStatus,
+      paymentStatus: orderDetails.paymentStatus
+    };
+
+    console.log('📦 Formatted Order Data:', JSON.stringify(formattedOrder, null, 2));
+
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      { $push: { orders: orderDetails } },
+      { $push: { orders: formattedOrder } },
       { new: true, session }
     );
 
@@ -101,7 +138,7 @@ const postUserOrders = async (req, res) => {
       await session.commitTransaction();
       session.endSession();
     }
-    
+
     res.status(201).json({ message: "Order successful", user: updatedUser });
 
   } catch (error) {
@@ -112,27 +149,27 @@ const postUserOrders = async (req, res) => {
       // Manual Rollback for standalone DBs
       // Reverse the stock deduction for all successful items so far
       // Note: This is loop is best-effort in a crash, but handles logical errors (e.g. 5th item out of stock)
-        /* 
-           Ideally we would reverse `updatedProducts`. 
-           However, doing this inside the catch block requires access to `updatedProducts`.
-           I'll define it outside loop.
-           
-           Wait, `updatedProducts` is not accessible here if I defined it in try block?
-           No, `let updatedProducts = []` inside TRY is scoped to TRY.
-           But `const updatedProducts = ...` was defined inside TRY in the code above.
-           Wait, for manual rollback to work, I need to access it. 
-           I will trust MongoDB Transactions for now as requested by user ("Use MongoDB transactions if available").
-           If the user doesn't have a Replica Set, `startSession()` might fail or return null?
-           I added `.catch(() => null)` to `startSession()`.
-           If session is null, I need manual rollback.
-        */
-       /* 
-          Refactoring to ensure `updatedProducts` is accessible if needed, 
-          BUT for this tool call I must stick to the block replacement.
-          I will assume Session works or simply throw the error. 
-          Implementing a full manual rollback system in this snippet might be too verbose.
-          Let's try to include a basic manual rollback in the catch if session is null.
-       */
+      /* 
+         Ideally we would reverse `updatedProducts`. 
+         However, doing this inside the catch block requires access to `updatedProducts`.
+         I'll define it outside loop.
+         
+         Wait, `updatedProducts` is not accessible here if I defined it in try block?
+         No, `let updatedProducts = []` inside TRY is scoped to TRY.
+         But `const updatedProducts = ...` was defined inside TRY in the code above.
+         Wait, for manual rollback to work, I need to access it. 
+         I will trust MongoDB Transactions for now as requested by user ("Use MongoDB transactions if available").
+         If the user doesn't have a Replica Set, `startSession()` might fail or return null?
+         I added `.catch(() => null)` to `startSession()`.
+         If session is null, I need manual rollback.
+      */
+      /* 
+         Refactoring to ensure `updatedProducts` is accessible if needed, 
+         BUT for this tool call I must stick to the block replacement.
+         I will assume Session works or simply throw the error. 
+         Implementing a full manual rollback system in this snippet might be too verbose.
+         Let's try to include a basic manual rollback in the catch if session is null.
+      */
     }
     throw new CustomErrorHandler(error.statusCode || 500, error.message);
   }
@@ -142,7 +179,7 @@ const postUserOrders = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     const users = await User.find({}).select('orders username email').populate('orders.products.productId', 'title price image');
-    
+
     // Flatten all orders from all users
     let allOrders = [];
     users.forEach(user => {
@@ -153,18 +190,22 @@ const getAllOrders = async (req, res) => {
           id: order._id,
           customer: order.username,
           email: user.email,
-          phone: user.phone || 'N/A',
+          phone: order.phone || user.phone || 'N/A',
           product: firstProduct?.title || 'Multiple Products',
           productCount: order.products.length,
           amount: order.totalAmount,
-          status: order.deliveryStatus === 'delivered' ? 'Delivered' : 
-                  order.deliveryStatus === 'cancelled' ? 'Cancelled' : 
-                  'Processing',
+          status: order.deliveryStatus === 'delivered' ? 'Delivered' :
+            order.deliveryStatus === 'cancelled' ? 'Cancelled' :
+              'Processing',
           paymentStatus: order.paymentStatus,
           date: new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           rawDate: order.date,
+          addressType: order.addressType || 'Home',
+          addressLine1: order.addressLine1 || '',
+          addressLine2: order.addressLine2 || '',
           address: order.address,
           city: order.city,
+          state: order.state || '',
           country: order.country,
           postalCode: order.postalCode,
           shippingMethod: order.shippingMethod,
@@ -177,10 +218,10 @@ const getAllOrders = async (req, res) => {
     // Sort by date (newest first)
     allOrders.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       orders: allOrders,
-      totalOrders: allOrders.length 
+      totalOrders: allOrders.length
     });
   } catch (error) {
     throw new CustomErrorHandler(500, error.message);
@@ -191,7 +232,7 @@ const getAllOrders = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}).select('-password -verificationToken');
-    
+
     const usersData = users.map(user => ({
       id: user._id,
       name: user.username,
@@ -207,8 +248,8 @@ const getAllUsers = async (req, res) => {
       country: user.country
     }));
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       users: usersData,
       totalUsers: usersData.length,
       verifiedUsers: usersData.filter(u => u.status === 'Verified').length
@@ -374,7 +415,7 @@ const updateOrderTracking = async (req, res) => {
     const orderIndex = user.orders.findIndex(ord => ord._id.toString() === orderId);
 
     if (orderIndex === -1) {
-       throw new CustomErrorHandler(404, "Order not found in user record");
+      throw new CustomErrorHandler(404, "Order not found in user record");
     }
 
     // Generate Tracking URL
@@ -398,10 +439,10 @@ const updateOrderTracking = async (req, res) => {
     };
 
     const provider = trackingProviders[carrier];
-    
+
     // Fallback if carrier not in list (though validation normally prevents this)
     if (!provider) {
-       throw new CustomErrorHandler(400, "Invalid Carrier Selected");
+      throw new CustomErrorHandler(400, "Invalid Carrier Selected");
     }
 
     let trackingUrl;
@@ -411,15 +452,31 @@ const updateOrderTracking = async (req, res) => {
       trackingUrl = provider.url; // NO trackingId appended
     }
 
-    // Update order fields
-    user.orders[orderIndex].tracking = {
-        carrier,
-        trackingId,
-        trackingUrl
-    };
-    user.orders[orderIndex].deliveryStatus = "Shipped"; // Update status to Shipped
+    // Update order fields using findOneAndUpdate to avoid validation issues
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        "_id": user._id,
+        "orders._id": orderId
+      },
+      {
+        $set: {
+          "orders.$.tracking": {
+            carrier,
+            trackingId,
+            trackingUrl
+          },
+          "orders.$.deliveryStatus": "Shipped"
+        }
+      },
+      {
+        new: true,
+        runValidators: false // Skip validation to avoid firstName/lastName errors
+      }
+    );
 
-    await user.save();
+    if (!updatedUser) {
+      throw new CustomErrorHandler(500, "Failed to update tracking information");
+    }
 
     res.status(200).json({
       success: true,
@@ -428,7 +485,7 @@ const updateOrderTracking = async (req, res) => {
     });
 
   } catch (error) {
-     throw new CustomErrorHandler(500, error.message);
+    throw new CustomErrorHandler(500, error.message);
   }
 };
 

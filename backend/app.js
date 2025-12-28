@@ -11,6 +11,7 @@ const productRoute = require("./routes/productRoute");
 const authRoute = require("./routes/authenticationRoute");
 const adminRoute = require("./routes/adminRoutes");
 const ordersRoute = require("./routes/ordersRoute");
+const addressRoute = require("./routes/addressRoutes");
 const { clearAdminJwt } = require("./controllers/admin");
 
 cloudinary.config({
@@ -44,6 +45,7 @@ app.use("/api/v1/products", productRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/orders", ordersRoute);
 app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/address", addressRoute);
 app.use(errorHandler);
 app.use(pathNotFound);
 
