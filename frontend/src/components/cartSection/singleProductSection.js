@@ -20,7 +20,7 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
     for (let key of cart) {
       const isSameProduct = key._id === _id;
       const isSameVariant = selectedColor
-        ? key.selectedColor?.colorName === selectedColor.colorName
+        ? key.selectedColor?.primaryColorName === selectedColor.primaryColorName || key.selectedColor?.colorName === selectedColor.colorName
         : !key.selectedColor;
 
       if (isSameProduct && isSameVariant) {
@@ -87,9 +87,17 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
               <span className="text-xs text-gray-500">Color:</span>
               <div
                 className="w-4 h-4 rounded-full border-2 border-gray-300"
-                style={{ backgroundColor: selectedColor.hexCode }}
+                style={{
+                  background: selectedColor.isDualColor
+                    ? `linear-gradient(90deg, ${selectedColor.primaryHexCode || selectedColor.hexCode} 50%, ${selectedColor.secondaryHexCode} 50%)`
+                    : (selectedColor.primaryHexCode || selectedColor.hexCode)
+                }}
               ></div>
-              <span className="text-xs text-gray-600 font-medium">{selectedColor.colorName}</span>
+              <span className="text-xs text-gray-600 font-medium">
+                {selectedColor.isDualColor 
+                  ? `${selectedColor.primaryColorName} + ${selectedColor.secondaryColorName}`
+                  : (selectedColor.primaryColorName || selectedColor.colorName)}
+              </span>
             </div>
           )}
 

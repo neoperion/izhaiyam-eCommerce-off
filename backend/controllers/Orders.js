@@ -22,14 +22,17 @@ const postUserOrders = async (req, res) => {
       let product;
 
       // OPTION A: Specific Color Variant
-      if (item.selectedColor && item.selectedColor.colorName) {
-        // Find specific variant with enough stock
+      if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)) {
+        // Find specific variant with enough stock (support both new and legacy fields)
+        const colorField = item.selectedColor.primaryColorName ? "primaryColorName" : "colorName";
+        const colorValue = item.selectedColor.primaryColorName || item.selectedColor.colorName;
+        
         product = await Product.findOneAndUpdate(
           {
             _id: item.productId,
             "colorVariants": {
               $elemMatch: {
-                colorName: item.selectedColor.colorName,
+                [colorField]: colorValue,
                 stock: { $gte: item.quantity }
               }
             }
@@ -62,8 +65,8 @@ const postUserOrders = async (req, res) => {
       updatedProducts.push({
         id: item.productId,
         quantity: item.quantity,
-        isVariant: !!(item.selectedColor && item.selectedColor.colorName),
-        colorName: item.selectedColor?.colorName
+        isVariant: !!(item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)),
+        colorName: item.selectedColor?.primaryColorName || item.selectedColor?.colorName
       });
 
       // 2. Update Status if Stock hits 0
@@ -95,11 +98,19 @@ const postUserOrders = async (req, res) => {
         };
 
         // Only add selectedColor if it exists and is not null
-        if (item.selectedColor && item.selectedColor.colorName) {
+        if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)) {
           product.selectedColor = {
-            name: item.selectedColor.colorName || item.selectedColor.name,
-            hexCode: item.selectedColor.hexCode,
-            imageUrl: item.selectedColor.imageUrl
+            // Support new dual-color fields
+            primaryColorName: item.selectedColor.primaryColorName,
+            primaryHexCode: item.selectedColor.primaryHexCode,
+            secondaryColorName: item.selectedColor.secondaryColorName,
+            secondaryHexCode: item.selectedColor.secondaryHexCode,
+            isDualColor: item.selectedColor.isDualColor || false,
+            imageUrl: item.selectedColor.imageUrl,
+            
+            // Legacy fields for backward compatibility
+            name: item.selectedColor.colorName || item.selectedColor.primaryColorName,
+            hexCode: item.selectedColor.hexCode || item.selectedColor.primaryHexCode
           };
         }
 

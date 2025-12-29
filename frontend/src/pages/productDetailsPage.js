@@ -188,11 +188,39 @@ export const ProductDetailsPage = () => {
                 </div>
                 {isCustomizationActive && colorVariants && colorVariants.length > 0 && (
                   <div className="space-y-3">
-                    <p className="font-inter text-sm text-gray-700">Selected: <span className="font-semibold">{selectedColor?.colorName}</span></p>
+                    <p className="font-inter text-sm text-gray-700">Selected: <span className="font-semibold">
+                      {selectedColor?.isDualColor 
+                        ? `${selectedColor.primaryColorName} + ${selectedColor.secondaryColorName}`
+                        : (selectedColor?.primaryColorName || selectedColor?.colorName)}
+                    </span></p>
                     <div className="flex gap-3 flex-wrap">
-                      {colorVariants.map((variant, idx) => (
-                        <button key={idx} onClick={() => handleColorSelect(variant)} className={`w-12 h-12 rounded-full border-2 transition-all ${selectedColor?.colorName === variant.colorName ? 'border-[#93a267] scale-110 shadow-md' : 'border-gray-300 hover:border-[#93a267]/50'}`} style={{ backgroundColor: variant.hexCode }} title={variant.colorName} />
-                      ))}
+                      {colorVariants.map((variant, idx) => {
+                        const isDual = variant.isDualColor || (variant.secondaryColorName && variant.secondaryHexCode);
+                        const primaryHex = variant.primaryHexCode || variant.hexCode;
+                        const secondaryHex = variant.secondaryHexCode;
+                        const variantColorName = variant.primaryColorName || variant.colorName;
+                        const displayTitle = isDual 
+                          ? `${variant.primaryColorName} + ${variant.secondaryColorName}`
+                          : variantColorName;
+                        
+                        return (
+                          <button 
+                            key={idx} 
+                            onClick={() => handleColorSelect(variant)} 
+                            className={`w-12 h-12 rounded-full border-2 transition-all ${
+                              (selectedColor?.primaryColorName || selectedColor?.colorName) === variantColorName
+                                ? 'border-[#93a267] scale-110 shadow-md' 
+                                : 'border-gray-300 hover:border-[#93a267]/50'
+                            }`}
+                            style={{
+                              background: isDual
+                                ? `linear-gradient(90deg, ${primaryHex} 50%, ${secondaryHex} 50%)`
+                                : primaryHex
+                            }}
+                            title={displayTitle}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 )}

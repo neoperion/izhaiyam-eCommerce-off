@@ -50,8 +50,18 @@ const productSchema = new mongoose.Schema(
     },
     colorVariants: [
       {
-        colorName: { type: String }, // Renamed from name
-        hexCode: { type: String },
+        // New dual-color fields
+        variantName: { type: String }, // Display name (e.g., "Red + Yellow")
+        primaryColorName: { type: String },
+        primaryHexCode: { type: String },
+        secondaryColorName: { type: String }, // Optional for dual-color
+        secondaryHexCode: { type: String }, // Optional for dual-color
+        isDualColor: { type: Boolean, default: false },
+        
+        // Legacy fields for backward compatibility
+        colorName: { type: String }, // Deprecated - use primaryColorName
+        hexCode: { type: String }, // Deprecated - use primaryHexCode
+        
         imageUrl: { type: String },
         stock: { type: Number, default: 0 },
       },

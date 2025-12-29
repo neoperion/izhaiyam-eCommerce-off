@@ -20,7 +20,15 @@ export const EditAndupdateProductModal = ({
   // Color Variants State
   const [isCustomizable, setIsCustomizable] = useState(initialIsCustomizable ? "yes" : "no");
   const [colorVariants, setColorVariants] = useState(initialColorVariants || []);
-  const [newColor, setNewColor] = useState({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
+  const [newColor, setNewColor] = useState({ 
+    primaryColorName: "", 
+    primaryHexCode: "#000000", 
+    secondaryColorName: "", 
+    secondaryHexCode: "#000000",
+    isDualColor: false,
+    stock: 0, 
+    imageUrl: "" 
+  });
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
 
   useEffect(() => {
@@ -80,8 +88,12 @@ export const EditAndupdateProductModal = ({
       displayOrder: parseInt(productDetails.displayOrder),
       isPinned: productDetails.isPinned === "yes",
       colorVariants: isCustomizable === "yes" ? colorVariants.map(c => ({
-        colorName: c.colorName,
-        hexCode: c.hexCode,
+        variantName: c.variantName,
+        primaryColorName: c.primaryColorName || c.colorName, // Support legacy
+        primaryHexCode: c.primaryHexCode || c.hexCode, // Support legacy
+        secondaryColorName: c.secondaryColorName || "",
+        secondaryHexCode: c.secondaryHexCode || "",
+        isDualColor: c.isDualColor || false,
         imageUrl: c.imageUrl,
         stock: parseInt(c.stock) || 0
       })) : [],
@@ -225,12 +237,31 @@ export const EditAndupdateProductModal = ({
   };
 
   const addColorVariant = () => {
-    if (!newColor.colorName || !newColor.imageUrl) {
-      toast.error("Please provide color name and image");
+    if (!newColor.primaryColorName || !newColor.imageUrl) {
+      toast.error("Please provide primary color name and image");
       return;
     }
-    setColorVariants([...colorVariants, newColor]);
-    setNewColor({ colorName: "", hexCode: "#000000", stock: 0, image: null, imageUrl: "" });
+    
+    const isDual = !!(newColor.secondaryColorName && newColor.secondaryHexCode);
+    const variantName = isDual 
+      ? `${newColor.primaryColorName} + ${newColor.secondaryColorName}`
+      : newColor.primaryColorName;
+    
+    setColorVariants([...colorVariants, { 
+      ...newColor, 
+      isDualColor: isDual,
+      variantName 
+    }]);
+    
+    setNewColor({ 
+      primaryColorName: "", 
+      primaryHexCode: "#000000", 
+      secondaryColorName: "", 
+      secondaryHexCode: "#000000",
+      isDualColor: false,
+      stock: 0, 
+      imageUrl: "" 
+    });
   };
 
   const removeColorVariant = (index) => {
@@ -439,21 +470,40 @@ export const EditAndupdateProductModal = ({
                 {/* Add New Variant */}
                 <div className="flex flex-wrap gap-4 items-end mb-4 p-4 bg-gray-50 rounded">
                   <div className="flex-1 min-w-[150px]">
-                    <label className="block text-sm font-medium mb-1 text-black">Color Name</label>
+                    <label className="block text-sm font-medium mb-1 text-black">Primary Color Name *</label>
                     <input
                       type="text"
-                      value={newColor.colorName}
-                      onChange={(e) => setNewColor({ ...newColor, colorName: e.target.value })}
+                      value={newColor.primaryColorName}
+                      onChange={(e) => setNewColor({ ...newColor, primaryColorName: e.target.value })}
                       className="w-full p-2 border rounded"
-                      placeholder="e.g. Red, Blue"
+                      placeholder="e.g. Red"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-black">Hex Code</label>
+                    <label className="block text-sm font-medium mb-1 text-black">Primary Color</label>
                     <input
                       type="color"
-                      value={newColor.hexCode}
-                      onChange={(e) => setNewColor({ ...newColor, hexCode: e.target.value })}
+                      value={newColor.primaryHexCode}
+                      onChange={(e) => setNewColor({ ...newColor, primaryHexCode: e.target.value })}
+                      className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Secondary Color (Optional)</label>
+                    <input
+                      type="text"
+                      value={newColor.secondaryColorName}
+                      onChange={(e) => setNewColor({ ...newColor, secondaryColorName: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="e.g. Yellow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-black">Secondary Color</label>
+                    <input
+                      type="color"
+                      value={newColor.secondaryHexCode}
+                      onChange={(e) => setNewColor({ ...newColor, secondaryHexCode: e.target.value })}
                       className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
                     />
                   </div>
@@ -488,23 +538,37 @@ export const EditAndupdateProductModal = ({
                 {/* List Variants */}
                 {colorVariants.length > 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {colorVariants.map((variant, index) => (
-                      <div key={index} className="flex items-center gap-4 p-3 border rounded relative">
-                        <div className="w-12 h-12 rounded border" style={{ backgroundColor: variant.hexCode }}></div>
-                        <img src={variant.imageUrl} alt={variant.colorName} className="w-12 h-12 object-cover rounded" />
-                        <div className="flex-1">
-                          <p className="font-bold text-black">{variant.colorName}</p>
-                          <p className="text-sm text-black">Stock: {variant.stock}</p>
+                    {colorVariants.map((variant, index) => {
+                      const displayName = variant.variantName || variant.primaryColorName || variant.colorName;
+                      const isDual = variant.isDualColor || (variant.secondaryColorName && variant.secondaryHexCode);
+                      const primaryHex = variant.primaryHexCode || variant.hexCode;
+                      const secondaryHex = variant.secondaryHexCode;
+                      
+                      return (
+                        <div key={index} className="flex items-center gap-4 p-3 border rounded relative">
+                          <div 
+                            className="w-12 h-12 rounded-full border-2 border-gray-300" 
+                            style={{ 
+                              background: isDual 
+                                ? `linear-gradient(90deg, ${primaryHex} 50%, ${secondaryHex} 50%)`
+                                : primaryHex
+                            }}
+                          ></div>
+                          <img src={variant.imageUrl} alt={displayName} className="w-12 h-12 object-cover rounded" />
+                          <div className="flex-1">
+                            <p className="font-bold text-black">{displayName}</p>
+                            <p className="text-sm text-black">Stock: {variant.stock}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeColorVariant(index)}
+                            className="text-red-500 hover:text-red-700 font-bold px-2"
+                          >
+                            X
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeColorVariant(index)}
-                          className="text-red-500 hover:text-red-700 font-bold px-2"
-                        >
-                          X
-                        </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

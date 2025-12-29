@@ -16,7 +16,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
         const filteredCart = cart.filter((item) => {
           // If deleting a specific variant
           if (selectedColor) {
-            return !(item._id === _id && item.selectedColor?.colorName === selectedColor.colorName);
+          return !(item._id === _id && (item.selectedColor?.primaryColorName === selectedColor.primaryColorName || item.selectedColor?.colorName === selectedColor.colorName));
           }
           // If deleting non-variant product
           return item._id !== _id;
@@ -32,7 +32,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
 
         for (let key of newCart) {
           const isSameVariant = selectedColor
-            ? key._id === _id && key.selectedColor?.colorName === selectedColor.colorName
+            ? key._id === _id && (key.selectedColor?.primaryColorName === selectedColor.primaryColorName || key.selectedColor?.colorName === selectedColor.colorName)
             : key._id === _id;
 
           if (isSameVariant) {
