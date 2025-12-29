@@ -43,7 +43,7 @@ const statesOfIndia = [
   "Puducherry"
 ];
 
-export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormData }) => {
+export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormData, savedAddresses }) => {
   const [isLoadingPincode, setIsLoadingPincode] = useState(false);
   const [pincodeError, setPincodeError] = useState('');
 
@@ -98,7 +98,6 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
   } = useSelector((state) => state.userAuth);
 
   const dispatch = useDispatch();
-  const [saveAddress, setSaveAddress] = useState(false);
 
   return (
     <form
@@ -169,6 +168,58 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
           </div>
         </div>
       </div>
+
+      {/* Saved Addresses */}
+      {savedAddresses && savedAddresses.length > 0 && (
+        <div className="bg-[#faf9f7] rounded-2xl p-6 mb-6">
+          <h2 className="font-inter text-lg font-semibold text-gray-900 mb-5">Saved Addresses</h2>
+          <div className="grid grid-cols-1 gap-4">
+              {savedAddresses.map((addr) => (
+                  <div key={addr._id} 
+                       className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
+                           (checkoutFormData.addressLine1 === addr.addressLine1 && checkoutFormData.postalCode === addr.postalCode) 
+                           ? 'border-[#93a267] bg-[#93a267]/5' 
+                           : 'border-gray-200 hover:border-gray-300'
+                       }`}
+                       onClick={() => {
+                           setCheckoutFormData(prev => ({
+                               ...prev,
+                               addressType: addr.addressType,
+                               addressLine1: addr.addressLine1,
+                               addressLine2: addr.addressLine2,
+                               city: addr.city,
+                               state: addr.state,
+                               country: addr.country,
+                               postalCode: addr.postalCode
+                           }));
+                       }}
+                  >
+                      <div className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                               (checkoutFormData.addressLine1 === addr.addressLine1 && checkoutFormData.postalCode === addr.postalCode)
+                               ? 'border-[#93a267]' : 'border-gray-300'
+                          }`}>
+                              {(checkoutFormData.addressLine1 === addr.addressLine1 && checkoutFormData.postalCode === addr.postalCode) && (
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#93a267]" />
+                              )}
+                          </div>
+                          <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-inter font-semibold text-gray-900">{addr.addressType}</span>
+                                  {addr.isDefault && (
+                                      <span className="text-[10px] bg-[#93a267] text-white px-2 py-0.5 rounded-full font-bold">DEFAULT</span>
+                                  )}
+                              </div>
+                              <p className="font-inter text-sm text-gray-600 line-clamp-1">
+                                  {addr.addressLine1}, {addr.city}, {addr.state} - {addr.postalCode}
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              ))}
+          </div>
+        </div>
+      )}
 
       {/* Address Information */}
       <div className="bg-[#faf9f7] rounded-2xl p-6 mb-6">
@@ -349,8 +400,8 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
-              checked={saveAddress}
-              onChange={(e) => setSaveAddress(e.target.checked)}
+              checked={checkoutFormData.saveAddress}
+              onChange={(e) => setCheckoutFormData(prev => ({ ...prev, saveAddress: e.target.checked }))}
               className="w-5 h-5 rounded border-gray-300 text-[#93a267] focus:ring-[#93a267] cursor-pointer"
             />
             <span className="font-inter text-sm text-gray-700">Save this address for future orders</span>

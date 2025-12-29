@@ -48,7 +48,8 @@ export const AddressModal = ({ isOpen, onClose, onSave }) => {
         city: '',
         state: '',
         country: 'India',
-        postalCode: ''
+        postalCode: '',
+        isDefault: false
     });
 
     const [isLoadingPincode, setIsLoadingPincode] = useState(false);
@@ -118,7 +119,8 @@ export const AddressModal = ({ isOpen, onClose, onSave }) => {
             city: '',
             state: '',
             country: 'India',
-            postalCode: ''
+            postalCode: '',
+            isDefault: false
         });
 
         onClose();

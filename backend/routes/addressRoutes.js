@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticateUser = require("../middleware/authentication");
 const {
     getUserAddresses,
     addAddress,
@@ -8,6 +9,8 @@ const {
 } = require("../controllers/addressManagement");
 
 const router = express.Router();
+
+router.use(authenticateUser);
 
 router.route("/").get(getUserAddresses);
 router.route("/add").post(addAddress);

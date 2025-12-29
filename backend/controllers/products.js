@@ -193,16 +193,6 @@ const sortByLowStockProducts = async (req, res) => {
   res.status(201).json({ products: sortedProducts, productsLength });
 };
 
-module.exports = {
-  getAllProducts,
-  createProducts,
-  uploadProductImages,
-  getAspecificProduct,
-  deleteAspecificProduct,
-  updateAspecificProduct,
-  searchProducts,
-  sortByLowStockProducts,
-};
 
 const reindexAllProducts = async (req, res) => {
   // Fetch all products, sorted by Pinned > DisplayOrder > UpdatedAt

@@ -33,6 +33,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     postalCode: postalCode || "",
     address: address || "",
     shippingMethod: shippingMethod || "",
+    saveAddress: false
   });
 
   // on reload, set the data after it has gotten userData from localstorage
@@ -44,6 +45,46 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
       return { ...prevData, email: email };
     });
   }, [email, username]);
+
+  // Fetch saved addresses
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      const userData = localStorage.getItem("UserData");
+      if (!userData) return;
+      
+      const parsed = JSON.parse(userData);
+      const token = parsed.loginToken;
+      const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+
+      try {
+        const response = await axios.get(`${serverUrl}/api/v1/address`, {
+           headers: { Authorization: `Bearer ${token}` }
+        });
+        if(response.data.success){
+           setSavedAddresses(response.data.addresses);
+           
+           // Preselect default
+           const defaultAddr = response.data.addresses.find(a => a.isDefault);
+           if(defaultAddr) {
+              setCheckoutFormData(prev => ({
+                  ...prev,
+                  addressType: defaultAddr.addressType,
+                  addressLine1: defaultAddr.addressLine1,
+                  addressLine2: defaultAddr.addressLine2,
+                  city: defaultAddr.city,
+                  state: defaultAddr.state,
+                  country: defaultAddr.country,
+                  postalCode: defaultAddr.postalCode,
+              }));
+           }
+        }
+      } catch (error) {
+        console.error("Failed to fetch addresses", error);
+      }
+    };
+    fetchAddresses();
+  }, []);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -82,6 +123,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     deliveryStatus: "pending",
     paymentStatus: "pending",
     totalAmount: totalAmountToBePaid,
+    saveAddress: checkoutFormData.saveAddress
   };
 
   const placeOrderFn = async (e) => {
@@ -126,7 +168,10 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
           country: "India",
           address: "",
           postalCode: "",
+          address: "",
+          postalCode: "",
           shippingMethod: shippingMethod || "",
+          saveAddress: false
         };
       });
     } catch (error) {
@@ -144,7 +189,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     return (
       <>
         <div className="flex flex-col-reverse lg:flex-row lg:flex lg:w-[96%] xl:w-[92%] lg:mx-auto lg:justify-between mb-20 lg:items-start pt-20">
-          <CheckoutForm {...{ placeOrderFn, checkoutFormData, setCheckoutFormData }} />
+          <CheckoutForm {...{ placeOrderFn, checkoutFormData, setCheckoutFormData, savedAddresses }} />
           <OrderSummary {...{ setTotalAmountToBePaid }} />
         </div>
       </>

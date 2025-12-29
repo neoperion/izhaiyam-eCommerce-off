@@ -135,9 +135,44 @@ const postUserOrders = async (req, res) => {
 
     console.log('📦 Formatted Order Data:', JSON.stringify(formattedOrder, null, 2));
 
+    let updateQuery = { $push: { orders: formattedOrder } };
+
+    // SAVE ADDRESS LOGIC
+    if (orderDetails.saveAddress && email) {
+        // Fetch user to check for duplicates
+        // Note: We can't easily check duplicates in a single atomic update without fetching first 
+        // OR using intricate $addToSet with custom equality (which Objects in mongo are tricky with)
+        // Since we are inside a transaction/session or just doing an operation, let's fetch first.
+        
+        const userForCheck = await User.findOne({ email }).session(session);
+        
+        if (userForCheck) {
+            const addressExists = userForCheck.savedAddresses.some(addr => 
+                addr.addressLine1.toLowerCase() === orderDetails.addressLine1.toLowerCase() && 
+                addr.postalCode === orderDetails.postalCode
+            );
+            
+            if (!addressExists) {
+                const newAddress = {
+                    addressType: orderDetails.addressType || "Home",
+                    addressLine1: orderDetails.addressLine1,
+                    addressLine2: orderDetails.addressLine2 || "",
+                    city: orderDetails.city,
+                    state: orderDetails.state,
+                    country: orderDetails.country,
+                    postalCode: orderDetails.postalCode,
+                    isDefault: userForCheck.savedAddresses.length === 0 // Default if it's the first one
+                };
+                
+                // Add to the updates
+                updateQuery.$push.savedAddresses = newAddress;
+            }
+        }
+    }
+
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      { $push: { orders: formattedOrder } },
+      updateQuery,
       { new: true, session }
     );
 
