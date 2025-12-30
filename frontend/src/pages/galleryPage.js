@@ -114,7 +114,7 @@ export default function GalleryPage() {
             <NavTabs />
 
             {/* Hero Section - Fixed below navbar */}
-            <section className="relative w-full h-[calc(100vh-64px)] overflow-hidden">
+            <section className="relative w-full h-screen overflow-hidden -mt-16 pt-16">
                 <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
