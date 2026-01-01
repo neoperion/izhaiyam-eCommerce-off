@@ -26,6 +26,7 @@ import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
 import OrdersManagement from "../pages/adminPage/OrdersManagement";
 import { SettingsPage } from "../pages/adminPage/settings";
+import InstagramGalleryManager from "../pages/adminPage/InstagramGalleryManager";
 
 
 const PagesRoute = ({ setIsCartSectionActive }) => {
@@ -63,6 +64,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="orders-Management" element={<OrdersManagement />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
+          <Route path="instagram-gallery" element={<InstagramGalleryManager />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

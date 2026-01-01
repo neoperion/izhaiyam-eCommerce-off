@@ -80,7 +80,6 @@ const userSchema = mongoose.Schema(
               primaryHexCode: String,
               secondaryColorName: String,
               secondaryHexCode: String,
-              secondaryHexCode: String,
               isDualColor: Boolean,
             },
           },

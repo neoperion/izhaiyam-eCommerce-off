@@ -4,16 +4,18 @@ const Admin = require("../models/admin");
 const User = require("../models/userData");
 
 const checkIfUserIsAnAdminMiddleware = async (req, res, next) => {
+  console.log('Checking admin permissions for:', req.headers.authorization);
   let authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1] || " ";
 
-  const tokenVerification = jwt.verify(token, process.env.SECRET_TOKEN_KEY, (err, decoded) => {
-    if (err) {
-      return false;
-    } else {
-      return true;
-    }
-  });
+  let tokenVerification;
+  try {
+    jwt.verify(token, process.env.SECRET_TOKEN_KEY);
+    tokenVerification = true;
+  } catch (err) {
+    console.log('Admin Auth Middleware Error (Verify):', err.message);
+    tokenVerification = false;
+  }
 
   let checkIfTokenExist = await User.findOne({ verificationToken: token });
 
@@ -24,9 +26,11 @@ const checkIfUserIsAnAdminMiddleware = async (req, res, next) => {
   } else if (!checkIfTokenExist) {
     throw new CustomErrorHandler(401, "Unauthorized,only logged in admin may perfrom action");
   } else if (checkIfTokenExist && checkIfTokenExist.adminStatus === true) {
+    // eslint-disable-next-line no-unused-vars
     const adminData = await Admin.findOne({ userData: checkIfTokenExist._id });
 
-    res.locals.actionDoer = { doerRank: adminData.adminRank, doerData: checkIfTokenExist };
+    // eslint-disable-next-line no-undef
+    res.locals.actionDoer = { doerRank: adminData?.adminRank, doerData: checkIfTokenExist };
     next();
   } else {
     throw new CustomErrorHandler(401, "Unauthorized,only logged in admin may perfrom action");

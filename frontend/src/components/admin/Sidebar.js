@@ -10,7 +10,8 @@ import {
   Settings,
   Tag,
   MessageSquare,
-  LogOut
+  LogOut,
+  Image
 } from 'lucide-react';
 
 export const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -22,6 +23,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
     { icon: ShoppingCart, label: 'Orders', path: '/admin/orders-Management' },
     { icon: Package, label: 'Products', path: '/admin/products' },
     { icon: Users, label: 'Customers', path: '/admin/user-Management' },
+    { icon: Image, label: 'Gallery', path: '/admin/instagram-gallery' },
     { icon: Settings, label: 'Settings', path: '/admin/settings' }
   ];
 

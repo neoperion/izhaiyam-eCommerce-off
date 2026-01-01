@@ -12,6 +12,7 @@ const authRoute = require("./routes/authenticationRoute");
 const adminRoute = require("./routes/adminRoutes");
 const ordersRoute = require("./routes/ordersRoute");
 const addressRoute = require("./routes/addressRoutes");
+const instagramRoute = require("./routes/instagramRoute");
 const { clearAdminJwt } = require("./controllers/admin");
 
 cloudinary.config({
@@ -37,6 +38,12 @@ app.use(
   })
 );
 
+// Debug logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.status(200).send("<h1>Auffur,ecommerce server</h1> ");
 });
@@ -46,6 +53,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/orders", ordersRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/address", addressRoute);
+app.use("/api/v1/instagram", instagramRoute);
 app.use(errorHandler);
 app.use(pathNotFound);
 
