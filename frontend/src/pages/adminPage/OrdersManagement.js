@@ -144,6 +144,8 @@ const OrdersManagement = () => {
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">State</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Pincode</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Amount</th>
+                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment Method</th>
+                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment ID</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Status</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Date</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Actions</th>
@@ -173,6 +175,8 @@ const OrdersManagement = () => {
                     <td className="p-3 md:p-4 text-sm text-gray-700">{order.state || 'N/A'}</td>
                     <td className="p-3 md:p-4 text-sm text-gray-700">{order.postalCode || 'N/A'}</td>
                     <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString("en-IN")}</td>
+                     <td className="p-3 md:p-4 text-sm text-gray-700 capitalize">{order.paymentMethod || 'COD'}</td>
+                     <td className="p-3 md:p-4 text-sm text-gray-500 font-mono text-xs">{order.paymentId || '-'}</td>
                     <td className="p-3 md:p-4">
                       <span className={`px-2 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusColor(order.status)}`}>
                         {order.status}

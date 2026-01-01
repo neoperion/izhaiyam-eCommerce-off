@@ -68,10 +68,20 @@ const userSchema = mongoose.Schema(
           {
             productId: { type: Schema.Types.ObjectId, ref: "Product" },
             quantity: { type: Number },
+            name: String, // Snapshot: Product Title
+            image: String, // Snapshot: Product Image URL
+            price: Number, // Snapshot: Price at purchase
             selectedColor: {
               name: String,
               hexCode: String,
               imageUrl: String,
+                 // New dual-color fields (optional)
+              primaryColorName: String,
+              primaryHexCode: String,
+              secondaryColorName: String,
+              secondaryHexCode: String,
+              secondaryHexCode: String,
+              isDualColor: Boolean,
             },
           },
         ],
@@ -88,8 +98,17 @@ const userSchema = mongoose.Schema(
         country: String,
         postalCode: String,
         totalAmount: Number,
-        deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled", "Shipped", "shipped"] },
-        paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"] },
+        deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled", "Shipped", "shipped"], default: "pending" },
+        paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+        payment: {
+            method: { type: String, enum: ["razorpay", "cod"], default: "cod" },
+            razorpayOrderId: String,
+            razorpayPaymentId: String,
+            razorpaySignature: String,
+            amount: Number,
+            currency: String,
+            status: { type: String, default: "pending" }
+        },
         date: { type: Date, default: Date.now },
         tracking: {
           carrier: String,
