@@ -455,11 +455,14 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
       {/* Payment Method */}
       <div className="bg-[#faf9f7] rounded-2xl p-6 mb-8">
         <h2 className="font-inter text-lg font-semibold text-gray-900 mb-3">Payment Method</h2>
-        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+        <div className="flex items-start gap-3 p-4 bg-[#93a267]/10 rounded-lg border border-[#93a267]/30">
+          <svg className="w-5 h-5 text-[#93a267] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          <p className="font-inter text-sm text-blue-800">Payment on delivery. No online payment functionality available yet.</p>
+           <div>
+            <p className="font-inter font-semibold text-[#93a267] text-sm mb-1">Secure Online Payment</p>
+            <p className="font-inter text-sm text-gray-600">You will be redirected to Razorpay to complete your purchase securely.</p>
+           </div>
         </div>
       </div>
 

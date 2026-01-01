@@ -82,7 +82,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
           <img
             src={logoDark}
             alt="IZHAYAM HANDLOOM FURNITURE"
-            className="h-10 md:h-16 w-auto cursor-pointer brightness-[5] contrast-[0.8]"
+            className="h-10 md:h-16 w-auto cursor-pointer"
             onClick={() => navigate("/")}
           />
 

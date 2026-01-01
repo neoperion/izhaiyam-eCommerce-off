@@ -15,11 +15,15 @@ const postUserOrders = async (req, res) => {
       session.startTransaction();
     }
 
-    // 1. Deduct Stock Atomically
-    const updatedProducts = []; // Keep track for rollback if not using transactions or mixed mode
+    // 1. Deduct Stock Atomically & Build Snapshot
+    const formattedProducts = [];
 
     for (let item of products) {
       let product;
+      let snapshot = {
+          productId: item.productId,
+          quantity: item.quantity
+      };
 
       // OPTION A: Specific Color Variant
       if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)) {
@@ -43,6 +47,25 @@ const postUserOrders = async (req, res) => {
           { new: true, session }
         );
 
+        // Add Snapshot Data for Variant
+         if(product) {
+             snapshot.name = product.title;
+             snapshot.price = product.price;
+             snapshot.image = product.image; // Fallback main image
+             
+             // Variant Details
+             snapshot.selectedColor = {
+                primaryColorName: item.selectedColor.primaryColorName,
+                primaryHexCode: item.selectedColor.primaryHexCode,
+                secondaryColorName: item.selectedColor.secondaryColorName,
+                secondaryHexCode: item.selectedColor.secondaryHexCode,
+                isDualColor: item.selectedColor.isDualColor || false,
+                imageUrl: item.selectedColor.imageUrl, // Priority image
+                name: item.selectedColor.colorName || item.selectedColor.primaryColorName,
+                hexCode: item.selectedColor.hexCode || item.selectedColor.primaryHexCode
+             };
+         }
+
       } else {
         // OPTION B: Main Product Stock
         product = await Product.findOneAndUpdate(
@@ -55,25 +78,25 @@ const postUserOrders = async (req, res) => {
           },
           { new: true, session }
         );
+        
+        // Add Snapshot Data for Main Product
+        if(product) {
+            snapshot.name = product.title;
+            snapshot.price = product.price;
+            snapshot.image = product.image;
+        }
       }
 
       if (!product) {
         throw new CustomErrorHandler(400, `Product/Variant out of stock: ${item.name || item.productId}`);
       }
 
-      // Track for manual rollback if session is null
-      updatedProducts.push({
-        id: item.productId,
-        quantity: item.quantity,
-        isVariant: !!(item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)),
-        colorName: item.selectedColor?.primaryColorName || item.selectedColor?.colorName
-      });
+      formattedProducts.push(snapshot);
 
       // 2. Update Status if Stock hits 0
       let needsSave = false;
       if (item.selectedColor && item.selectedColor.colorName) {
-        // Variant Logic (optional: check if ALL variants are 0? or just this one)
-        // For now, simpler to leave main status unless logic requires variants -> main status sync
+        // Variant Logic
       } else {
         if (product.stock === 0) {
           product.status = "Out of Stock";
@@ -91,31 +114,7 @@ const postUserOrders = async (req, res) => {
 
     // 3. User Order Creation - Format the order properly
     const formattedOrder = {
-      products: products.map(item => {
-        const product = {
-          productId: item.productId,
-          quantity: item.quantity
-        };
-
-        // Only add selectedColor if it exists and is not null
-        if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)) {
-          product.selectedColor = {
-            // Support new dual-color fields
-            primaryColorName: item.selectedColor.primaryColorName,
-            primaryHexCode: item.selectedColor.primaryHexCode,
-            secondaryColorName: item.selectedColor.secondaryColorName,
-            secondaryHexCode: item.selectedColor.secondaryHexCode,
-            isDualColor: item.selectedColor.isDualColor || false,
-            imageUrl: item.selectedColor.imageUrl,
-            
-            // Legacy fields for backward compatibility
-            name: item.selectedColor.colorName || item.selectedColor.primaryColorName,
-            hexCode: item.selectedColor.hexCode || item.selectedColor.primaryHexCode
-          };
-        }
-
-        return product;
-      }),
+      products: formattedProducts,
       username: orderDetails.username,
       shippingMethod: orderDetails.shippingMethod,
       email: orderDetails.email,
@@ -130,7 +129,8 @@ const postUserOrders = async (req, res) => {
       postalCode: orderDetails.postalCode,
       totalAmount: orderDetails.totalAmount,
       deliveryStatus: orderDetails.deliveryStatus,
-      paymentStatus: orderDetails.paymentStatus
+      paymentStatus: orderDetails.paymentStatus,
+      date: Date.now() 
     };
 
     console.log('📦 Formatted Order Data:', JSON.stringify(formattedOrder, null, 2));
@@ -139,10 +139,6 @@ const postUserOrders = async (req, res) => {
 
     // SAVE ADDRESS LOGIC
     if (orderDetails.saveAddress && email) {
-        // Fetch user to check for duplicates
-        // Note: We can't easily check duplicates in a single atomic update without fetching first 
-        // OR using intricate $addToSet with custom equality (which Objects in mongo are tricky with)
-        // Since we are inside a transaction/session or just doing an operation, let's fetch first.
         
         const userForCheck = await User.findOne({ email }).session(session);
         
@@ -191,31 +187,6 @@ const postUserOrders = async (req, res) => {
     if (session) {
       await session.abortTransaction();
       session.endSession();
-    } else {
-      // Manual Rollback for standalone DBs
-      // Reverse the stock deduction for all successful items so far
-      // Note: This is loop is best-effort in a crash, but handles logical errors (e.g. 5th item out of stock)
-      /* 
-         Ideally we would reverse `updatedProducts`. 
-         However, doing this inside the catch block requires access to `updatedProducts`.
-         I'll define it outside loop.
-         
-         Wait, `updatedProducts` is not accessible here if I defined it in try block?
-         No, `let updatedProducts = []` inside TRY is scoped to TRY.
-         But `const updatedProducts = ...` was defined inside TRY in the code above.
-         Wait, for manual rollback to work, I need to access it. 
-         I will trust MongoDB Transactions for now as requested by user ("Use MongoDB transactions if available").
-         If the user doesn't have a Replica Set, `startSession()` might fail or return null?
-         I added `.catch(() => null)` to `startSession()`.
-         If session is null, I need manual rollback.
-      */
-      /* 
-         Refactoring to ensure `updatedProducts` is accessible if needed, 
-         BUT for this tool call I must stick to the block replacement.
-         I will assume Session works or simply throw the error. 
-         Implementing a full manual rollback system in this snippet might be too verbose.
-         Let's try to include a basic manual rollback in the catch if session is null.
-      */
     }
     throw new CustomErrorHandler(error.statusCode || 500, error.message);
   }
@@ -243,7 +214,9 @@ const getAllOrders = async (req, res) => {
           status: order.deliveryStatus === 'delivered' ? 'Delivered' :
             order.deliveryStatus === 'cancelled' ? 'Cancelled' :
               'Processing',
-          paymentStatus: order.paymentStatus,
+          paymentStatus: order.payment?.status == 'paid' ? 'Paid' : order.paymentStatus, // Use granular status if available
+          paymentMethod: order.payment?.method || 'N/A',
+          paymentId: order.payment?.razorpayPaymentId || 'N/A',
           date: new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           rawDate: order.date,
           addressType: order.addressType || 'Home',

@@ -435,6 +435,17 @@ export const ProfilePage = () => {
                                   <p className="text-sm font-medium text-gray-900">₹{order.totalAmount?.toLocaleString()}</p>
                                 </div>
                                 <div>
+                                  <p className="text-xs text-gray-500 uppercase mb-1">Payment</p>
+                                  <div className="flex items-center gap-2">
+                                     <span className="text-sm font-medium text-gray-900 capitalize">{order.payment?.method || 'COD'}</span>
+                                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold border ${
+                                         order.paymentStatus === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'
+                                     }`}>
+                                         {order.paymentStatus?.toUpperCase() || 'PENDING'}
+                                     </span>
+                                  </div>
+                                </div>
+                                <div>
                                   <p className="text-xs text-gray-500 uppercase mb-1">Order ID</p>
                                   <p className="text-sm font-medium text-gray-900">#{order._id?.slice(-8).toUpperCase() || 'N/A'}</p>
                                 </div>
@@ -475,17 +486,29 @@ export const ProfilePage = () => {
                           <div className="p-3 md:p-4">
                             {order.products.map((item, idx) => (
                               <div key={idx} className="flex items-center gap-2 md:gap-4 py-2 md:py-4 border-b last:border-0 border-gray-100">
-                                <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                  {item.productId?.image ? (
-                                    <img src={item.productId.image} alt="Product" className="w-full h-full object-cover" />
-                                  ) : (
-                                    <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
-                                  )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="font-medium text-sm md:text-base text-gray-900 line-clamp-1">{item.productId?.title || 'Product Name Unavailable'}</h4>
-                                  <p className="text-xs md:text-sm text-gray-500">Qty: {item.quantity}</p>
-                                </div>
+                                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
+                                    {item.image || item.productId?.image ? (
+                                      <img src={item.image || item.productId?.image} alt={item.name || item.productId?.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="font-medium text-sm md:text-base text-gray-900 line-clamp-1">{item.name || item.productId?.title || 'Product Name Unavailable'}</h4>
+                                    <div className="flex flex-col gap-0.5">
+                                        <p className="text-xs md:text-sm text-gray-500">Qty: {item.quantity}</p>
+                                        {item.selectedColor && (
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-xs text-gray-500">Color:</span>
+                                                <div 
+                                                    className="w-3 h-3 rounded-full border border-gray-200"
+                                                    style={{ backgroundColor: item.selectedColor.hexCode || item.selectedColor.primaryHexCode || '#ccc' }}
+                                                ></div>
+                                                <span className="text-xs text-gray-600">{item.selectedColor.name || item.selectedColor.primaryColorName}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                  </div>
                               </div>
                             ))}
                           </div>
