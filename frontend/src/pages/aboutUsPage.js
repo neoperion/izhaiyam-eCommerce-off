@@ -5,6 +5,7 @@ import heroAbout from "../assets/heroabout.JPG";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
+import BrandStorySection from "../components/BrandStorySection";
 
 // Import award images
 import award1 from "../assets/award1.jpg";
@@ -99,37 +100,8 @@ export const AboutUsPage = () => {
         </div>
       </section>
 
-      {/* Our Vision Section */}
-      <section className="w-full bg-white py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Vision</h2>
-
-
-          {/* Vision Box */}
-          <div className="bg-orange-50 rounded-lg p-12 max-w-xl w-full mx-auto mb-12">
-            <h3 className="font-inter text-5xl font-light text-gray-800 mb-6 leading-tight">
-              Our<br />Vision
-            </h3>
-            <p className="font-inter text-sm text-gray-700 leading-relaxed">
-              A world with healthier<br />
-              lifestyle<br />
-              and to retain traditional<br />
-              craft from<br />
-              disappearing
-            </p>
-          </div>
-
-          {/* Benefits Box */}
-          <div className="bg-gray-900 text-white p-12 max-w-xl w-full text-center rounded-lg mx-auto">
-            <h3 className="font-inter text-3xl font-light leading-relaxed">
-              Health<br />
-              benefits of<br />
-              rope<br />
-              furniture
-            </h3>
-          </div>
-        </div>
-      </section>
+      {/* Brand Story Section */}
+      <BrandStorySection />
 
       {/* Why Choose Us Section */}
       <section className="w-full bg-gray-50 py-24 px-6">
