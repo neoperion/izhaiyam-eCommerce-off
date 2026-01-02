@@ -148,6 +148,4 @@ Here is a summary of the main API resources. For full documentation, please refe
 -   **Admin**: `/api/v1/admin` (Admin stats, User management)
 -   **Instagram**: `/api/v1/instagram` (Manage gallery posts)
 
-## 📄 License
 
-This project is licensed under the ISC License.

@@ -1,14 +1,13 @@
 {
-  "name": "auffur",
+  "name": "izhaiyam",
   "version": "1.0.0",
-  "description": "Auffur is an e-commerce platform",
+  "description": "izhaiyam is an e-commerce platform",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "server": "nodemon app.js"
   },
-  "author": "Azeez umar faruk",
-  "license": "ISC",
+  "author": "vasantharaj",
   "devDependencies": {
     "nodemon": "^2.0.20"
   },
