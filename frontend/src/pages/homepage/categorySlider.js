@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
 import cotImg from '../../assets/category-cot.jpg';
-import sofaImg from '../../assets/category-sofa.jpg';
+import sofaImg from '../../assets/sofa.png';
 import diwanImg from '../../assets/category-diwan.png';
-import chairImg from '../../assets/category-chair.jpg';
-import swingImg from '../../assets/category-swing.jpg';
+import chairImg from '../../assets/chair (2).png';
+import swingImg from '../../assets/HEALTH (5).png';
 import balconyImg from '../../assets/category-balcony.jpg';
 
 const CategorySlider = () => {

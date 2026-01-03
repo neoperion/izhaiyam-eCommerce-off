@@ -36,12 +36,13 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
                 )}
 
                 {/* Heart Icon */}
-                <div
+                <button
                     onClick={() => handleWishlistModification(_id, dispatch)}
-                    className="absolute top-3 right-3 bg-white rounded-full p-2 cursor-pointer shadow-md hover:shadow-lg transition"
+                    className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-300 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`}
+                    aria-label="Add to wishlist"
                 >
-                    <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
-                </div>
+                    <Heart className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"}`} />
+                </button>
             </div>
 
             {/* Content Container */}

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import FooterSection from "../components/footerSection";
-import heroAbout from "../assets/heroabout.JPG";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
@@ -16,26 +15,63 @@ import award4 from "../assets/award4.jpg";
 export const AboutUsPage = () => {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Background Image */}
-      <section
-        className="relative w-full h-96 bg-cover flex items-center justify-center"
-        style={{
-          backgroundImage: `url(${heroAbout})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top'
-        }}
-      >
-        {/* Transparency Overlay */}
-        <div className="absolute inset-0 bg-white bg-opacity-30"></div>
+      {/* Enhanced Modern Hero Section */}
+      <section className="relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-24 md:py-32 px-6 overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
 
-        {/* Content - Explore Button */}
-        <div className="text-center z-10 relative">
-          <button
-            className="font-inter px-8 py-3 text-white font-semibold tracking-wider rounded-md transition-all duration-300 hover:scale-105 hover:shadow-lg"
-            style={{ backgroundColor: '#93a267' }}
-          >
-            ABOUT US
-          </button>
+        <div className="max-w-5xl mx-auto relative z-10">
+          {/* Eyebrow Text */}
+          <p className="font-inter text-sm md:text-base font-semibold tracking-wider uppercase text-center mb-4" style={{ color: '#93a267' }}>
+            Weaving Tradition, Crafting Comfort
+          </p>
+
+          {/* Main Heading */}
+          <h1 className="font-inter text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 text-center leading-tight">
+            About <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">Izhaiyam</span>
+          </h1>
+
+          {/* Decorative Line */}
+          <div className="flex items-center justify-center gap-3 mb-12">
+            <div className="w-12 h-0.5 bg-gray-300"></div>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#93a267' }}></div>
+            <div className="w-12 h-0.5 bg-gray-300"></div>
+          </div>
+
+          {/* Description Paragraphs */}
+          <div className="space-y-8 max-w-3xl mx-auto">
+            <p className="font-inter text-xl md:text-2xl text-gray-800 leading-relaxed text-center font-light">
+              Where <span className="font-semibold text-gray-900">handloom tradition meets modern comfort</span>. We create exquisite rope furniture using <span className="font-semibold text-gray-900">time-honored weaving techniques</span> that bring natural elegance to your home.
+            </p>
+
+            <p className="font-inter text-base md:text-lg text-gray-600 leading-relaxed text-center">
+              Every piece is meticulously handwoven by <span className="font-medium text-gray-800">skilled artisans</span> using traditional rope weaving methods passed down through generations. We preserve the rich heritage of Indian handloom craftsmanship while empowering local communities, especially women weavers, through fair wages and sustainable employment.
+            </p>
+
+            <p className="font-inter text-base md:text-lg text-gray-600 leading-relaxed text-center">
+              From carefully selecting natural, eco-friendly materials to ensuring each knot is perfectly woven, we maintain the highest standards of quality. We deliver not just furniture, but <span className="font-medium text-gray-800">handcrafted masterpieces</span> that embody heritage, wellness, and timeless beauty.
+            </p>
+          </div>
+
+          {/* Stats Section - Enhanced */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>15+</p>
+              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Years of Excellence</p>
+              <p className="font-inter text-xs text-gray-500 mt-1">Trusted tradition</p>
+            </div>
+            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>200+</p>
+              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
+              <p className="font-inter text-xs text-gray-500 mt-1">Master craftspeople</p>
+            </div>
+            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>5K+</p>
+              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
+              <p className="font-inter text-xs text-gray-500 mt-1">Across India</p>
+            </div>
+          </div>
         </div>
       </section>
 

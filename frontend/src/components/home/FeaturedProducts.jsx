@@ -5,8 +5,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import FeaturedProductCard from './FeaturedProductCard';
 import { useSelector } from 'react-redux';
 
-const FeaturedProducts = () =>
-{
+const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const scrollContainerRef = useRef(null);
@@ -14,10 +13,8 @@ const FeaturedProducts = () =>
     // Get wishlist from Redux (same as shop page)
     const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
 
-    useEffect(() =>
-    {
-        const fetchFeaturedProducts = async () =>
-        {
+    useEffect(() => {
+        const fetchFeaturedProducts = async () => {
             try {
                 setLoading(true);
                 // Fetch only featured products, limit to 6
@@ -36,8 +33,7 @@ const FeaturedProducts = () =>
 
 
     // Scroll functions for arrow navigation
-    const scrollLeft = () =>
-    {
+    const scrollLeft = () => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollBy({
                 left: -400,
@@ -46,8 +42,7 @@ const FeaturedProducts = () =>
         }
     };
 
-    const scrollRight = () =>
-    {
+    const scrollRight = () => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollBy({
                 left: 400,
@@ -55,8 +50,6 @@ const FeaturedProducts = () =>
             });
         }
     };
-
-    console.log('Featured Products:', products);
 
     return (
         <section className="py-20 px-4 sm:px-8 bg-[#FDFBF7]">

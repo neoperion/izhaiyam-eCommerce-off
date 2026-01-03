@@ -8,6 +8,7 @@ import { handleCartModification } from "../utils/handleCartModification";
 import { handleWishlistModification } from "../utils/handleWishlistModification";
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
 import { ProductLoader } from "../components/loaders/productLoader";
+import ExploreCard from "../components/home/ExploreCard";
 
 export const ProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -120,9 +121,10 @@ export const ProductDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          <div className="flex flex-col gap-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Image Section - Left Column */}
+          <div className="flex flex-col gap-4 h-full sticky top-24">
             <div className="relative bg-[#FFF7F2] rounded-lg overflow-hidden aspect-square flex items-center justify-center">
               <img src={images[currentImageIndex]} alt={title} className="w-full h-full object-cover" />
               {images.length > 1 && (
@@ -150,7 +152,8 @@ export const ProductDetailsPage = () => {
             )}
           </div>
 
-          <div className="flex flex-col gap-6">
+          {/* Product Details Section - Right Column */}
+          <div className="flex flex-col gap-6 h-full">
             <div>
               <h1 className="font-inter text-3xl md:text-4xl font-bold text-gray-900 mb-3 capitalize">{title}</h1>
               <div className="flex items-center gap-2 mb-4">
@@ -189,7 +192,7 @@ export const ProductDetailsPage = () => {
                 {isCustomizationActive && colorVariants && colorVariants.length > 0 && (
                   <div className="space-y-3">
                     <p className="font-inter text-sm text-gray-700">Selected: <span className="font-semibold">
-                      {selectedColor?.isDualColor 
+                      {selectedColor?.isDualColor
                         ? `${selectedColor.primaryColorName} + ${selectedColor.secondaryColorName}`
                         : (selectedColor?.primaryColorName || selectedColor?.colorName)}
                     </span></p>
@@ -199,19 +202,18 @@ export const ProductDetailsPage = () => {
                         const primaryHex = variant.primaryHexCode || variant.hexCode;
                         const secondaryHex = variant.secondaryHexCode;
                         const variantColorName = variant.primaryColorName || variant.colorName;
-                        const displayTitle = isDual 
+                        const displayTitle = isDual
                           ? `${variant.primaryColorName} + ${variant.secondaryColorName}`
                           : variantColorName;
-                        
+
                         return (
-                          <button 
-                            key={idx} 
-                            onClick={() => handleColorSelect(variant)} 
-                            className={`w-12 h-12 rounded-full border-2 transition-all ${
-                              (selectedColor?.primaryColorName || selectedColor?.colorName) === variantColorName
-                                ? 'border-[#93a267] scale-110 shadow-md' 
-                                : 'border-gray-300 hover:border-[#93a267]/50'
-                            }`}
+                          <button
+                            key={idx}
+                            onClick={() => handleColorSelect(variant)}
+                            className={`w-12 h-12 rounded-full border-2 transition-all ${(selectedColor?.primaryColorName || selectedColor?.colorName) === variantColorName
+                              ? 'border-[#93a267] scale-110 shadow-md'
+                              : 'border-gray-300 hover:border-[#93a267]/50'
+                              }`}
                             style={{
                               background: isDual
                                 ? `linear-gradient(90deg, ${primaryHex} 50%, ${secondaryHex} 50%)`
@@ -236,7 +238,7 @@ export const ProductDetailsPage = () => {
             </div>
 
             {!isOutOfStock && (
-              <div className="space-y-4">
+              <div className="space-y-4 mt-auto">
                 {/* Quantity Selector */}
                 <div>
                   <label className="font-inter text-sm font-medium text-gray-700 mb-2 block">Quantity</label>
@@ -275,32 +277,28 @@ export const ProductDetailsPage = () => {
 
           return (
             <div className="mt-16">
-              <h2 className="font-inter text-2xl md:text-3xl font-bold text-gray-900 mb-8">Explore Similar Products</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-                {similarProducts.map((product) => (
-                  <div
-                    key={product._id}
-                    onClick={() => navigate(`/product/${product._id}`)}
-                    className="group cursor-pointer"
-                  >
-                    <div className="bg-[#FFF7F2] rounded-lg overflow-hidden aspect-square mb-3 relative">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {product.discountPercentValue > 0 && (
-                        <span className="absolute top-2 left-2 bg-[#93a267] text-white px-2 py-1 rounded-full text-xs font-inter font-semibold">
-                          {product.discountPercentValue}% off
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-inter font-semibold text-sm text-gray-900 group-hover:text-[#93a267] transition-colors mb-1 line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <p className="font-inter text-gray-600 text-sm">₹{product.price.toLocaleString("en-IN")}</p>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-inter text-2xl md:text-3xl font-bold text-gray-900">Explore Similar Products</h2>
+              </div>
+
+              {/* Horizontal Scrolling Container */}
+              <div className="relative">
+                <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                  {similarProducts.map((product) => {
+                    const wishlistItem = wishlist.find(item => item._id === product._id);
+                    return (
+                      <div key={product._id} className="snap-start">
+                        <ExploreCard
+                          title={product.title}
+                          description={product.description}
+                          image={product.image}
+                          link={`/product/${product._id}`}
+                          category={product.discountPercentValue > 0 ? `${product.discountPercentValue}% OFF` : null}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           );
