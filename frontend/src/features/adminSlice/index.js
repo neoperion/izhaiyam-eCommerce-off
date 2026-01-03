@@ -22,98 +22,99 @@ export const adminSlice = createSlice({
       state.isLoading = payload;
     },
   },
-  extraReducers: {
-    //createNewAdmin
-    [createNewAdmin.pending]: (state) => {
-      state.isLoading = true;
-      state.errorMessage = "";
-      state.successMessage = "";
-    },
-    [createNewAdmin.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
-      state.errorMessage = "";
-      state.successMessage = "";
+  extraReducers: (builder) => {
+    builder
+      //createNewAdmin
+      .addCase(createNewAdmin.pending, (state) => {
+        state.isLoading = true;
+        state.errorMessage = "";
+        state.successMessage = "";
+      })
+      .addCase(createNewAdmin.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.errorMessage = "";
+        state.successMessage = "";
 
-      toast(payload, {
-        type: "success",
-        autoClose: 2000,
-        position: "top-center",
+        toast(payload, {
+          type: "success",
+          autoClose: 2000,
+          position: "top-center",
+        });
+      })
+      .addCase(createNewAdmin.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.errorMessage = "";
+        state.successMessage = "";
+
+        toast(payload, {
+          type: "error",
+          autoClose: 2000,
+          position: "top-center",
+        });
+      })
+
+      // delete admin
+      .addCase(removeAdmin.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(removeAdmin.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+
+        toast(payload, {
+          type: "success",
+          autoClose: 3000,
+          position: "top-center",
+        });
+      })
+      .addCase(removeAdmin.rejected, (state, { payload }) => {
+        state.isLoading = false;
+
+        toast(payload, {
+          type: "error",
+          autoClose: 3000,
+          position: "top-center",
+        });
+      })
+
+      // fetch admin data
+      .addCase(fetchAdminDatas.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchAdminDatas.fulfilled, (state, { payload }) => {
+        state.adminDatas = payload;
+
+        state.userData = payload;
+        toast(payload, {
+          type: "success",
+          autoClose: 3000,
+          position: "top-center",
+        });
+      })
+      .addCase(fetchAdminDatas.rejected, (state, { payload }) => {
+        state.isLoading = false;
+
+        toast(payload, {
+          type: "error",
+          autoClose: 3000,
+          position: "top-center",
+        });
+      })
+
+      // check if  user is an admin
+      .addCase(fetchIsUserAnAdmin.pending, (state) => {
+        state.checkingAdminStatusLoader = true;
+      })
+      .addCase(fetchIsUserAnAdmin.fulfilled, (state) => {
+        state.checkingAdminStatusLoader = false;
+      })
+      .addCase(fetchIsUserAnAdmin.rejected, (state) => {
+        state.checkingAdminStatusLoader = false;
+        toast("Only logged in administrator is allowed to page", {
+          type: "error",
+          autoClose: 2000,
+          position: "top-center",
+        });
       });
-    },
-    [createNewAdmin.rejected]: (state, { payload }) => {
-      state.isLoading = false;
-      state.errorMessage = "";
-      state.successMessage = "";
-
-      toast(payload, {
-        type: "error",
-        autoClose: 2000,
-        position: "top-center",
-      });
-    },
-
-    // delete admin
-    [removeAdmin.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [removeAdmin.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
-
-      toast(payload, {
-        type: "success",
-        autoClose: 3000,
-        position: "top-center",
-      });
-    },
-    [removeAdmin.rejected]: (state, { payload }) => {
-      state.isLoading = false;
-
-      toast(payload, {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
-    },
-
-    // fetch admin data
-    [fetchAdminDatas.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [fetchAdminDatas.fulfilled]: (state, { payload }) => {
-      state.adminDatas = payload;
-
-      state.userData = payload;
-      toast(payload, {
-        type: "success",
-        autoClose: 3000,
-        position: "top-center",
-      });
-    },
-    [fetchAdminDatas.rejected]: (state, { payload }) => {
-      state.isLoading = false;
-
-      toast(payload, {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
-    },
-
-    // check if  user is an admin
-    [fetchIsUserAnAdmin.pending]: (state) => {
-      state.checkingAdminStatusLoader = true;
-    },
-    [fetchIsUserAnAdmin.fulfilled]: (state) => {
-      state.checkingAdminStatusLoader = false;
-    },
-    [fetchIsUserAnAdmin.rejected]: (state) => {
-      state.checkingAdminStatusLoader = false;
-      toast("Only logged in administrator is allowed to page", {
-        type: "error",
-        autoClose: 2000,
-        position: "top-center",
-      });
-    },
   },
 });
 

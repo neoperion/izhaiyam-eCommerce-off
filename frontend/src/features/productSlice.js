@@ -56,22 +56,23 @@ export const productSlice = createSlice({
       state.loadingOrErrorMessage = payload;
     },
   },
-  extraReducers: {
-    [getAllProductsData.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [getAllProductsData.fulfilled]: (state, { payload }) => {
-      // setting the objects to empty array before fetched data is received,instead of undefined, to prevent error in Array methods in the frontend
-      payload = payload ? payload : [];
-      state.isLoading = false;
-      state.allProductsData = payload;
-    },
-    [getAllProductsData.rejected]: (state, { payload }) => {
-      state.isLoading = true;
-      state.allProductsData = [];
-      state.fetchingError = true;
-      state.loadingOrErrorMessage = payload;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllProductsData.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllProductsData.fulfilled, (state, { payload }) => {
+        // setting the objects to empty array before fetched data is received,instead of undefined, to prevent error in Array methods in the frontend
+        payload = payload ? payload : [];
+        state.isLoading = false;
+        state.allProductsData = payload;
+      })
+      .addCase(getAllProductsData.rejected, (state, { payload }) => {
+        state.isLoading = true;
+        state.allProductsData = [];
+        state.fetchingError = true;
+        state.loadingOrErrorMessage = payload;
+      });
   },
 });
 

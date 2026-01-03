@@ -3,23 +3,78 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
+import { useNavigate, useParams } from "react-router-dom";
+import AdminLayout from "../../../components/admin/AdminLayout";
 
-export const EditAndupdateProductModal = ({
-  isEditAndUpdateModalOn,
-  setIsEditAndUpdateModal,
-  productDetails,
-  setProductDetails,
-  setIsFetchingUpdatedDataLoading,
-  isFetchingUpdatedDataLoading,
-  fetchProductData,
-}) => {
+export const EditAndupdateProductModal = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [isFetchingUpdatedDataLoading, setIsFetchingUpdatedDataLoading] = useState(false);
+  const [productDetails, setProductDetails] = useState({
+    title: "",
+    stock: "",
+    price: "",
+    discountPercentValue: "",
+    isFeatured: "no",
+    isCustomizable: "no",
+    displayOrder: "",
+    isPinned: "no",
+    description: "",
+    categories: {
+      "Featured Categories": [],
+      location: [],
+      features: [],
+      others: [],
+    },
+    image: "",
+    colorVariants: []
+  });
+
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
-  const { _id, title, stock, price, discountPercentValue, categories, image, isFeatured, description, isCustomizable: initialIsCustomizable, colorVariants: initialColorVariants, displayOrder, isPinned } = productDetails;
+  useEffect(() => {
+    const fetchProductData = async () => {
+      setIsFetchingUpdatedDataLoading(true);
+      try {
+        const { data: { product } } = await axios.get(`${serverUrl}/api/v1/products/getProduct/${id}`);
+        
+        // Ensure consistent data structure
+        const formattedProduct = {
+          ...product,
+          isFeatured: product.isFeatured ? "yes" : "no",
+          isPinned: product.isPinned ? "yes" : "no",
+          isCustomizable: product.isCustomizable ? "yes" : "no",
+        };
+        
+        setProductDetails(formattedProduct);
+        
+        if (product.colorVariants) {
+          setColorVariants(product.colorVariants);
+        }
+        if (product.isCustomizable) {
+          setIsCustomizable("yes");
+        } else {
+            setIsCustomizable("no");
+        }
+
+        setIsFetchingUpdatedDataLoading(false);
+      } catch (error) {
+        setIsFetchingUpdatedDataLoading(false);
+        toast.error("Failed to fetch product data");
+        navigate('/admin/products');
+      }
+    };
+
+    if (id) {
+      fetchProductData();
+    }
+  }, [id, serverUrl, navigate]);
+
+  const { title, stock, price, discountPercentValue, categories, image, description } = productDetails;
 
   // Color Variants State
-  const [isCustomizable, setIsCustomizable] = useState(initialIsCustomizable ? "yes" : "no");
-  const [colorVariants, setColorVariants] = useState(initialColorVariants || []);
+  const [isCustomizable, setIsCustomizable] = useState("no");
+  const [colorVariants, setColorVariants] = useState([]);
   const [newColor, setNewColor] = useState({ 
     primaryColorName: "", 
     primaryHexCode: "#000000", 
@@ -31,12 +86,15 @@ export const EditAndupdateProductModal = ({
   });
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
 
+  // Sync state when details load
   useEffect(() => {
-    if (initialColorVariants) {
-      setColorVariants(initialColorVariants);
-    }
-    setIsCustomizable(initialIsCustomizable ? "yes" : "no");
-  }, [initialColorVariants, initialIsCustomizable]);
+      // This logic is already handled in the fetch function, but double check
+      if (productDetails.isCustomizable === "yes") setIsCustomizable("yes");
+      else setIsCustomizable("no");
+      
+      if (productDetails.colorVariants) setColorVariants(productDetails.colorVariants);
+  }, [productDetails.isCustomizable, productDetails.colorVariants]);
+
 
   const productCategories = {
     "Featured Categories": ["featured", "first order deal", "discounts"],
@@ -49,7 +107,6 @@ export const EditAndupdateProductModal = ({
 
   const handleCategoryChange = (categoryName, selectedValue) => {
     if (selectedValue === "") {
-      // If empty option selected, remove the category
       setProductDetails((prev) => ({
         ...prev,
         categories: {
@@ -58,7 +115,6 @@ export const EditAndupdateProductModal = ({
         },
       }));
     } else {
-      // Set single selected value for that category
       setProductDetails((prev) => ({
         ...prev,
         categories: {
@@ -89,8 +145,8 @@ export const EditAndupdateProductModal = ({
       isPinned: productDetails.isPinned === "yes",
       colorVariants: isCustomizable === "yes" ? colorVariants.map(c => ({
         variantName: c.variantName,
-        primaryColorName: c.primaryColorName || c.colorName, // Support legacy
-        primaryHexCode: c.primaryHexCode || c.hexCode, // Support legacy
+        primaryColorName: c.primaryColorName || c.colorName,
+        primaryHexCode: c.primaryHexCode || c.hexCode,
         secondaryColorName: c.secondaryColorName || "",
         secondaryHexCode: c.secondaryHexCode || "",
         isDualColor: c.isDualColor || false,
@@ -105,36 +161,12 @@ export const EditAndupdateProductModal = ({
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || " ";
 
-      const data = await axios.patch(`${serverUrl}/api/v1/products/editAndupdateProduct/${_id}`, formData, {
+      await axios.patch(`${serverUrl}/api/v1/products/editAndupdateProduct/${id}`, formData, {
         headers: {
           authorization: `Bearer ${LoginToken}`,
           "Content-Type": "application/json",
         },
       });
-
-      //resetting  form datas to default after submits
-      imgRef.current.value = null;
-      setProductDetails({
-        title: "",
-        stock: "",
-        price: "",
-        discountPercentValue: "",
-        isFeatured: "no",
-
-        isCustomizable: "no",
-        displayOrder: "",
-        isPinned: "no",
-        description: "",
-        categories: {
-          "Featured Categories": [],
-          location: [],
-          features: [],
-          others: [],
-        },
-        image: "",
-      });
-
-      imgRef.current.nextElementSibling.style.display = "none";
 
       toast.update(asyncCreateProductToastId, {
         render: "Product data has sucessfully been updated",
@@ -144,8 +176,8 @@ export const EditAndupdateProductModal = ({
       });
 
       setIsFetchingUpdatedDataLoading(false);
-      setIsEditAndUpdateModal(false);
-      fetchProductData && fetchProductData();
+      navigate('/admin/products');
+      
     } catch (error) {
       let errMessage;
 
@@ -271,23 +303,18 @@ export const EditAndupdateProductModal = ({
   };
 
   return (
-    <>
-      {" "}
+    <AdminLayout>
       {isFetchingUpdatedDataLoading && <FullpageSpinnerLoader />}
-      <div
-        className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 flex items-center justify-center overflow-y-auto  h-[100vh]  z-[3000] translate-y-[100%] ${isEditAndUpdateModalOn && "translate-y-0"
-          } `}
-      >
-        <div className="fixed inset-0 transition-opacity">
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-[99%] h-[98%] shadow-xl transform transition-all sm:max-w-3xl sm:w-full">
-          <h2 className="text-xl sm:text-2xl font-bold text-center text-black">Update existing product</h2>
-          <AiOutlineClose
-            className="w-9 h-9 fill-primaryColor absolute right-5 cursor-pointer top-5"
-            onClick={() => setIsEditAndUpdateModal(false)}
-          />
-          <form action="" className="pt-8" onSubmit={UpdateProduct}>
+      <div className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] my-6">
+        <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-full shadow-md sm:max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-center text-black">Update existing product</h2>
+            <AiOutlineClose
+              className="w-8 h-8 fill-primaryColor cursor-pointer hover:fill-red-600 transition-colors"
+              onClick={() => navigate('/admin/products')}
+            />
+          </div>
+          <form action="" className="" onSubmit={UpdateProduct}>
             <div className="mb-6">
               <label className="block font-medium mb-2 text-black">Title</label>
               <input
@@ -314,8 +341,8 @@ export const EditAndupdateProductModal = ({
                 rows="4"
               />
             </div>
-            <div className="mb-6 flex gap-[2%] items-end justify-between">
-              <div className="w-[30%]">
+            <div className="mb-6 flex flex-wrap lg:flex-nowrap gap-[2%] items-end justify-between">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="price" className="font-bold text-black">
                   Price
                 </label>
@@ -331,7 +358,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%] mb-4 lg:mb-0">
                 <label htmlFor="stock" className="font-bold text-black">
                   Stock
                 </label>
@@ -347,7 +374,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%] mb-4 lg:mb-0">
                 <label htmlFor="discount" className="font-bold text-black">
                   Discount(%)
                 </label>
@@ -363,11 +390,11 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%]">
                 <label htmlFor="featured" className="font-bold block mb-2 text-black">Featured</label>
                 <select
                   id="featured"
-                  value={productDetails.isFeatured === true ? "yes" : "no"}
+                  value={productDetails.isFeatured === "yes" ? "yes" : "no"}
                   onChange={(e) => {
                     setProductDetails((prevData) => ({
                       ...prevData,
@@ -382,8 +409,8 @@ export const EditAndupdateProductModal = ({
               </div>
             </div>
 
-            <div className="mb-6 flex gap-[2%] items-end justify-between">
-              <div className="w-[30%]">
+            <div className="mb-6 flex flex-wrap lg:flex-nowrap gap-[2%] items-end justify-between">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="displayOrder" className="font-bold text-black">
                   Display Order
                 </label>
@@ -399,11 +426,11 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[30%]">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="pinned" className="font-bold block mb-2 text-black">Pin to Top</label>
                 <select
                   id="pinned"
-                  value={productDetails.isPinned === true ? "yes" : "no"}
+                  value={productDetails.isPinned === "yes" ? "yes" : "no"}
                   onChange={(e) => {
                     setProductDetails((prevData) => ({
                       ...prevData,
@@ -416,7 +443,7 @@ export const EditAndupdateProductModal = ({
                   <option value="yes">Yes</option>
                 </select>
               </div>
-              <div className="w-[35%]">
+              <div className="w-full lg:w-[35%]">
                 <label htmlFor="customizable" className="font-bold block mb-2 text-black">Color Customization</label>
                 <select
                   id="customizable"
@@ -433,7 +460,7 @@ export const EditAndupdateProductModal = ({
             <section>
               <h2 className="text-lg font-bold mb-2 text-black">Select product categories</h2>
               <div className="mb-6">
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {Object.keys(productCategories).map((categoryTitle) => {
                     return (
                       <div key={categoryTitle} className="border border-gray-300 p-3 rounded-lg">
@@ -604,6 +631,6 @@ export const EditAndupdateProductModal = ({
           </form>
         </div>
       </div>
-    </>
+    </AdminLayout>
   );
 };

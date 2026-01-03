@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
-import { AddNewProduct } from "./addNewProduct";
 import { SingleProductTableCell } from "./singleProductTableCell";
 import axios from "axios";
 import { PaginationSectionForProductsAdminPage } from "./paginationForProductsAdmin";
 import AdminLayout from '../../../components/admin/AdminLayout';
+import { useNavigate } from "react-router-dom";
 
 export const ProductManagement = () => {
-  const [isAddNewProductClicked, setIsAddNewProductClicked] = useState(false);
+  const navigate = useNavigate();
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
   const [lowStockProductsParams, setLowStockProductsParams] = useState({
@@ -84,12 +84,11 @@ export const ProductManagement = () => {
   };
 
   return (<AdminLayout>    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
-    <AddNewProduct {...{ isAddNewProductClicked, setIsAddNewProductClicked, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} />
     <div className="container mx-auto mb-4">
       <div className="flex justify-end">
         <button
           className="flex items-center gap-2 bg-primaryColor hover:bg-lightPrimaryColor text-white font-medium px-6 py-3 rounded-md transition-colors duration-300"
-          onClick={() => setIsAddNewProductClicked(true)}
+          onClick={() => navigate('/admin/products/add')}
         >
           <IoAddOutline className="w-5 h-5" />
           Add New Product
@@ -150,18 +149,28 @@ export const ProductManagement = () => {
             </thead>
             {/* if search is loading return loading or tbody/not found and  tbody/not found depends on the length of the products array */}
             {isSearchLoading ? (
-              <h2>Loading ..</h2>
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center">
+                    <h2>Loading ..</h2>
+                  </td>
+                </tr>
+              </tbody>
             ) : productsLength > 0 ? (
-              <>
-                <tbody>
-                  {productsSearchedFor.map((products, index) => {
-                    const serialNo = (searchParameters.pageNo - 1) * searchParameters.perPage + index + 1;
-                    return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
-                  })}{" "}
-                </tbody>
-              </>
+              <tbody>
+                {productsSearchedFor.map((products, index) => {
+                  const serialNo = (searchParameters.pageNo - 1) * searchParameters.perPage + index + 1;
+                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
+                })}{" "}
+              </tbody>
             ) : (
-              <span>Products not found</span>
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center">
+                    <span>Products not found</span>
+                  </td>
+                </tr>
+              </tbody>
             )}
           </table>
 
@@ -195,33 +204,43 @@ export const ProductManagement = () => {
         </thead>
 
         {getLowStockProductsLoader ? (
-          <h2 className="mt-6 text-lg text-center">Loading ...</h2>
+          <tbody>
+            <tr>
+              <td colSpan="7" className="p-8 text-center">
+                <h2 className="text-lg">Loading ...</h2>
+              </td>
+            </tr>
+          </tbody>
         ) : lowStockProductsParams.productsLength > 0 ? (
-          <>
-            <tbody>
-              {lowStockProductsParams.lowStockProducts.map((products, index) => {
-                const serialNo = (lowStockProductsParams.pageNo - 1) * lowStockProductsParams.perPage + index + 1;
-                return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
-              })}
-            </tbody>
-          </>
+          <tbody>
+            {lowStockProductsParams.lowStockProducts.map((products, index) => {
+              const serialNo = (lowStockProductsParams.pageNo - 1) * lowStockProductsParams.perPage + index + 1;
+              return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
+            })}
+          </tbody>
         ) : (
-          <h3 className="mt-6 text-lg text-center">
-            {lowStockProductsParams.isError ? (
-              <span>
-                Error loading products{" "}
-                <span
-                  className="text-primaryColor cursor-pointer ml-2 hover:text-lightPrimaryColor"
-                  onClick={() => fetchLowStockProducts(lowStockProductsParams)}
-                >
-                  {" "}
-                  Retry
-                </span>
-              </span>
-            ) : (
-              "Products not found"
-            )}
-          </h3>
+          <tbody>
+            <tr>
+              <td colSpan="7" className="p-8 text-center">
+                <h3 className="text-lg">
+                  {lowStockProductsParams.isError ? (
+                    <span>
+                      Error loading products{" "}
+                      <span
+                        className="text-primaryColor cursor-pointer ml-2 hover:text-lightPrimaryColor"
+                        onClick={() => fetchLowStockProducts(lowStockProductsParams)}
+                      >
+                        {" "}
+                        Retry
+                      </span>
+                    </span>
+                  ) : (
+                    "Products not found"
+                  )}
+                </h3>
+              </td>
+            </tr>
+          </tbody>
         )}
       </table>
       <>

@@ -22,6 +22,8 @@ import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { AdminDashboard } from "../pages/adminPage/dashboard";
 import { ProductManagement } from "../pages/adminPage/productTab/";
+import { AddNewProduct } from "../pages/adminPage/productTab/addNewProduct";
+import { EditAndupdateProductModal } from "../pages/adminPage/productTab/editAndUpdateProductModal";
 import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
 import OrdersManagement from "../pages/adminPage/OrdersManagement";
@@ -61,6 +63,9 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="product-Management" element={<ProductManagement />} />
           <Route path="products" element={<ProductManagement />} />
+          <Route path="products/add" element={<AddNewProduct />} />
+          <Route path="products/edit/:id" element={<EditAndupdateProductModal />} />
+
           <Route path="orders-Management" element={<OrdersManagement />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />

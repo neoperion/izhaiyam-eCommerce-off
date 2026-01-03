@@ -31,98 +31,99 @@ export const authSlice = createSlice({
       state.isLoggedIn = payload;
     },
   },
-  extraReducers: {
-    //register reducers
-    [RegisterUser.pending]: (state) => {
-      state.isLoading = true;
-      state.errorMessageInRegisterPage = "";
-      state.successMessageInRegisterPage = "";
-    },
-    [RegisterUser.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
+  extraReducers: (builder) => {
+    builder
+      //register reducers
+      .addCase(RegisterUser.pending, (state) => {
+        state.isLoading = true;
+        state.errorMessageInRegisterPage = "";
+        state.successMessageInRegisterPage = "";
+      })
+      .addCase(RegisterUser.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
 
-      toast(payload, {
-        type: "success",
-      });
-    },
-    [RegisterUser.rejected]: (state, { payload }) => {
-      state.isLoading = false;
+        toast(payload, {
+          type: "success",
+        });
+      })
+      .addCase(RegisterUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
 
-      toast(payload, {
-        type: "error",
-      });
-    },
+        toast(payload, {
+          type: "error",
+        });
+      })
 
-    // login reducers
-    [loginUser.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [loginUser.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
+      // login reducers
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(loginUser.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
 
-      state.isLoggedIn = true;
+        state.isLoggedIn = true;
 
-      localStorage.setItem("UserData", JSON.stringify(payload.userData));
-      state.userData = payload.userData;
-      toast(payload.message, {
-        type: "success",
-      });
-    },
-    [loginUser.rejected]: (state, { payload }) => {
-      state.isLoading = false;
+        localStorage.setItem("UserData", JSON.stringify(payload.userData));
+        state.userData = payload.userData;
+        toast(payload.message, {
+          type: "success",
+        });
+      })
+      .addCase(loginUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
 
-      toast(payload, {
-        type: "error",
+        toast(payload, {
+          type: "error",
+        });
+      })
+      // fetch forgotpasssword click controller from server
+      .addCase(fetchForgotPasswordClick.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchForgotPasswordClick.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        toast(payload, {
+          type: "success",
+        });
+      })
+      .addCase(fetchForgotPasswordClick.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        toast(payload, {
+          type: "error",
+        });
+      })
+      //resend email verification
+      .addCase(fetchResendEmailVerificationLink.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchResendEmailVerificationLink.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        toast(payload, {
+          type: "success",
+        });
+      })
+      .addCase(fetchResendEmailVerificationLink.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        toast(payload, {
+          type: "error",
+        });
+      })
+      // fetch isTokenValid controller from servers
+      .addCase(fetchIsTokenValid.pending, (state) => {
+        state.isTokenValidLoader = true;
+      })
+      .addCase(fetchIsTokenValid.fulfilled, (state, { payload }) => {
+        state.isTokenValidLoader = false;
+        state.isLoggedIn = true;
+        if (payload.user) {
+          state.userData = payload.user;
+        }
+      })
+      .addCase(fetchIsTokenValid.rejected, (state, { payload }) => {
+        state.isLoggedIn = false;
+        state.userData = "";
+        state.isTokenValidLoader = false;
       });
-    },
-    // fetch forgotpasssword click controller from server
-    [fetchForgotPasswordClick.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [fetchForgotPasswordClick.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
-      toast(payload, {
-        type: "success",
-      });
-    },
-    [fetchForgotPasswordClick.rejected]: (state, { payload }) => {
-      state.isLoading = false;
-      toast(payload, {
-        type: "error",
-      });
-    },
-    //resend email verification
-    [fetchResendEmailVerificationLink.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [fetchResendEmailVerificationLink.fulfilled]: (state, { payload }) => {
-      state.isLoading = false;
-      toast(payload, {
-        type: "success",
-      });
-    },
-    [fetchResendEmailVerificationLink.rejected]: (state, { payload }) => {
-      state.isLoading = false;
-      toast(payload, {
-        type: "error",
-      });
-    },
-    // fetch isTokenValid controller from servers
-    [fetchIsTokenValid.pending]: (state) => {
-      state.isTokenValidLoader = true;
-    },
-    [fetchIsTokenValid.fulfilled]: (state, { payload }) => {
-      state.isTokenValidLoader = false;
-      state.isLoggedIn = true;
-      if (payload.user) {
-        state.userData = payload.user;
-      }
-    },
-    [fetchIsTokenValid.rejected]: (state, { payload }) => {
-      state.isLoggedIn = false;
-      state.userData = "";
-      state.isTokenValidLoader = false;
-    },
   },
 });
 
