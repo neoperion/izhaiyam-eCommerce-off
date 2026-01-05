@@ -50,7 +50,7 @@ const postUserOrders = async (req, res) => {
         // Add Snapshot Data for Variant
          if(product) {
              snapshot.name = product.title;
-             snapshot.price = product.price;
+             snapshot.price = product.price; // Base price (might need adjustment if color adds cost, but usually same)
              snapshot.image = product.image; // Fallback main image
              
              // Variant Details
@@ -66,8 +66,45 @@ const postUserOrders = async (req, res) => {
              };
          }
 
+      } else if (item.woodType) {
+        // OPTION B: Wood Variant
+        // Deduct stock from specific wood variant
+        // item.woodType is now { name: 'Teak', price: ... } or just name string if legacy? 
+        // Let's safe check:
+        const woodName = item.woodType.name || item.woodType; 
+        
+        product = await Product.findOneAndUpdate(
+          { 
+            _id: item.productId,
+            "woodVariants": { 
+              $elemMatch: { 
+                woodType: woodName,
+                stock: { $gte: item.quantity }
+              } 
+            }
+          },
+          {
+            $inc: { "woodVariants.$.stock": -item.quantity }
+          },
+          { new: true, session }
+        );
+
+        if (product) {
+            snapshot.name = product.title;
+            // SNAPSHOT: Trust Payload
+            snapshot.price = item.unitPrice || item.woodType?.price || product.price; 
+            
+            // Save Wood Type Object
+            snapshot.woodType = {
+                name: woodName,
+                price: item.woodType?.price || (product.woodVariants.find(v => v.woodType === woodName)?.price)
+            };
+            snapshot.woodPrice = snapshot.woodType.price; // Keep for safety
+            snapshot.image = product.image;
+        }
+
       } else {
-        // OPTION B: Main Product Stock
+        // OPTION C: Main Product Stock (Default)
         product = await Product.findOneAndUpdate(
           {
             _id: item.productId,
@@ -202,34 +239,27 @@ const getAllOrders = async (req, res) => {
     users.forEach(user => {
       user.orders.forEach(order => {
         // Get first product for display
-        const firstProduct = order.products[0]?.productId;
+        const firstRow = order.products[0];
+        const firstProductTitle = firstRow?.productId?.title || 'Unknown Product';
+        // Handle woodType being Object or String (Legacy) or null
+        let woodName = '';
+        if (firstRow?.woodType) {
+            woodName = firstRow.woodType.name || firstRow.woodType; // Support both
+        }
+        const firstWoodType = woodName ? ` (${woodName})` : '';
+        const displayTitle = firstProductTitle + firstWoodType;
+        
         allOrders.push({
           id: order._id,
-          customer: order.username,
-          email: user.email,
-          phone: order.phone || user.phone || 'N/A',
-          product: firstProduct?.title || 'Multiple Products',
+          customer: order.username || 'Unknown',
+          product: displayTitle,
           productCount: order.products.length,
           amount: order.totalAmount,
-          status: order.deliveryStatus === 'delivered' ? 'Delivered' :
-            order.deliveryStatus === 'cancelled' ? 'Cancelled' :
-              'Processing',
-          paymentStatus: order.payment?.status == 'paid' ? 'Paid' : order.paymentStatus, // Use granular status if available
           paymentMethod: order.payment?.method || 'N/A',
           paymentId: order.payment?.razorpayPaymentId || 'N/A',
+          status: order.deliveryStatus,
           date: new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          rawDate: order.date,
-          addressType: order.addressType || 'Home',
-          addressLine1: order.addressLine1 || '',
-          addressLine2: order.addressLine2 || '',
-          address: order.address,
-          city: order.city,
-          state: order.state || '',
-          country: order.country,
-          postalCode: order.postalCode,
-          shippingMethod: order.shippingMethod,
-          products: order.products,
-          tracking: order.tracking // Include tracking info
+          rawDate: order.date
         });
       });
     });
@@ -242,6 +272,72 @@ const getAllOrders = async (req, res) => {
       orders: allOrders,
       totalOrders: allOrders.length
     });
+  } catch (error) {
+    throw new CustomErrorHandler(500, error.message);
+  }
+};
+
+// Get specific order details (Admin only)
+const getSpecificAdminOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find the user who has this order and simpler projection
+    const user = await User.findOne(
+        { "orders._id": id },
+        { "orders.$": 1, username: 1, email: 1, phone: 1 } // Return matches order + user details
+    ).populate('orders.products.productId', 'title price image');
+
+    if (!user || !user.orders || user.orders.length === 0) {
+        throw new CustomErrorHandler(404, "Order not found");
+    }
+
+    const order = user.orders[0]; // Projection returns array with matching element
+
+    // Format response similar to getAllOrders but with details
+    const orderDetails = {
+        id: order._id,
+        customer: {
+            name: user.username,
+            email: user.email,
+            phone: order.phone || user.phone || 'N/A',
+            addressType: order.addressType,
+            addressLine1: order.addressLine1,
+            addressLine2: order.addressLine2,
+            city: order.city,
+            state: order.state,
+            postalCode: order.postalCode,
+            country: order.country
+        },
+        products: order.products.map(p => {
+             // Use snapshot data primarily, fallback to populated where logical
+             return {
+                 productId: p.productId?._id || p.productId,
+                 title: p.name || p.productId?.title || 'Unknown Product',
+                 image: p.image || p.productId?.image, // Snapshot image priority or current product image
+                 price: p.woodPrice || p.price, // Priority to Wood Price if exists
+                 quantity: p.quantity,
+                 woodType: p.woodType || null,
+                 selectedColor: p.selectedColor || null,
+                 lineTotal: (p.woodPrice || p.price) * p.quantity
+             };
+        }),
+        amount: order.totalAmount,
+        status: order.deliveryStatus,
+        payment: {
+            method: order.payment?.method || 'N/A',
+            id: order.payment?.razorpayPaymentId || 'N/A',
+            status: order.payment?.status || 'N/A'
+        },
+        date: order.date,
+        tracking: order.tracking
+    };
+
+    res.status(200).json({
+        success: true,
+        order: orderDetails
+    });
+
   } catch (error) {
     throw new CustomErrorHandler(500, error.message);
   }
@@ -508,4 +604,4 @@ const updateOrderTracking = async (req, res) => {
   }
 };
 
-module.exports = { postUserOrders, getAllOrders, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking };
+module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking };

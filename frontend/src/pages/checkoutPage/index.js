@@ -105,7 +105,13 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
       return {
         productId: products._id,
         quantity: products.quantity,
-        selectedColor: products.selectedColor || null
+        selectedColor: products.selectedColor || null,
+        // products.woodType is now { name: "Teak", price: 12000 } from Cart
+        woodType: products.woodType || null, 
+        // woodPrice: products.woodType ? products.price : null, // Redundant if woodType has price, but backend reads it. 
+        // Let's pass unitPrice clearly
+        unitPrice: products.price,
+        totalPrice: products.price * products.quantity
       };
     }),
     username: checkoutFormData.username,

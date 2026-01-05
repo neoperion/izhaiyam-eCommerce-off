@@ -86,6 +86,9 @@ const getAspecificProduct = async (req, res) => {
     colorVariants: 1,
     displayOrder: 1,
     isPinned: 1,
+    isWoodCustomizable: 1,
+    woodVariants: 1,
+    abTestConfig: 1,
   });
   if (!checkIfProductExist) {
     throw new CustomErrorHandler(404, "Products not found");

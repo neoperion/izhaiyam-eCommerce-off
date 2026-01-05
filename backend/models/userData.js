@@ -82,6 +82,12 @@ const userSchema = mongoose.Schema(
               secondaryHexCode: String,
               isDualColor: Boolean,
             },
+            // Wood Variant Snapshot
+            woodType: {
+              name: String,
+              price: Number
+            },
+            woodPrice: Number, // Keeping for query/legacy safety, or we can drop it if user matches "Order Item Schema" strictness. User said "Order Item Schema: woodType: { name, price }" and "unitPrice". I will keep woodType object structure.
           },
         ],
         username: String,

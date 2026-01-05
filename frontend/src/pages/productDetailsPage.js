@@ -19,7 +19,7 @@ export const ProductDetailsPage = () => {
 
   const { productId } = useParams();
   const currentProduct = allProductsData.find((product) => product._id === productId);
-  const { _id, title, price, image, description, stock: mainStock, discountPercentValue, categories, isCustomizable, colorVariants } = currentProduct || {
+  const { _id, title, price, image, description, stock: mainStock, discountPercentValue, categories, isCustomizable, colorVariants, isWoodCustomizable, woodVariants, abTestConfig } = currentProduct || {
     _id: "",
     title: "",
     price: "",
@@ -29,15 +29,52 @@ export const ProductDetailsPage = () => {
     stock: "",
     isCustomizable: false,
     colorVariants: [],
+    // Wood & AB Test Fields
+    isWoodCustomizable: false,
+    woodVariants: [],
+    abTestConfig: {}
   };
 
   const [productQuantity, setProductQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(null);
+  
+  // Wood State
+  const [selectedWood, setSelectedWood] = useState(null);
+  const [showWoodInfoPopup, setShowWoodInfoPopup] = useState(false);
+
   const [isCustomizationActive, setIsCustomizationActive] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // A/B Testing & Default Wood Logic
+  useEffect(() => {
+    if (isWoodCustomizable && woodVariants && woodVariants.length > 0) {
+       let defaultVariant = woodVariants.find(w => w.isDefault) || woodVariants[0];
+
+       // A/B Testing Logic
+       if (abTestConfig?.enabled) {
+          let userGroup = sessionStorage.getItem("abTestGroup");
+          if (!userGroup) {
+             const random = Math.random() * 100;
+             userGroup = random < (abTestConfig.trafficSplit || 50) ? "A" : "B";
+             sessionStorage.setItem("abTestGroup", userGroup);
+             
+             // Track assignment (Mock event)
+             console.log(`User assigned to Group ${userGroup} for Wood Pricing`);
+          }
+
+          const targetVariantName = userGroup === "A" ? abTestConfig.groupAVariant : abTestConfig.groupBVariant;
+          const targetVariant = woodVariants.find(w => w.woodType === targetVariantName);
+          if (targetVariant) {
+             defaultVariant = targetVariant;
+          }
+       }
+       
+       setSelectedWood(defaultVariant);
+    }
+  }, [isWoodCustomizable, woodVariants, abTestConfig]);
 
   useEffect(() => {
     if (isCustomizationActive && isCustomizable && colorVariants && colorVariants.length > 0) {
@@ -53,7 +90,18 @@ export const ProductDetailsPage = () => {
   }, [selectedColor]);
 
   const currentImage = isCustomizationActive && selectedColor ? selectedColor.imageUrl : image;
-  const currentStock = isCustomizationActive && selectedColor ? selectedColor.stock : mainStock;
+  
+  // Dynamic Pricing & Stock
+  let currentDisplayPrice = price;
+  let currentStock = mainStock;
+
+  if (isWoodCustomizable && selectedWood) {
+      currentDisplayPrice = selectedWood.price;
+      currentStock = selectedWood.stock;
+  } else if (isCustomizationActive && selectedColor) {
+     currentStock = selectedColor.stock;
+  }
+
   const isOutOfStock = currentStock === 0;
 
   // Show only selected color's image when customization is active
@@ -75,7 +123,7 @@ export const ProductDetailsPage = () => {
       alert(`Only ${currentStock} items are available in stock.`);
       return;
     }
-    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null);
+    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null);
     setProductQuantity(1);
   };
 
@@ -88,7 +136,7 @@ export const ProductDetailsPage = () => {
       alert(`Only ${currentStock} items are available in stock.`);
       return;
     }
-    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null);
+    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null);
     navigate("/checkout");
   };
 
@@ -97,8 +145,8 @@ export const ProductDetailsPage = () => {
   }, [wishlist, _id]);
 
   useEffect(() => {
-    isProductInCartFn(_id, setIsProductInCart, cart, isCustomizationActive ? selectedColor : null);
-  }, [cart, _id, selectedColor, isCustomizationActive]);
+    isProductInCartFn(_id, setIsProductInCart, cart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null);
+  }, [cart, _id, selectedColor, isCustomizationActive, selectedWood, isWoodCustomizable]);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -113,7 +161,7 @@ export const ProductDetailsPage = () => {
     setCurrentImageIndex(0); // Reset to first image of selected color
   };
 
-  let discountedPrice = price - (price * discountPercentValue) / 100;
+  let discountedPrice = currentDisplayPrice - (currentDisplayPrice * discountPercentValue) / 100;
 
   if (isLoading) {
     return <ProductLoader />;
@@ -168,13 +216,72 @@ export const ProductDetailsPage = () => {
                 {discountPercentValue > 0 ? (
                   <>
                     <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{discountedPrice.toLocaleString("en-IN")}</span>
-                    <span className="font-inter text-lg md:text-xl text-gray-400 line-through">₹{price.toLocaleString("en-IN")}</span>
+                    <span className="font-inter text-lg md:text-xl text-gray-400 line-through">₹{currentDisplayPrice.toLocaleString("en-IN")}</span>
                     <span className="font-inter text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">{discountPercentValue}% OFF</span>
                   </>
                 ) : (
-                  <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{price.toLocaleString("en-IN")}</span>
+                  <span className="font-inter text-3xl md:text-4xl font-bold text-gray-900">₹{currentDisplayPrice.toLocaleString("en-IN")}</span>
                 )}
               </div>
+
+            {/* Wood Selection UI */}
+            {isWoodCustomizable && woodVariants && woodVariants.length > 0 && (
+               <div className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                     <h3 className="font-inter font-bold text-gray-900">Select Wood Type</h3>
+                     <button
+                       onClick={() => setShowWoodInfoPopup(!showWoodInfoPopup)}
+                       className="text-[#93a267] hover:text-[#7d8c56]"
+                       aria-label="Why Teak Costs More?"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                     </button>
+                     
+                     {/* "Why Teak Costs More?" Popup */}
+                     {showWoodInfoPopup && (
+                        <div className="absolute z-50 bg-white border border-[#93a267] p-4 rounded-lg shadow-xl w-[280px] md:w-[350px] mt-8">
+                           <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-bold text-[#5A6E3A]">Why the price difference?</h4>
+                              <button onClick={() => setShowWoodInfoPopup(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                           </div>
+                           <p className="text-sm text-gray-600 leading-relaxed">
+                              <strong>Teak</strong> is a premium hardwood known for its incredible durability, weather resistance, and natural oils that protect against pests. <strong>Acacia</strong> is a cost-effective alternative that is durable but lighter. We offer both to suit your budget and longevity needs!
+                           </p>
+                        </div>
+                     )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                     {woodVariants.map((wood) => (
+                        <div 
+                           key={wood.woodType}
+                           onClick={() => setSelectedWood(wood)}
+                           className={`relative border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                              selectedWood?.woodType === wood.woodType 
+                                 ? 'border-[#93a267] bg-[#93a267]/5 shadow-md' 
+                                 : 'border-gray-200 hover:border-[#93a267]/50'
+                           }`}
+                        >
+                           <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-2">
+                                 <div className={`w-4 h-4 rounded-full border border-gray-400 flex items-center justify-center ${selectedWood?.woodType === wood.woodType ? 'border-[#93a267]' : ''}`}>
+                                    {selectedWood?.woodType === wood.woodType && <div className="w-2.5 h-2.5 rounded-full bg-[#93a267]"></div>}
+                                 </div>
+                                 <span className="font-bold text-gray-900">{wood.woodType}</span>
+                              </div>
+                              <span className="font-semibold text-gray-900">₹{wood.price.toLocaleString("en-IN")}</span>
+                           </div>
+                           {wood.description && (
+                              <p className="text-xs text-gray-500 mt-2 ml-6">{wood.description}</p>
+                           )}
+                           {wood.stock < 5 && wood.stock > 0 && (
+                              <p className="text-xs text-red-500 font-bold mt-1 ml-6">Only {wood.stock} left!</p>
+                           )}
+                        </div>
+                     ))}
+                  </div>
+               </div>
+            )}
             </div>
 
             {description && description.trim() !== "" && (
@@ -252,7 +359,7 @@ export const ProductDetailsPage = () => {
                 {/* Action Buttons - Horizontal */}
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button onClick={handleAddToCart} className="flex-1 bg-[#93a267] hover:bg-[#7d8c56] text-white font-inter font-bold py-3 px-6 rounded-lg transition-all">
-                    {cart.find(item => item._id === _id && (isCustomizationActive && selectedColor ? item.selectedColor?.colorName === selectedColor?.colorName : !item.selectedColor)) ? "Update Cart" : "Add to Cart"}
+                    {cart.find(item => item._id === _id && (isCustomizationActive && selectedColor ? item.selectedColor?.colorName === selectedColor?.colorName : !item.selectedColor) && (isWoodCustomizable && selectedWood ? item.woodType === selectedWood.woodType : !item.woodType)) ? "Update Cart" : "Add to Cart"}
                   </button>
                   <button onClick={handleBuyNow} className="flex-1 bg-[#93a267] hover:bg-[#7d8c56] text-white font-inter font-bold py-3 px-6 rounded-lg transition-all border-2 border-[#93a267]">Buy Now</button>
                 </div>

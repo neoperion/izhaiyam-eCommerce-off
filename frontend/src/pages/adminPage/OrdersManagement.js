@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, Truck, Search, Filter, Download } from 'lucide-react';
 import OrderTracking from './OrderTracking';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
 
 const OrdersManagement = () => {
+  const navigate = useNavigate();
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
   const [orders, setOrders] = useState([]);
@@ -136,13 +138,8 @@ const OrdersManagement = () => {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Order ID</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Customer</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Product</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Address Line 1</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Address Line 2</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">City</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">State</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Pincode</th>
+                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Customer Name</th>
+                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Product(s)</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Amount</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment Method</th>
                 <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment ID</th>
@@ -154,7 +151,7 @@ const OrdersManagement = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="13" className="p-8 text-center text-gray-500">
+                  <td colSpan="9" className="p-8 text-center text-gray-500">
                     Loading orders...
                   </td>
                 </tr>
@@ -169,11 +166,6 @@ const OrdersManagement = () => {
                         <span className="text-xs text-gray-500 ml-1">+{order.productCount - 1} more</span>
                       )}
                     </td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700 min-w-[160px]">{order.addressLine1 || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-500 min-w-[200px]">{order.addressLine2 || '-'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.city || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.state || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.postalCode || 'N/A'}</td>
                     <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString("en-IN")}</td>
                      <td className="p-3 md:p-4 text-sm text-gray-700 capitalize">{order.paymentMethod || 'COD'}</td>
                      <td className="p-3 md:p-4 text-sm text-gray-500 font-mono text-xs">{order.paymentId || '-'}</td>
@@ -193,6 +185,7 @@ const OrdersManagement = () => {
                           <Truck size={16} />
                         </button>
                         <button
+                          onClick={() => navigate(`/admin/orders-management/${order.id}`)}
                           className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                           title="View Details"
                         >
@@ -204,7 +197,7 @@ const OrdersManagement = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="13" className="p-8 text-center text-gray-500">
+                  <td colSpan="9" className="p-8 text-center text-gray-500">
                     No orders found matching your criteria
                   </td>
                 </tr>

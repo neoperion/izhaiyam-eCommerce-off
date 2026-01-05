@@ -2,45 +2,64 @@ import { store } from "../store";
 import { setCart } from "../features/wishlistAndCartSlice";
 import { toast } from "react-toastify";
 
-export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart, selectedColor = null) => {
+export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart, selectedColor = null, woodType = null, cartItemId = null) => {
   const { allProductsData } = store.getState().productsData;
   const { cart } = store.getState().wishlistAndCartSection;
 
   let newCart;
-  // if the product is in the cart and productQuantity param  is true-it means u wanna add more while if it doesnt u wanna remove all.
-  //  if the product is not in the cart  and productQuantity param  is true- it means u wanna add the specified quantity while if it isnt,it means u wanna add 1
+
+  // Helper to generate unique ID
+  const generateCartItemId = (prodId, woodObj, color) => {
+      const colorPart = color ? (color.primaryColorName || color.colorName || 'noColor') : 'noColor';
+      const woodPart = woodObj ? woodObj.woodType : 'noWood';
+      return `${prodId}_${woodPart}_${colorPart}_${Date.now()}`;
+  };
+
   switch (isObjInCart) {
     case true:
+      // --- DELETE OR DECREASE ---
       if (!productQuantity) {
         // REMOVE FROM CART
-        const filteredCart = cart.filter((item) => {
-          // If deleting a specific variant
-          if (selectedColor) {
-          return !(item._id === _id && (item.selectedColor?.primaryColorName === selectedColor.primaryColorName || item.selectedColor?.colorName === selectedColor.colorName));
-          }
-          // If deleting non-variant product
-          return item._id !== _id;
-        });
-        newCart = [...filteredCart];
+        if (cartItemId) {
+            newCart = cart.filter(item => item.cartItemId !== cartItemId);
+        } else {
+            newCart = cart.filter((item) => {
+                if (item._id !== _id) return true;
+                
+                const colorMatch = selectedColor 
+                    ? (item.selectedColor?.primaryColorName === selectedColor.primaryColorName || item.selectedColor?.colorName === selectedColor.colorName)
+                    : !item.selectedColor;
+                // Check wood name match (woodType is now object)
+                const woodMatch = woodType
+                    ? item.woodType?.woodType === woodType.woodType
+                    : !item.woodType;
+
+                return !(colorMatch && woodMatch);
+            });
+        }
+        
         toast("Product has been removed from cart", {
           type: "success",
           autoClose: 2000,
         });
+
       } else if (productQuantity) {
-        // ON QUANTITY CHANGE
-        newCart = [...cart];
+        // ON QUANTITY CHANGE (Update)
+        newCart = cart.map((item) => {
+             const isMatch = cartItemId 
+                ? item.cartItemId === cartItemId
+                : (item._id === _id && 
+                   (selectedColor ? (item.selectedColor?.primaryColorName === selectedColor.primaryColorName || item.selectedColor?.colorName === selectedColor.colorName) : !item.selectedColor) &&
+                   (woodType ? item.woodType?.woodType === woodType.woodType : !item.woodType)
+                  );
 
-        for (let key of newCart) {
-          const isSameVariant = selectedColor
-            ? key._id === _id && (key.selectedColor?.primaryColorName === selectedColor.primaryColorName || key.selectedColor?.colorName === selectedColor.colorName)
-            : key._id === _id;
+             if (isMatch) {
+                return { ...item, quantity: item.quantity + parseInt(productQuantity) };
+             }
+             return item;
+        });
 
-          if (isSameVariant) {
-            const index = newCart.indexOf(key);
-            newCart[index] = { ...key, quantity: newCart[index].quantity + parseInt(productQuantity) };
-          }
-        }
-        toast("Product has been added to cart", {
+        toast("Cart updated", {
           type: "success",
           autoClose: 2000,
         });
@@ -48,47 +67,61 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
       break;
 
     case false:
-      if (!productQuantity) {
+      // --- ADD NEW ITEM ---
+      {
         let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
+        
+        const existingItemIndex = cart.findIndex(item => 
+            item._id === _id &&
+            (selectedColor ? (item.selectedColor?.primaryColorName === selectedColor.primaryColorName || item.selectedColor?.colorName === selectedColor.colorName) : !item.selectedColor) &&
+            (woodType ? item.woodType?.woodType === woodType.woodType : !item.woodType)
+        );
 
-        // Clone and add selectedColor if exists
-        if (selectedColor) {
-          currentCartedProduct = { ...currentCartedProduct, selectedColor };
+        if (existingItemIndex !== -1) {
+            newCart = [...cart];
+            const existingItem = newCart[existingItemIndex];
+            newCart[existingItemIndex] = {
+                ...existingItem,
+                quantity: existingItem.quantity + (parseInt(productQuantity) || 1)
+            };
+        } else {
+            // New Item
+            const newCartItemId = generateCartItemId(_id, woodType, selectedColor);
+            
+            // Determine Price (Base or Wood Variant)
+            let finalPrice = currentCartedProduct.price;
+            // woodType is now the object passed from ProductDetails e.g. { woodType: "Teak", price: 12000, ... }
+            if (woodType && woodType.price) {
+                finalPrice = woodType.price;
+            } else if (woodType && currentCartedProduct.woodVariants) {
+                 // Fallback if passed object didn't have price for some reason
+                 const variant = currentCartedProduct.woodVariants.find(v => v.woodType === woodType.woodType);
+                 if (variant) finalPrice = variant.price;
+            }
+
+            const newItem = {
+                ...currentCartedProduct,
+                cartItemId: newCartItemId,
+                price: finalPrice, 
+                quantity: parseInt(productQuantity) || 1,
+                // STORE FULL OBJECT: { name: "Teak", price: 12000 }
+                // Mapped to Schema Requirement: woodType: { name, price }
+                woodType: woodType ? { name: woodType.woodType, price: finalPrice } : null,
+                selectedColor: selectedColor || null
+            };
+            
+            newCart = [...cart, newItem];
         }
-
-        currentCartedProduct = {
-          ...currentCartedProduct,
-          quantity: 1,
-        };
-        newCart = [...cart, currentCartedProduct];
-
-        toast("Product has been added to cart", {
-          type: "success",
-          autoClose: 2000,
-        });
-      } else if (productQuantity) {
-        let currentCartedProduct = allProductsData.find((productsData) => productsData._id === _id);
-
-        // Clone and add selectedColor if exists
-        if (selectedColor) {
-          currentCartedProduct = { ...currentCartedProduct, selectedColor };
-        }
-
-        currentCartedProduct = {
-          ...currentCartedProduct,
-          quantity: parseInt(productQuantity),
-        };
-        newCart = [...cart, currentCartedProduct];
 
         toast("Product has been added to cart", {
           type: "success",
           autoClose: 2000,
         });
       }
+      break;
 
-      break;
     default:
-      break;
+      return;
   }
 
   dispatch(setCart(newCart));

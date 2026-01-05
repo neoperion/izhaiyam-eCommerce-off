@@ -27,6 +27,7 @@ import { EditAndupdateProductModal } from "../pages/adminPage/productTab/editAnd
 import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
 import OrdersManagement from "../pages/adminPage/OrdersManagement";
+import OrderDetails from "../pages/adminPage/OrderDetails";
 import { SettingsPage } from "../pages/adminPage/settings";
 import InstagramGalleryManager from "../pages/adminPage/InstagramGalleryManager";
 
@@ -67,6 +68,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="products/edit/:id" element={<EditAndupdateProductModal />} />
 
           <Route path="orders-Management" element={<OrdersManagement />} />
+          <Route path="orders-management/:id" element={<OrderDetails />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
           <Route path="instagram-gallery" element={<InstagramGalleryManager />} />

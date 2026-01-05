@@ -71,6 +71,14 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
                         <span className="font-inter text-xs text-gray-600">{cartItem.selectedColor.name}</span>
                       </div>
                     )}
+                    {cartItem.woodType && (
+                        <div className="flex items-center gap-1 mt-1">
+                            <span className="text-xs font-semibold text-gray-500">Wood:</span>
+                            <span className="text-xs text-gray-600">
+                                {typeof cartItem.woodType === 'object' ? (cartItem.woodType.name || cartItem.woodType.woodType || '') : cartItem.woodType}
+                            </span>
+                        </div>
+                    )}
                     <p className="font-inter text-xs text-gray-500">Qty: {cartItem.quantity}</p>
                   </div>
                   <p className="font-inter text-base font-bold text-gray-900 mt-2">

@@ -35,7 +35,25 @@ export const AddNewProduct = () => {
     stock: 0, 
     imageUrl: "" 
   });
+
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
+
+  // Wood Variants State
+  const [isWoodCustomizable, setIsWoodCustomizable] = useState("no");
+  const [woodVariants, setWoodVariants] = useState([]);
+  const [newWood, setNewWood] = useState({
+    woodType: "",
+    price: "",
+    stock: "",
+    description: "",
+    isDefault: false
+  });
+  const [abTestConfig, setAbTestConfig] = useState({
+    enabled: false,
+    groupAVariant: "Acacia",
+    groupBVariant: "Teak",
+    trafficSplit: 50
+  });
 
   const productCategories = {
     "Featured Categories": ["featured", "first order deal", "discounts"],
@@ -90,6 +108,16 @@ export const AddNewProduct = () => {
         imageUrl: c.imageUrl,
         stock: parseInt(c.stock) || 0
       })) : [],
+      // Wood Variants Data
+      isWoodCustomizable: isWoodCustomizable === "yes",
+      woodVariants: isWoodCustomizable === "yes" ? woodVariants.map(w => ({
+        woodType: w.woodType,
+        price: parseFloat(w.price) || 0,
+        stock: parseInt(w.stock) || 0,
+        description: w.description,
+        isDefault: w.isDefault
+      })) : [],
+      abTestConfig: isWoodCustomizable === "yes" ? abTestConfig : { enabled: false },
     };
     console.log("Frontend Create Payload:", formData);
     const asyncCreateProductToastId = toast.loading("product data upload in progress");
@@ -229,6 +257,22 @@ export const AddNewProduct = () => {
     const updatedVariants = [...colorVariants];
     updatedVariants.splice(index, 1);
     setColorVariants(updatedVariants);
+  };
+
+  // Wood Variant Handlers
+  const addWoodVariant = () => {
+    if (!newWood.woodType || !newWood.price) {
+      toast.error("Please provide Wood Type and Price");
+      return;
+    }
+    setWoodVariants([...woodVariants, { ...newWood }]);
+    setNewWood({ woodType: "", price: "", stock: "", description: "", isDefault: false });
+  };
+
+  const removeWoodVariant = (index) => {
+    const updated = [...woodVariants];
+    updated.splice(index, 1);
+    setWoodVariants(updated);
   };
 
   return (
@@ -492,6 +536,129 @@ export const AddNewProduct = () => {
                       );
                     })}
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Wood Variants Section */}
+            <div className="mb-4">
+               <div className="w-full lg:w-[35%] mb-4">
+                <label htmlFor="woodCustomizable" className="font-bold block mb-2 text-black">Wood Type Selection</label>
+                <select
+                  id="woodCustomizable"
+                  value={isWoodCustomizable}
+                  onChange={(e) => setIsWoodCustomizable(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="no">Disabled</option>
+                  <option value="yes">Enabled</option>
+                </select>
+              </div>
+            </div>
+
+            {isWoodCustomizable === "yes" && (
+              <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-yellow-50/20">
+                <h2 className="text-lg font-bold mb-4 text-black">Wood Type Pricing</h2>
+                
+                {/* A/B Test Config Toggle */}
+                 <div className="mb-4 flex items-center gap-4">
+                    <label className="font-medium text-black">Enable A/B Testing?</label>
+                     <input 
+                      type="checkbox" 
+                      checked={abTestConfig.enabled} 
+                      onChange={(e) => setAbTestConfig({...abTestConfig, enabled: e.target.checked})}
+                      className="w-5 h-5 accent-[#93a267]"
+                     />
+                     {abTestConfig.enabled && <span className="text-sm text-gray-500">(Acacia vs Teak Split)</span>}
+                 </div>
+
+                {/* Add Wood Input */}
+                <div className="flex flex-wrap gap-4 items-end mb-4 p-4 bg-white border border-gray-200 rounded">
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Wood Type *</label>
+                    <input
+                      type="text"
+                      value={newWood.woodType}
+                      onChange={(e) => setNewWood({ ...newWood, woodType: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="e.g. Teak"
+                    />
+                  </div>
+                  <div className="w-[120px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Price *</label>
+                    <input
+                      type="number"
+                      value={newWood.price}
+                      onChange={(e) => setNewWood({ ...newWood, price: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="₹"
+                    />
+                  </div>
+                  <div className="w-[100px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Stock</label>
+                    <input
+                      type="number"
+                      value={newWood.stock}
+                      onChange={(e) => setNewWood({ ...newWood, stock: e.target.value })}
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Description (Optional)</label>
+                    <input
+                      type="text"
+                      value={newWood.description}
+                      onChange={(e) => setNewWood({ ...newWood, description: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="e.g. Premium durability"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                     <label className="text-sm font-medium text-black">Default?</label>
+                     <input 
+                      type="checkbox" 
+                      checked={newWood.isDefault} 
+                      onChange={(e) => setNewWood({...newWood, isDefault: e.target.checked})}
+                      className="w-5 h-5 accent-[#93a267]"
+                     />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addWoodVariant}
+                    className="bg-[#93a267] text-white px-4 py-2 rounded hover:bg-[#7a8856] transition-colors"
+                  >
+                    Add Wood
+                  </button>
+                </div>
+
+                {/* List Wood Variants */}
+                {woodVariants.length > 0 && (
+                   <div className="space-y-3">
+                      <div className="grid grid-cols-5 font-bold border-b pb-2 mb-2 bg-gray-100 p-2 rounded">
+                         <div className="col-span-1">Type</div>
+                         <div className="col-span-1">Price</div>
+                         <div className="col-span-1">Stock</div>
+                         <div className="col-span-1">Default</div>
+                         <div className="col-span-1">Action</div>
+                      </div>
+                      {woodVariants.map((wood, idx) => (
+                        <div key={idx} className="grid grid-cols-5 items-center p-2 border-b">
+                           <div className="font-medium text-black">{wood.woodType}</div>
+                           <div className="text-black">₹{wood.price}</div>
+                           <div className="text-black">{wood.stock}</div>
+                           <div className="text-black">{wood.isDefault ? "Yes" : "-"}</div>
+                           <div>
+                              <button
+                                type="button"
+                                onClick={() => removeWoodVariant(idx)}
+                                className="text-red-500 hover:text-red-700 font-bold"
+                              >
+                                Remove
+                              </button>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
                 )}
               </div>
             )}
