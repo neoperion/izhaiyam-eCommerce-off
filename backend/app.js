@@ -31,7 +31,9 @@ const io = new Server(server, {
   cors: {
      origin: [
       "http://localhost:3000",
-      "http://localhost:3001"
+      "http://localhost:3001",
+      "https://izhaiyam-e-commerce-off.vercel.app",
+      "https://izhaiyam-e-commerce-mpa2s3wu3-neo-perion.vercel.app"
     ],
     credentials: true
   }
@@ -41,7 +43,9 @@ const io = new Server(server, {
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "http://localhost:3001"
+    "http://localhost:3001",
+    "https://izhaiyam-e-commerce-off.vercel.app",
+    "https://izhaiyam-e-commerce-mpa2s3wu3-neo-perion.vercel.app"
   ],
   credentials: true
 }));
