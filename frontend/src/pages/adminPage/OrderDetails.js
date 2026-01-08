@@ -108,27 +108,50 @@ const OrderDetails = () => {
                                                                     <span 
                                                                         className="w-3 h-3 rounded-full inline-block border border-gray-200" 
                                                                         style={{ 
-                                                                            background: item.selectedColor.isDualColor 
-                                                                                ? `linear-gradient(90deg, ${item.selectedColor.primaryHexCode || item.selectedColor.hexCode} 50%, ${item.selectedColor.secondaryHexCode} 50%)`
-                                                                                : (item.selectedColor.hexCode || item.selectedColor.primaryHexCode || '#ccc')
+                                                                            background: item.selectedColor?.isDualColor 
+                                                                                ? `linear-gradient(90deg, ${item.selectedColor?.primaryHexCode || item.selectedColor?.hexCode} 50%, ${item.selectedColor?.secondaryHexCode} 50%)`
+                                                                                : (item.selectedColor?.hexCode || item.selectedColor?.primaryHexCode || '#ccc')
                                                                         }}
                                                                     ></span>
-                                                                    {item.selectedColor.isDualColor 
-                                                                        ? `${item.selectedColor.primaryColorName || 'Color'} + ${item.selectedColor.secondaryColorName || 'Color'}`
-                                                                        : (item.selectedColor.name || item.selectedColor.primaryColorName || 'Unknown Color')}
+                                                                    {item.selectedColor?.isDualColor 
+                                                                        ? `${item.selectedColor?.primaryColorName || 'Color'} + ${item.selectedColor?.secondaryColorName || 'Color'}`
+                                                                        : (item.selectedColor?.name || item.selectedColor?.primaryColorName || 'Unknown Color')}
                                                                 </p>
                                                             )}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-4">
-                                                    {item.woodType ? (
-                                                        <span className="px-2 py-1 bg-[#93a267]/10 text-[#5A6E3A] text-xs font-semibold rounded-md">
-                                                            {typeof item.woodType === 'object' ? (item.woodType.name || '') : item.woodType}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm">-</span>
-                                                    )}
+                                                    <div className="flex flex-col items-start gap-1">
+                                                        {(() => {
+                                                            // Resolve Wood Name
+                                                            const woodName = item.wood?.type || 
+                                                                (typeof item.woodType === 'object' ? item.woodType?.name : item.woodType) || 
+                                                                "Not Selected";
+                                                            const displayWoodName = woodName === "Not Selected" ? "-" : woodName;
+
+                                                            // Resolve Custom Logic
+                                                            const isCustom = item.customization?.enabled || (item.selectedColor && (item.selectedColor.isDualColor || item.selectedColor.name));
+
+                                                            return (
+                                                                <>
+                                                                    <span className="font-semibold text-gray-800 text-sm capitalize">
+                                                                        {displayWoodName}
+                                                                    </span>
+                                                                    {isCustom && (
+                                                                        <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">
+                                                                            Custom
+                                                                        </span>
+                                                                    )}
+                                                                </>
+                                                            );
+                                                        })()}
+                                                        
+                                                        {/* Price Logic (Only if extra wood cost is tracked separately or for debug, keeping existing logic optionally or hiding if redundant. 
+                                                            User said "Price: 12,000" which matches the main column. I will hide explicit extra cost here to clean up UI unless user insists.
+                                                            Actually, leaving it out makes it cleaner as per "WHAT ADMIN SHOULD SEE".
+                                                        */}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-right text-gray-600">
                                                     ₹{item.price.toLocaleString('en-IN')}

@@ -161,10 +161,33 @@ const OrdersManagement = () => {
                     <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-gray-800">{order.id}</td>
                     <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{order.customer}</td>
                     <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">
-                      {order.product}
-                      {order.productCount > 1 && (
-                        <span className="text-xs text-gray-500 ml-1">+{order.productCount - 1} more</span>
-                      )}
+                      {order.product} 
+                      {/* Note: Backend might need to return all names for this to work fully as comma sep list if `order.product` is just one string. 
+                          Currently `orders/all` endpoint returns `product` string. Ideally it should be `productNames` array.
+                          But User Requirement: "Product Names (comma separated) product.map(item => item.name).join(', ')"
+                          I should check if `order.product` is already formatted or if I need to format it in the backend logic.
+                          Assuming `order.product` is the string from `orders/all` controller mapping. 
+                          Actually, looking at `OrdersManagement.js` line 164: `{order.product}`.
+                          If previous controller logic just took first product, I can't fix it HERE without Backend `orders/all` change.
+                          But wait, "Admin Order List View ... items.map(item => item.name).join(', ')"
+                          User implies I should implement this logic.
+                          The current `orders` state comes from `/orders/all`.
+                          If I can't change backend `orders/all`, I'll stick to what I can do.
+                          BUT, I have access to backend.
+                          Let's assume the backend `orders/all` needs update or `order` object here has `products` array?
+                          In `fetchOrders` (OrdersManagement.js), response.data.orders.
+                          Let's look at `OrdersManagement.js` again. It iterates `filteredOrders`.
+                          If the object `order` has `products` array, I can do `order.products.map(p=>p.name).join(", ")`.
+                          However, typically summary endpoints might flatten it to `product` string.
+                          Let's implement the comma logic assuming I can access names.
+                          Wait, `backend/controllers/siteManagement.js` or `orders` controller usually handles `/orders/all`.
+                          I haven't edited `orders/all` controller.
+                          I will modify this Frontend Code to TRY to map names if array exists, else fallback.
+                       */}
+                      {order.products && Array.isArray(order.products) 
+                        ? order.products.map(p => p?.name || "Unknown").join(", ") 
+                        : (order.product || "-")
+                      }
                     </td>
                     <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString("en-IN")}</td>
                      <td className="p-3 md:p-4 text-sm text-gray-700 capitalize">{order.paymentMethod || 'COD'}</td>

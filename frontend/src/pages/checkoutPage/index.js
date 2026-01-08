@@ -105,11 +105,14 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
       return {
         productId: products._id,
         quantity: products.quantity,
-        selectedColor: products.selectedColor || null,
-        // products.woodType is now { name: "Teak", price: 12000 } from Cart
-        woodType: products.woodType || null, 
-        // woodPrice: products.woodType ? products.price : null, // Redundant if woodType has price, but backend reads it. 
-        // Let's pass unitPrice clearly
+        
+        // Pass full object for Backend to extract Details + Stock Check
+        selectedColor: products.selectedColor || null, 
+        
+        // Flatten Wood Data for Order Schema (String + Number)
+        woodType: products.wood?.type || (products.woodType?.name || products.woodType) || "Not Selected",
+        woodPrice: products.wood?.price || products.woodType?.price || 0,
+        
         unitPrice: products.price,
         totalPrice: products.price * products.quantity
       };

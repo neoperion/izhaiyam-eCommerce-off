@@ -70,24 +70,29 @@ const userSchema = mongoose.Schema(
             quantity: { type: Number },
             name: String, // Snapshot: Product Title
             image: String, // Snapshot: Product Image URL
+            name: String, // Snapshot: Product Title
+            image: String, // Snapshot: Product Image URL
             price: Number, // Snapshot: Price at purchase
-            selectedColor: {
-              name: String,
-              hexCode: String,
-              imageUrl: String,
-                 // New dual-color fields (optional)
-              primaryColorName: String,
-              primaryHexCode: String,
-              secondaryColorName: String,
-              secondaryHexCode: String,
-              isDualColor: Boolean,
+            
+            // STRICT SEPARATION: Wood vs Customization
+            wood: {
+                type: { type: String, required: true, default: "Not Selected" },
+                price: { type: Number, default: 0 }
             },
-            // Wood Variant Snapshot
-            woodType: {
-              name: String,
-              price: Number
+            
+            customization: {
+                enabled: { type: Boolean, default: false },
+                primaryColor: { type: String, default: null },
+                secondaryColor: { type: String, default: null },
+                primaryHex: String,
+                secondaryHex: String,
+                imageUrl: String // Snapshot of the specific color variant image if applicable
             },
-            woodPrice: Number, // Keeping for query/legacy safety, or we can drop it if user matches "Order Item Schema" strictness. User said "Order Item Schema: woodType: { name, price }" and "unitPrice". I will keep woodType object structure.
+
+            // LEGACY FALLBACKS (To prevent crashes on old data)
+            selectedColor: { type: Object }, 
+            woodType: String,
+            woodPrice: Number
           },
         ],
         username: String,

@@ -115,17 +115,49 @@ const verifyPayment = async (req, res) => {
              snapshot.price = product.price;
              snapshot.image = product.image; // Fallback main image
              
-             // Variant Details
+          // 1. New Customization Object
+             snapshot.customization = {
+                enabled: true,
+                primaryColor: item.selectedColor.primaryColorName || item.selectedColor.name || "N/A",
+                secondaryColor: item.selectedColor.secondaryColorName || "N/A",
+                primaryHex: item.selectedColor.primaryHexCode || item.selectedColor.hexCode,
+                secondaryHex: item.selectedColor.secondaryHexCode,
+                imageUrl: item.selectedColor.imageUrl
+             };
+
+             // Legacy Fallback
              snapshot.selectedColor = {
-                primaryColorName: item.selectedColor.primaryColorName,
-                primaryHexCode: item.selectedColor.primaryHexCode,
-                secondaryColorName: item.selectedColor.secondaryColorName,
+                primaryColorName: item.selectedColor.primaryColorName || item.selectedColor.name || "N/A",
+                primaryHexCode: item.selectedColor.primaryHexCode || item.selectedColor.hexCode,
+                secondaryColorName: item.selectedColor.secondaryColorName || "N/A",
                 secondaryHexCode: item.selectedColor.secondaryHexCode,
                 isDualColor: item.selectedColor.isDualColor || false,
-                imageUrl: item.selectedColor.imageUrl, // Priority image
-                name: item.selectedColor.colorName || item.selectedColor.primaryColorName,
+                imageUrl: item.selectedColor.imageUrl,
+                name: item.selectedColor.name || item.selectedColor.primaryColorName,
                 hexCode: item.selectedColor.hexCode || item.selectedColor.primaryHexCode
              };
+         } else {
+             snapshot.customization = { enabled: false };
+             snapshot.selectedColor = {};
+         }
+
+         // 2. New Wood Object
+         if (item.woodType || (item.wood && item.wood.type)) {
+            // Check if frontend sent 'wood' object (new) or 'woodType' string (old/intermediate)
+            const wType = item.wood?.type || item.woodType || "Not Selected";
+            const wPrice = item.wood?.price || item.woodPrice || 0;
+
+            snapshot.wood = {
+                type: wType,
+                price: wPrice
+            };
+            // Legacy
+            snapshot.woodType = wType;
+            snapshot.woodPrice = wPrice;
+         } else {
+             snapshot.wood = { type: "Not Selected", price: 0 };
+             snapshot.woodType = "Not Selected";
+             snapshot.woodPrice = 0;
          }
 
       } else {
@@ -144,8 +176,31 @@ const verifyPayment = async (req, res) => {
         // Add Snapshot Data for Main Product
         if(product) {
             snapshot.name = product.title;
-            snapshot.price = product.price;
+            snapshot.price = product.price; // This might need override if wood was selected!
             snapshot.image = product.image;
+            
+            snapshot.customization = { enabled: false };
+            snapshot.selectedColor = {};
+        }
+
+        // Wood Logic for Main Product Stock
+        if (item.woodType || (item.wood && item.wood.type)) {
+            const wType = item.wood?.type || item.woodType || "Not Selected";
+            const wPrice = item.wood?.price || item.woodPrice || 0;
+
+            snapshot.wood = {
+                type: wType,
+                price: wPrice
+            };
+            snapshot.woodType = wType;
+            snapshot.woodPrice = wPrice;
+            
+             // Set price to the wood price if provided, as that's the "finalPrice"
+             if(item.price) snapshot.price = item.price; 
+        } else {
+             snapshot.wood = { type: "Not Selected", price: 0 };
+             snapshot.woodType = "Not Selected";
+             snapshot.woodPrice = 0;
         }
       }
 

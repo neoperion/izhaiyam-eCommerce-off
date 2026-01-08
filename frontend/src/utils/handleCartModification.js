@@ -104,8 +104,26 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
                 cartItemId: newCartItemId,
                 price: finalPrice, 
                 quantity: parseInt(productQuantity) || 1,
-                // STORE FULL OBJECT: { name: "Teak", price: 12000 }
-                // Mapped to Schema Requirement: woodType: { name, price }
+                
+                // DATA CONTRACT MANDATORY FIELDS
+                wood: woodType ? {
+                    type: woodType.woodType, // Ensure this is the string name
+                    price: finalPrice
+                } : {
+                    type: "Not Selected",
+                    price: 0
+                },
+                
+                customization: {
+                    primaryColor: selectedColor ? (selectedColor.primaryColorName || selectedColor.colorName || "N/A") : "N/A",
+                    secondaryColor: selectedColor ? (selectedColor.secondaryColorName || "N/A") : "N/A",
+                    primaryHex: selectedColor ? (selectedColor.primaryHexCode || selectedColor.hexCode) : null,
+                    secondaryHex: selectedColor ? selectedColor.secondaryHexCode : null
+                },
+
+                // Legacy/Redux Compatibility (Optional but good for fallback)
+                // We keep these so as not to break other components reading them yet, 
+                // but we will mainly rely on `wood` and `customization` above.
                 woodType: woodType ? { name: woodType.woodType, price: finalPrice } : null,
                 selectedColor: selectedColor || null
             };
