@@ -55,6 +55,23 @@ export const productSlice = createSlice({
       payload = payload ? payload : [];
       state.loadingOrErrorMessage = payload;
     },
+    // Real-time Reducers
+    addProduct: (state, { payload }) => {
+        state.allProductsData.unshift(payload);
+        state.sortedAllProductsData.unshift(payload);
+        // Also update search result if matches? Logic can be complex, keeping simple for now.
+    },
+    updateProduct: (state, { payload }) => {
+        state.allProductsData = state.allProductsData.map(p => p._id === payload._id ? payload : p);
+        state.sortedAllProductsData = state.sortedAllProductsData.map(p => p._id === payload._id ? payload : p);
+        // Update current page data as well to reflect instantly
+        state.productsDataForCurrentPage = state.productsDataForCurrentPage.map(p => p._id === payload._id ? payload : p);
+    },
+    removeProduct: (state, { payload }) => {
+        state.allProductsData = state.allProductsData.filter(p => p._id !== payload);
+        state.sortedAllProductsData = state.sortedAllProductsData.filter(p => p._id !== payload);
+        state.productsDataForCurrentPage = state.productsDataForCurrentPage.filter(p => p._id !== payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -84,6 +101,9 @@ export const {
   setSearchedProductData,
   setSortedSearchedProductData,
   setLoadingOrErrorMessage,
+  addProduct,
+  updateProduct,
+  removeProduct
 } = productSlice.actions;
 
 export default productSlice.reducer;

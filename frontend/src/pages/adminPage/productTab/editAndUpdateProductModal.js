@@ -100,7 +100,7 @@ export const EditAndupdateProductModal = () => {
     secondaryColorName: "", 
     secondaryHexCode: "#000000",
     isDualColor: false,
-    stock: 0, 
+ 
     imageUrl: "" 
   });
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
@@ -111,7 +111,7 @@ export const EditAndupdateProductModal = () => {
   const [newWood, setNewWood] = useState({
     woodType: "",
     price: "",
-    stock: "",
+
     description: "",
     isDefault: false
   });
@@ -201,7 +201,7 @@ export const EditAndupdateProductModal = () => {
         secondaryHexCode: c.secondaryHexCode || "",
         isDualColor: c.isDualColor || false,
         imageUrl: c.imageUrl,
-        stock: parseInt(c.stock) || 0
+
       })) : [],
       
       // Wood Variants & AB Test Data
@@ -209,7 +209,7 @@ export const EditAndupdateProductModal = () => {
       woodVariants: isWoodCustomizable === "yes" ? woodVariants.map(w => ({
         woodType: w.woodType,
         price: parseFloat(w.price) || 0,
-        stock: parseInt(w.stock) || 0,
+
         description: w.description,
         isDefault: w.isDefault
       })) : [],
@@ -352,7 +352,6 @@ export const EditAndupdateProductModal = () => {
       secondaryColorName: "", 
       secondaryHexCode: "#000000",
       isDualColor: false,
-      stock: 0, 
       imageUrl: "" 
     });
   };
@@ -370,7 +369,7 @@ export const EditAndupdateProductModal = () => {
       return;
     }
     setWoodVariants([...woodVariants, { ...newWood }]);
-    setNewWood({ woodType: "", price: "", stock: "", description: "", isDefault: false });
+    setNewWood({ woodType: "", price: "", description: "", isDefault: false });
   };
 
   const removeWoodVariant = (index) => {
@@ -611,15 +610,7 @@ export const EditAndupdateProductModal = () => {
                       className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
                     />
                   </div>
-                  <div className="w-[100px]">
-                    <label className="block text-sm font-medium mb-1 text-black">Stock</label>
-                    <input
-                      type="number"
-                      value={newColor.stock}
-                      onChange={(e) => setNewColor({ ...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value) })}
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
+
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1 text-black">Image</label>
                     <input
@@ -661,7 +652,7 @@ export const EditAndupdateProductModal = () => {
                           <img src={variant.imageUrl} alt={displayName} className="w-12 h-12 object-cover rounded" />
                           <div className="flex-1">
                             <p className="font-bold text-black">{displayName}</p>
-                            <p className="text-sm text-black">Stock: {variant.stock}</p>
+
                           </div>
                           <button
                             type="button"
@@ -732,15 +723,7 @@ export const EditAndupdateProductModal = () => {
                       placeholder="₹"
                     />
                   </div>
-                  <div className="w-[100px]">
-                    <label className="block text-sm font-medium mb-1 text-black">Stock</label>
-                    <input
-                      type="number"
-                      value={newWood.stock}
-                      onChange={(e) => setNewWood({ ...newWood, stock: e.target.value })}
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
+
                   <div className="flex-1 min-w-[200px]">
                     <label className="block text-sm font-medium mb-1 text-black">Description (Optional)</label>
                     <input
@@ -775,7 +758,7 @@ export const EditAndupdateProductModal = () => {
                       <div className="grid grid-cols-5 font-bold border-b pb-2 mb-2 bg-gray-100 p-2 rounded">
                          <div className="col-span-1">Type</div>
                          <div className="col-span-1">Price</div>
-                         <div className="col-span-1">Stock</div>
+
                          <div className="col-span-1">Default</div>
                          <div className="col-span-1">Action</div>
                       </div>
@@ -783,7 +766,7 @@ export const EditAndupdateProductModal = () => {
                         <div key={idx} className="grid grid-cols-5 items-center p-2 border-b">
                            <div className="font-medium text-black">{wood.woodType}</div>
                            <div className="text-black">₹{wood.price}</div>
-                           <div className="text-black">{wood.stock}</div>
+
                            <div className="text-black">{wood.isDefault ? "Yes" : "-"}</div>
                            <div>
                               <button

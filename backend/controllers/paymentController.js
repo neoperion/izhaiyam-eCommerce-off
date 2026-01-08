@@ -4,6 +4,7 @@ const User = require("../models/userData");
 const Product = require("../models/products");
 const CustomErrorHandler = require("../errors/customErrorHandler");
 const mongoose = require("mongoose");
+const { createNotification } = require("./notificationController");
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
@@ -14,11 +15,24 @@ const razorpay = new Razorpay({
 // Create Razorpay Order
 const createRazorpayOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, products } = req.body;
     console.log("Debugging Razorpay Key:", process.env.RAZORPAY_KEY_ID ? "Loaded" : "Missing"); // DEBUG log
 
     if (!amount) {
       throw new CustomErrorHandler(400, "Amount is required");
+    }
+
+    // 1. Validate Stock Before Creating Payment Order
+    if (products && Array.isArray(products)) {
+        for (const item of products) {
+            const product = await Product.findById(item.productId || item._id); // Handle both formats
+            if (!product) {
+                throw new CustomErrorHandler(404, `Product not found: ${item.name}`);
+            }
+            if (product.stock < item.quantity) {
+                throw new CustomErrorHandler(400, `Insufficient Main Product Stock for "${product.title}". Requested: ${item.quantity}, Available: ${product.stock}. (Variant stock is ignored).`);
+            }
+        }
     }
 
     const options = {
@@ -38,7 +52,7 @@ const createRazorpayOrder = async (req, res) => {
         key: process.env.RAZORPAY_KEY_ID
     });
   } catch (error) {
-    throw new CustomErrorHandler(500, error.message);
+    throw new CustomErrorHandler(error.statusCode || 500, error.message);
   }
 };
 
@@ -82,40 +96,71 @@ const verifyPayment = async (req, res) => {
     }
 
     for (let item of products) {
-      let product;
-      let snapshot = {
-          productId: item.productId,
-          quantity: item.quantity
-      };
+      // Find and update MAIN product stock
+      const product = await Product.findOneAndUpdate(
+        {
+          _id: item.productId,
+          stock: { $gte: item.quantity }
+        },
+        {
+          $inc: { stock: -item.quantity }
+        },
+        { new: true, session }
+      );
 
-      // OPTION A: Specific Color Variant
-      if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.colorName)) {
-        const colorField = item.selectedColor.primaryColorName ? "primaryColorName" : "colorName";
-        const colorValue = item.selectedColor.primaryColorName || item.selectedColor.colorName;
-        
-        product = await Product.findOneAndUpdate(
-          {
-            _id: item.productId,
-            "colorVariants": {
-              $elemMatch: {
-                [colorField]: colorValue,
-                stock: { $gte: item.quantity }
-              }
-            }
-          },
-          {
-            $inc: { "colorVariants.$.stock": -item.quantity }
-          },
-          { new: true, session }
-        );
+      if (!product) {
+        // Atomic update failed, let's diagnose WHY (Product missing vs Stock low)
+        const checkProduct = await Product.findById(item.productId || item._id);
+        if (!checkProduct) {
+             throw new CustomErrorHandler(404, `Product not found: ${item.name || item.productId}`);
+        } else {
+             throw new CustomErrorHandler(400, `Insufficient Main Product Stock for "${checkProduct.title}". Requested: ${item.quantity}, Available: ${checkProduct.stock}. (Variant stock is ignored).`);
+        }
+      }
+      
+      // Notification Logic
+      if (product.stock === 0) {
+         product.status = "Out of Stock";
+         await product.save({ session });
+          try {
+             await createNotification({
+               title: "Out of Stock",
+               message: `"${product.title}" is now out of stock!`,
+               type: "error",
+               productId: product._id
+             });
+          } catch(e) { console.error("Notification error", e); }
 
-         // Add Snapshot Data for Variant
-         if(product) {
-             snapshot.name = product.title;
-             snapshot.price = product.price;
-             snapshot.image = product.image; // Fallback main image
-             
-          // 1. New Customization Object
+      } else if (product.stock < 10) {
+           try {
+             await createNotification({
+               title: "Low Stock Alert",
+               message: `Only ${product.stock} units left for "${product.title}"`,
+               type: "warning",
+               productId: product._id
+             });
+          } catch(e) { console.error("Notification error", e); }
+      } else if (product.status === "Out of Stock" && product.stock > 0) {
+          product.status = "In Stock";
+          await product.save({ session });
+      }
+
+         // Build Snapshot
+         let snapshot = {
+              productId: item.productId,
+              quantity: item.quantity,
+              name: product.title,
+              price: product.price,
+              image: product.image,
+              customization: { enabled: false },
+              selectedColor: {},
+              wood: { type: "Not Selected", price: 0 },
+              woodType: "Not Selected",
+              woodPrice: 0
+         };
+
+         // Variant - Customization
+         if (item.selectedColor && (item.selectedColor.primaryColorName || item.selectedColor.name)) {
              snapshot.customization = {
                 enabled: true,
                 primaryColor: item.selectedColor.primaryColorName || item.selectedColor.name || "N/A",
@@ -124,67 +169,15 @@ const verifyPayment = async (req, res) => {
                 secondaryHex: item.selectedColor.secondaryHexCode,
                 imageUrl: item.selectedColor.imageUrl
              };
-
-             // Legacy Fallback
              snapshot.selectedColor = {
-                primaryColorName: item.selectedColor.primaryColorName || item.selectedColor.name || "N/A",
-                primaryHexCode: item.selectedColor.primaryHexCode || item.selectedColor.hexCode,
-                secondaryColorName: item.selectedColor.secondaryColorName || "N/A",
-                secondaryHexCode: item.selectedColor.secondaryHexCode,
-                isDualColor: item.selectedColor.isDualColor || false,
-                imageUrl: item.selectedColor.imageUrl,
-                name: item.selectedColor.name || item.selectedColor.primaryColorName,
-                hexCode: item.selectedColor.hexCode || item.selectedColor.primaryHexCode
+                ...item.selectedColor,
+                name: item.selectedColor.name || item.selectedColor.primaryColorName
              };
-         } else {
-             snapshot.customization = { enabled: false };
-             snapshot.selectedColor = {};
+             if(item.selectedColor.imageUrl) snapshot.image = item.selectedColor.imageUrl;
          }
 
-         // 2. New Wood Object
+          // Variant - Wood
          if (item.woodType || (item.wood && item.wood.type)) {
-            // Check if frontend sent 'wood' object (new) or 'woodType' string (old/intermediate)
-            const wType = item.wood?.type || item.woodType || "Not Selected";
-            const wPrice = item.wood?.price || item.woodPrice || 0;
-
-            snapshot.wood = {
-                type: wType,
-                price: wPrice
-            };
-            // Legacy
-            snapshot.woodType = wType;
-            snapshot.woodPrice = wPrice;
-         } else {
-             snapshot.wood = { type: "Not Selected", price: 0 };
-             snapshot.woodType = "Not Selected";
-             snapshot.woodPrice = 0;
-         }
-
-      } else {
-        // OPTION B: Main Product Stock
-        product = await Product.findOneAndUpdate(
-          {
-            _id: item.productId,
-            stock: { $gte: item.quantity }
-          },
-          {
-            $inc: { stock: -item.quantity }
-          },
-          { new: true, session }
-        );
-        
-        // Add Snapshot Data for Main Product
-        if(product) {
-            snapshot.name = product.title;
-            snapshot.price = product.price; // This might need override if wood was selected!
-            snapshot.image = product.image;
-            
-            snapshot.customization = { enabled: false };
-            snapshot.selectedColor = {};
-        }
-
-        // Wood Logic for Main Product Stock
-        if (item.woodType || (item.wood && item.wood.type)) {
             const wType = item.wood?.type || item.woodType || "Not Selected";
             const wPrice = item.wood?.price || item.woodPrice || 0;
 
@@ -194,29 +187,11 @@ const verifyPayment = async (req, res) => {
             };
             snapshot.woodType = wType;
             snapshot.woodPrice = wPrice;
-            
-             // Set price to the wood price if provided, as that's the "finalPrice"
+             // Use wood price if it's the effective price
              if(item.price) snapshot.price = item.price; 
-        } else {
-             snapshot.wood = { type: "Not Selected", price: 0 };
-             snapshot.woodType = "Not Selected";
-             snapshot.woodPrice = 0;
-        }
-      }
-
-      if (!product) {
-        throw new CustomErrorHandler(400, `Product/Variant out of stock: ${item.name || item.productId}`);
-      }
+         }
 
       formattedProducts.push(snapshot);
-
-      // Update Status if Stock hits 0 (Simplified logic from Orders.js)
-       if (!item.selectedColor?.colorName) { 
-        if (product.stock === 0) {
-           product.status = "Out of Stock";
-           await product.save({ session });
-        }
-      }
     }
 
     // 3. Format Order Data
@@ -284,6 +259,21 @@ const verifyPayment = async (req, res) => {
       await session.commitTransaction();
       session.endSession();
     }
+
+    // Trigger New Order Notification
+    try {
+        await createNotification({
+            title: "New Order Received",
+            message: `Order #${razorpay_order_id} placed by ${orderDetails.username || 'Customer'}`,
+            type: "info",
+            productId: null,
+            io: req.io
+        });
+
+        // Also emit New Order event for Order List management
+        if(req.io) req.io.emit("order:new", { ...orderDetails, orderId: razorpay_order_id });
+
+    } catch(e) { console.error("Notification trigger failed", e); }
 
     res.status(200).json({
       success: true,

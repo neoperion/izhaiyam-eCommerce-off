@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Heart, Star } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 
-const FeaturedProductCard = ({ product, isWishlisted }) => {
+const FeaturedProductCard = ({ product, isWishlisted }) =>
+{
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
     const dispatch = useDispatch();
@@ -58,21 +59,7 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
                 <p className="font-inter text-xs text-gray-600 mb-3">By Wooden Street</p>
 
                 {/* Rating */}
-                <div className="flex items-center gap-2 mb-3">
-                    <div className="flex gap-0.5">
-                        {[...Array(Math.floor(rating || 4))].map((_, i) => (
-                            <svg key={i} className="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                            </svg>
-                        ))}
-                        {(rating || 4) % 1 !== 0 && (
-                            <svg className="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" opacity="0.5" />
-                            </svg>
-                        )}
-                    </div>
-                    <span className="font-inter text-xs text-gray-600">({reviews || 0})</span>
-                </div>
+
 
                 {/* Price Section */}
                 <div className="flex items-center gap-3">

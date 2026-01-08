@@ -157,9 +157,10 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     }
 
     try {
-      // 2. Create Order on Backend
+      // 2. Create Order on Backend (Validates Stock)
       const { data: { key, id: order_id, currency, amount } } = await axios.post(`${serverUrl}orders/create-razorpay-order`, {
-        amount: totalAmountToBePaid
+        amount: totalAmountToBePaid,
+        products: orderDetails.products // Send products for stock check
       });
 
       // 3. Open Razorpay Option
@@ -169,7 +170,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
         currency: currency,
         name: "Izhaiyam Handloom Furniture",
         description: "Order Payment",
-        image: "https://your-logo-url.com/logo.png", // Functionality to add logo later
+        // image: "https://your-logo-url.com/logo.png", // Removed or replace with valid logo if available
         order_id: order_id, 
         handler: async function (response) {
             // 4. Verify Payment

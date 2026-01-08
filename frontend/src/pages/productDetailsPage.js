@@ -1,6 +1,6 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
-import { Heart, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import FooterSection from "../components/footerSection";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -91,16 +91,15 @@ export const ProductDetailsPage = () => {
 
   const currentImage = isCustomizationActive && selectedColor ? selectedColor.imageUrl : image;
   
-  // Dynamic Pricing & Stock
+  // Dynamic Pricing & Stock (Unified Stock: Variants don't have stock anymore)
   let currentDisplayPrice = price;
-  let currentStock = mainStock;
+  const currentStock = mainStock; // Use Main Product Stock ONLY
 
   if (isWoodCustomizable && selectedWood) {
       currentDisplayPrice = selectedWood.price;
-      currentStock = selectedWood.stock;
-  } else if (isCustomizationActive && selectedColor) {
-     currentStock = selectedColor.stock;
   }
+  // Color variants don't affect price usually, but if they did, handle here. 
+  // Stock is ALWAYS mainStock.
 
   const isOutOfStock = currentStock === 0;
 
@@ -204,14 +203,7 @@ export const ProductDetailsPage = () => {
           <div className="flex flex-col gap-6 h-full">
             <div>
               <h1 className="font-inter text-3xl md:text-4xl font-bold text-gray-900 mb-3 capitalize">{title}</h1>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <span className="font-inter text-gray-600 text-sm">(243 Reviews)</span>
-              </div>
+
               <div className="flex items-baseline gap-3 mb-4">
                 {discountPercentValue > 0 ? (
                   <>
@@ -274,9 +266,7 @@ export const ProductDetailsPage = () => {
                            {wood.description && (
                               <p className="text-xs text-gray-500 mt-2 ml-6">{wood.description}</p>
                            )}
-                           {wood.stock < 5 && wood.stock > 0 && (
-                              <p className="text-xs text-red-500 font-bold mt-1 ml-6">Only {wood.stock} left!</p>
-                           )}
+                            {/* Stock removed from variants */ }
                         </div>
                      ))}
                   </div>

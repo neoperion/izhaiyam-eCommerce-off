@@ -63,7 +63,7 @@ const productSchema = new mongoose.Schema(
         hexCode: { type: String }, // Deprecated - use primaryHexCode
         
         imageUrl: { type: String },
-        stock: { type: Number, default: 0 },
+
       },
     ],
     // New Wood Pricing & A/B Testing Fields
@@ -75,7 +75,7 @@ const productSchema = new mongoose.Schema(
       {
         woodType: { type: String, required: true }, // e.g., "Acacia", "Teak"
         price: { type: Number, required: true },
-        stock: { type: Number, default: 0 },
+
         isDefault: { type: Boolean, default: false },
         description: { type: String }, // Optional micro-text like "Premium durability"
       }

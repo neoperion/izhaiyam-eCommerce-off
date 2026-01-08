@@ -14,13 +14,49 @@ import { getUserData } from "./features/authSlice";
 import { useLocation } from "react-router-dom";
 import WelcomeModal from "./components/welcomeModal/WelcomeModal";
 
+import { SocketProvider } from './context/SocketContext';
+import { useSocket } from './context/SocketContext'; 
+import { addProduct, updateProduct, removeProduct } from "./features/productSlice";
+
+// Separate component to handle socket logic inside provider
+const SocketListener = () => {
+    const socket = useSocket();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("product:new", (newProduct) => {
+                dispatch(addProduct(newProduct));
+            });
+
+            socket.on("product:update", (updatedProduct) => {
+                dispatch(updateProduct(updatedProduct));
+            });
+
+            socket.on("product:delete", (deletedId) => {
+                dispatch(removeProduct(deletedId));
+            });
+        }
+    
+        return () => {
+            if (socket) {
+                socket.off("product:new");
+                socket.off("product:update");
+                socket.off("product:delete");
+            }
+        }
+      }, [socket, dispatch]);
+
+      return null;
+}
+
 function App() {
   const [isLargeScreen, setIsLargeScreen] = useState("");
   const [isWishlistActive, setIsWishlistActive] = useState(false);
   const [isCartSectionActive, setIsCartSectionActive] = useState(false);
 
+  // ... (hooks)
   const location = useLocation();
-
   const isAdminRoute = useMemo(() => {
     return location.pathname.startsWith("/admin");
   }, [location.pathname]);
@@ -56,6 +92,8 @@ function App() {
   }, []);
 
   return (
+    <SocketProvider>
+    <SocketListener />
     <div className="App-container lg:text-[18px]">
 
       {/* Show PUBLIC HEADER only when NOT on admin pages */}
@@ -96,6 +134,7 @@ function App() {
         theme="light"
       />
     </div>
+    </SocketProvider>
   );
 }
 

@@ -30,6 +30,7 @@ import OrdersManagement from "../pages/adminPage/OrdersManagement";
 import OrderDetails from "../pages/adminPage/OrderDetails";
 import { SettingsPage } from "../pages/adminPage/settings";
 import InstagramGalleryManager from "../pages/adminPage/InstagramGalleryManager";
+import NotificationsProtocol from "../pages/adminPage/Notifications";
 
 
 const PagesRoute = ({ setIsCartSectionActive }) => {
@@ -72,6 +73,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
           <Route path="instagram-gallery" element={<InstagramGalleryManager />} />
+          <Route path="notifications" element={<NotificationsProtocol />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

@@ -13,6 +13,7 @@ const adminRoute = require("./routes/adminRoutes");
 const ordersRoute = require("./routes/ordersRoute");
 const addressRoute = require("./routes/addressRoutes");
 const instagramRoute = require("./routes/instagramRoute");
+const notificationRoute = require("./routes/notificationRoutes");
 const { clearAdminJwt } = require("./controllers/admin");
 
 cloudinary.config({
@@ -22,10 +23,23 @@ cloudinary.config({
 });
 
 const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+     origin: [
+      "http://localhost:3000",
+      "http://localhost:3001"
+    ],
+    credentials: true
+  }
+});
+
 //  middlewares
 app.use(cors({
   origin: [
-    "https://auffur-furnishes.netlify.app",
     "http://localhost:3000",
     "http://localhost:3001"
   ],
@@ -37,6 +51,12 @@ app.use(
     useTempFiles: true,
   })
 );
+
+// Attach IO to request object
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 // Debug logging middleware
 app.use((req, res, next) => {
@@ -54,6 +74,7 @@ app.use("/orders", ordersRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/address", addressRoute);
 app.use("/api/v1/instagram", instagramRoute);
+app.use("/api/v1/admin/notifications", notificationRoute); // Mounted under /admin/notifications as per plan/requirements
 app.use(errorHandler);
 app.use(pathNotFound);
 
@@ -62,11 +83,20 @@ setInterval(clearAdminJwt, 6 * 60 * 60 * 1000);
 
 const port = process.env.PORT || 5000;
 
+// Socket Connection Logic
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
 const startServer = async () => {
   try {
     await connectDb(process.env.MONGO_URI);
     console.log("✅ Database connected successfully!");
-    app.listen(port, () => console.log(`🚀 Server is listening on port ${port}`));
+    // CHANGE: Listen on 'server' instead of 'app'
+    server.listen(port, () => console.log(`🚀 Server is listening on port ${port}`));
   } catch (error) {
     console.error("❌ Error starting server:", error.message);
     process.exit(1);

@@ -3,6 +3,7 @@ const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 const CustomErrorHandler = require("../errors/customErrorHandler");
 const { title } = require("process");
+const { createNotification } = require("./notificationController");
 
 const createProducts = async (req, res) => {
   console.log("Create Product Request Body:", req.body);
@@ -23,6 +24,10 @@ const createProducts = async (req, res) => {
 
   const product = await Product.create(req.body);
   console.log("Created Product:", product);
+  
+  // Real-time Update
+  if(req.io) req.io.emit("product:new", product);
+
   res.status(201).json(product);
 };
 
@@ -161,8 +166,37 @@ const updateAspecificProduct = async (req, res) => {
   }
 
   console.log("Update Product Request Body:", updatedData);
+  
+  // Check for Manual Stock Update Notification
+  let notificationPromise = null;
+  if(updatedData.stock !== undefined && updatedData.stock !== null && currentProduct.stock !== updatedData.stock) {
+      const oldStock = currentProduct.stock;
+      const newStock = parseInt(updatedData.stock);
+      
+      // Determine type based on levels
+      const type = newStock === 0 ? "error" : newStock < 10 ? "warning" : "info";
+      const message = newStock === 0 
+          ? `Stock manually updated to 0 (Out of Stock) for "${currentProduct.title}"`
+          : newStock < 10 
+              ? `Stock manually updated to ${newStock} (Low Stock) for "${currentProduct.title}"`
+              : `Stock manually updated from ${oldStock} to ${newStock} for "${currentProduct.title}"`;
+
+      notificationPromise = createNotification({
+         title: "Manual Stock Update",
+         message,
+         type,
+         productId: currentProduct._id,
+         io: req.io
+      });
+  }
+
   const Updatedproduct = await Product.findByIdAndUpdate(id, updatedData, { runValidators: true, new: true });
   console.log("Updated Product Result:", Updatedproduct);
+  
+  if(notificationPromise) await notificationPromise.catch(e => console.error("Notification Error:", e));
+
+  // Real-time Update
+  if(req.io) req.io.emit("product:update", Updatedproduct);
 
   res.status(201).json({ message: "product successfully updated", product: Updatedproduct });
 };

@@ -65,7 +65,7 @@ const OrderTracking = ({ order, onClose }) => {
             <div className="space-y-2 text-sm text-gray-700">
               <div className="flex justify-between">
                 <span className="text-gray-500">Name:</span>
-                <span className="font-medium">{order.customer || 'N/A'}</span>
+                <span className="font-medium">{typeof order.customer === 'object' ? order.customer.name : order.customer || 'N/A'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Email:</span>
