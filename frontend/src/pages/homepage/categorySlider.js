@@ -108,10 +108,10 @@ const CategorySlider = () => {
   };
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
+    <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8" style={{ backgroundColor: '#FFF7F2' }}>
       <div className="max-w-7xl mx-auto">
         {/* Heading Section */}
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center mb-6 sm:mb-10">
           <p className="font-inter text-xs sm:text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
             BROWSE CATEGORIES
           </p>
@@ -121,12 +121,12 @@ const CategorySlider = () => {
         </div>
 
         {/* Mobile Grid Layout - 3 rows x 2 columns */}
-        <div className="grid grid-cols-2 gap-4 md:hidden">
+        <div className="grid grid-cols-2 gap-2 md:hidden">
           {categories.map((category, index) => (
             <div
               key={index}
               onClick={() => handleCategoryClick(category)}
-              className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group cursor-pointer aspect-square"
+              className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group cursor-pointer aspect-square w-[85%] mx-auto"
             >
               {/* Image */}
               <img
@@ -139,12 +139,12 @@ const CategorySlider = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                <h3 className="text-base font-bold mb-1">{category.name}</h3>
-                <p className="text-xs text-white/90 mb-2">{category.products} Products</p>
-                <div className="flex items-center gap-2 text-xs font-medium group-hover:gap-3 transition-all">
+              <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                <h3 className="text-sm font-bold mb-1">{category.name}</h3>
+                <p className="text-[10px] text-white/90 mb-1">{category.products} Products</p>
+                <div className="flex items-center gap-2 text-[10px] font-medium group-hover:gap-3 transition-all">
                   <span>Explore</span>
-                  <ArrowRight size={12} />
+                  <ArrowRight size={10} />
                 </div>
               </div>
             </div>
@@ -179,7 +179,7 @@ const CategorySlider = () => {
                 >
                   <div
                     onClick={() => handleCategoryClick(category)}
-                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[450px] pointer-events-auto"
+                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer w-[85%] mx-auto aspect-square pointer-events-auto"
                   >
                     {/* Image */}
                     <img
@@ -192,10 +192,10 @@ const CategorySlider = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 
                     {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-                      <h3 className="text-xl font-bold mb-1">{category.name}</h3>
-                      <p className="text-xs text-white/90 mb-2">{category.products} Products</p>
-                      <div className="flex items-center gap-2 text-xs font-medium group-hover:gap-3 transition-all">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <h3 className="text-lg font-bold mb-1">{category.name}</h3>
+                      <p className="text-[11px] text-white/90 mb-2">{category.products} Products</p>
+                      <div className="flex items-center gap-2 text-[11px] font-medium group-hover:gap-3 transition-all">
                         <span>Explore</span>
                         <ArrowRight size={14} />
                       </div>
