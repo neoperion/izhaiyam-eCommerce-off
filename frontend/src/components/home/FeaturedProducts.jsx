@@ -17,8 +17,8 @@ const FeaturedProducts = () => {
         const fetchFeaturedProducts = async () => {
             try {
                 setLoading(true);
-                // Fetch only featured products, limit to 6
-                const { data } = await axios.get('/api/v1/products?featured=true&limit=6');
+                // Fetch only featured products, limit to 8 for 2 rows
+                const { data } = await axios.get('/api/v1/products?featured=true&limit=8');
                 setProducts(data.products || []);
             } catch (error) {
                 console.error('Failed to fetch featured products:', error);
@@ -29,27 +29,6 @@ const FeaturedProducts = () => {
 
         fetchFeaturedProducts();
     }, []);
-
-
-
-    // Scroll functions for arrow navigation
-    const scrollLeft = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({
-                left: -400,
-                behavior: 'smooth'
-            });
-        }
-    };
-
-    const scrollRight = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({
-                left: 400,
-                behavior: 'smooth'
-            });
-        }
-    };
 
     return (
         <section className="py-20 px-4 sm:px-8 bg-[#FDFBF7]">
@@ -62,7 +41,7 @@ const FeaturedProducts = () => {
                         <div className="mb-3">
                             <span className="font-inter text-xs font-bold tracking-[0.2em] text-[#93a267] uppercase">Curated Selection</span>
                         </div>
-                        <h2 className="font-inter text-4xl md:text-5xl font-serif font-medium text-gray-900">
+                        <h2 className="font-inter text-4xl md:text-5xl font-medium text-gray-900">
                             Featured Products
                         </h2>
                     </div>
@@ -77,61 +56,36 @@ const FeaturedProducts = () => {
                     </div>
                 </div>
 
-                {/* Horizontal Slider with Arrow Navigation */}
-                <div className="relative">
-                    {/* Left Arrow */}
-                    <button
-                        onClick={scrollLeft}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all -ml-4 hidden md:flex items-center justify-center"
-                        aria-label="Scroll left"
-                    >
-                        <ChevronLeft size={24} className="text-gray-800" />
-                    </button>
-
-                    {/* Right Arrow */}
-                    <button
-                        onClick={scrollRight}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all -mr-4 hidden md:flex items-center justify-center"
-                        aria-label="Scroll right"
-                    >
-                        <ChevronRight size={24} className="text-gray-800" />
-                    </button>
-
-                    {/* Scrollable Container */}
-                    <div
-                        ref={scrollContainerRef}
-                        className="flex overflow-x-auto gap-20 pb-4 scrollbar-hide scroll-smooth"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                    >
-                        {loading ? (
-                            // Skeleton Loading
-                            Array.from({ length: 6 }).map((_, i) => (
-                                <div key={i} className="flex-shrink-0 w-[280px] sm:w-[320px] bg-white rounded-lg p-4 animate-pulse">
-                                    <div className="aspect-square bg-gray-200 rounded-lg mb-4" />
-                                    <div className="space-y-3">
-                                        <div className="h-4 bg-gray-200 w-3/4 rounded" />
-                                        <div className="h-4 bg-gray-200 w-1/2 rounded" />
-                                    </div>
+                {/* Responsive Layout: Slider on Mobile/Tablet, Grid on Desktop */}
+                <div className="flex overflow-x-auto pb-6 gap-4 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:pb-0 scrollbar-hide snap-x snap-mandatory">
+                    {loading ? (
+                        // Skeleton Loading
+                        Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-full bg-white rounded-none p-4 animate-pulse snap-center">
+                                <div className="aspect-square bg-gray-200 mb-4" />
+                                <div className="space-y-3">
+                                    <div className="h-4 bg-gray-200 w-3/4 rounded" />
+                                    <div className="h-4 bg-gray-200 w-1/2 rounded" />
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        products.length > 0 ? (
+                            products.map((product) => (
+                                <div key={product._id} className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-full snap-center">
+                                    <FeaturedProductCard
+                                        product={product}
+                                        isWishlisted={wishlist.some(item => item._id === product._id)}
+                                    />
                                 </div>
                             ))
                         ) : (
-                            products.length > 0 ? (
-                                products.map((product) => (
-                                    <div key={product._id} className="flex-shrink-0 w-[280px] sm:w-[320px]">
-                                        <FeaturedProductCard
-                                            product={product}
-                                            isWishlisted={wishlist.some(item => item._id === product._id)}
-                                        />
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="w-full py-12 flex flex-col items-center justify-center text-center space-y-3">
-                                    <p className="text-gray-400 italic font-medium">No featured products found.</p>
-                                    <p className="text-sm text-gray-400">Mark items as "Featured" in the Admin Panel to display them here.</p>
-                                </div>
-                            )
-                        )}
-                    </div>
+                            <div className="col-span-full w-full py-12 flex flex-col items-center justify-center text-center space-y-3">
+                                <p className="text-gray-400 italic font-medium">No featured products found.</p>
+                                <p className="text-sm text-gray-400">Mark items as "Featured" in the Admin Panel to display them here.</p>
+                            </div>
+                        )
+                    )}
                 </div>
 
                 {/* Mobile "View All" Button */}

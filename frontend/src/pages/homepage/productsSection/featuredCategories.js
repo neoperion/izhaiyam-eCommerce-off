@@ -3,6 +3,8 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import bedroomCategoryBgImg from "../../../assets/bedRoomCategory.jpg";
 import kidsCategoryBgImg from "../../../assets/kidsCategory.jpg";
 import livingRoomCategoryBgImg from "../../../assets/livingRoomCategory.jpg";
+import cotCategoryBgImg from "../../../assets/COT1.png";
+import balconyCategoryBgImg from "../../../assets/ourvision.png";
 import { useNavigate } from "react-router-dom";
 
 export const FeaturedCategories = () => {
@@ -11,11 +13,11 @@ export const FeaturedCategories = () => {
 
   // Categories for handloom furniture
   const categoriesArr = [
-    { title: "Cot", count: 24, src: bedroomCategoryBgImg },
+    { title: "Cot", count: 24, src: cotCategoryBgImg },
     { title: "Sofa", count: 36, src: livingRoomCategoryBgImg },
     { title: "Diwan", count: 18, src: kidsCategoryBgImg },
     { title: "Chair", count: 28, src: livingRoomCategoryBgImg },
-    { title: "Balcony Furniture", count: 15, src: bedroomCategoryBgImg },
+    { title: "Balcony Furniture", count: 15, src: balconyCategoryBgImg },
     { title: "Swing", count: 12, src: kidsCategoryBgImg },
   ];
 
@@ -38,7 +40,7 @@ export const FeaturedCategories = () => {
           <p className="text-primary text-xs md:text-sm font-semibold tracking-widest uppercase mb-3">
             Explore Our Collection
           </p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+          <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
             Shop by Category
           </h2>
         </div>
@@ -88,16 +90,16 @@ export const FeaturedCategories = () => {
                     />
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-wood-dark/90 via-wood-dark/50 to-transparent" />
-                    
+
                     {/* Content Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-2xl md:text-3xl font-bold font-display mb-2">
+                      <h3 className="text-2xl md:text-3xl font-bold font-inter mb-2">
                         {category.title}
                       </h3>
                       <p className="text-sm text-white/80 mb-3">
                         Explore {category.count}+
                       </p>
-                      
+
                       {/* Explore Button */}
                       <button className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:gap-3 transition-all duration-300">
                         Explore
@@ -116,11 +118,10 @@ export const FeaturedCategories = () => {
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentIndex === index
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-border hover:bg-primary/50"
-                }`}
+                className={`h-2 rounded-full transition-all duration-300 ${currentIndex === index
+                  ? "w-8 bg-primary"
+                  : "w-2 bg-border hover:bg-primary/50"
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}

@@ -32,79 +32,72 @@ export const SingleProductBox = ({ productsData }) => {
   const originalPrice = price;
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden font-sans group hover:shadow-xl transition-shadow duration-300">
-      {/* Image Container */}
-      <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 aspect-square lg:aspect-[4/3] flex items-center justify-center overflow-hidden">
-        <Link to={`/product/${_id}`} className="w-full h-full">
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        </Link>
+    <div className="w-full max-w-sm">
+      <div className="bg-white rounded-none shadow-md overflow-hidden hover:shadow-lg transition-shadow">
 
-        {/* Best Seller Badge */}
-        {isFeatured && (
-          <div className="absolute top-2 left-2 text-white px-2 py-0.5 text-xs lg:text-sm font-bold rounded font-inter" style={{ backgroundColor: '#93a267' }}>
-            Best Seller
-          </div>
-        )}
+        {/* Image Container */}
+        <div className="relative bg-gradient-to-b from-orange-50 to-orange-100 aspect-square overflow-hidden group">
+          <Link to={`/product/${_id}`} className="block w-full h-full">
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </Link>
 
-        {/* Discount Badge */}
-        {discountPercentValue > 0 && !isFeatured && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-0.5 text-xs lg:text-sm font-bold rounded font-inter">
-            -{discountPercentValue}% OFF
-          </div>
-        )}
-
-        {/* Heart Icon */}
-        <button
-          onClick={() => handleWishlistModification(_id, dispatch)}
-          className={`absolute top-2 right-2 p-1.5 lg:p-2 rounded-full shadow-lg transition-all duration-300 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`}
-          aria-label="Add to wishlist"
-        >
-          <Heart className={`w-4 h-4 lg:w-5 lg:h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"}`} />
-        </button>
-      </div>
-
-      {/* Content Container */}
-      <div className="p-2 lg:p-3">
-        {/* Title */}
-        <Link to={`/product/${_id}`}>
-          <h3 className="font-inter text-xs lg:text-sm font-semibold text-gray-800 leading-tight mb-1 line-clamp-2 hover:text-orange-500 transition-colors">
-            {title}
-          </h3>
-        </Link>
-
-        {/* Brand */}
-        <p className="font-inter text-[10px] lg:text-xs text-gray-600 mb-2 lg:mb-3">By Wooden Street</p>
-
-        {/* Rating */}
-
-
-        {/* Price Section */}
-        <div className="flex items-center gap-2 lg:gap-3 mb-2 lg:mb-4">
-          <span className="font-inter text-sm lg:text-lg font-bold text-gray-900">₹{discountedPrice.toLocaleString()}</span>
-          {discountPercentValue > 0 && (
-            <>
-              <span className="font-inter text-xs lg:text-sm text-gray-500 line-through">₹{originalPrice.toLocaleString()}</span>
-              <span className="font-inter text-xs lg:text-sm font-semibold text-green-600">{discountPercentValue}% Off</span>
-            </>
+          {/* Badge */}
+          {isFeatured && (
+            <div className="absolute top-3 left-3 text-white px-3 py-1 rounded-none font-semibold text-sm" style={{ backgroundColor: '#93a267' }}>
+              Bestseller
+            </div>
           )}
+
+          {/* Wishlist Button */}
+          <button
+            onClick={() => handleWishlistModification(_id, dispatch)}
+            className="absolute top-3 right-3 hover:scale-110 transition-transform"
+          >
+            <Heart
+              size={24}
+              className={isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"}
+            />
+          </button>
         </div>
 
-        {/* Add to Cart Button */}
-        <button
-          className={`font-inter w-full py-2 lg:py-3 rounded-lg font-semibold text-xs lg:text-sm transition-all duration-300 ${isProductInCart
-            ? 'bg-red-600 text-white hover:bg-red-700'
-            : 'text-white hover:opacity-90'
-            }`}
-          style={!isProductInCart ? { backgroundColor: '#93a267' } : {}}
-          onClick={() => handleCartModification(_id, dispatch, null, isProductInCart)}
-        >
-          {isProductInCart ? "Remove from Cart" : "Add to Cart"}
-        </button>
+        {/* Content */}
+        <div className="p-3 lg:p-4">
+
+          {/* Brand */}
+          <p className="text-gray-500 text-[8px] lg:text-xs font-normal mb-0.5 lg:mb-1">
+            Izhaiyam
+          </p>
+
+          {/* Product Name */}
+          <Link to={`/product/${_id}`}>
+            <h3 className="text-gray-800 font-medium text-[8px] lg:text-base mb-1 lg:mb-1 line-clamp-1 hover:text-orange-500 transition-colors leading-snug">
+              {title}
+            </h3>
+          </Link>
+
+          {/* Pricing */}
+          <div className="flex flex-wrap items-baseline gap-1.5 lg:gap-2">
+            <span className="text-[12px] lg:text-lg font-medium text-gray-900">
+              ₹{discountedPrice.toLocaleString('en-IN')}
+            </span>
+            {discountPercentValue > 0 && (
+              <>
+                <span className="text-[8px] lg:text-xs text-gray-400 line-through">
+                  ₹{originalPrice.toLocaleString('en-IN')}
+                </span>
+                <span className="text-green-600 font-medium text-[8px] lg:text-xs ml-auto">
+                  {discountPercentValue}% OFF
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+

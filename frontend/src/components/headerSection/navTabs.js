@@ -15,8 +15,8 @@ export const NavTabs = ({ isMobile, setDisplayVerticalNavBar }) => {
   const getLinkClasses = (isActive) => {
     if (isMobile) {
       return `font-inter px-4 py-2.5 rounded-lg text-lg font-semibold transition-colors ${isActive
-          ? 'bg-primary-foreground/20 text-primary-foreground'
-          : 'text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground'
+        ? 'bg-primary-foreground/20 text-primary-foreground'
+        : 'text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground'
         }`;
     }
     return `text-base font-semibold transition-colors duration-200 ${isActive
@@ -32,7 +32,10 @@ export const NavTabs = ({ isMobile, setDisplayVerticalNavBar }) => {
           <Link
             key={link.name}
             to={link.href}
-            onClick={() => setDisplayVerticalNavBar && setDisplayVerticalNavBar(false)}
+            onClick={() => {
+              setDisplayVerticalNavBar && setDisplayVerticalNavBar(false);
+              window.scrollTo(0, 0);
+            }}
             className={getLinkClasses(location.pathname === link.href)}
           >
             {link.name}
@@ -48,6 +51,7 @@ export const NavTabs = ({ isMobile, setDisplayVerticalNavBar }) => {
         <Link
           key={link.name}
           to={link.href}
+          onClick={() => window.scrollTo(0, 0)}
           className={getLinkClasses(location.pathname === link.href)}
         >
           {link.name}

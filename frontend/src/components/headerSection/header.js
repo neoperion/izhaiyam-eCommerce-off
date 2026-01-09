@@ -72,6 +72,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
   // on user or myaccount icon btn click
   const handleMyAccountClick = async () => {
     navigate("/profilePage/accountInformation");
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -83,7 +84,10 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
             src={logoDark}
             alt="IZHAYAM HANDLOOM FURNITURE"
             className="h-10 md:h-16 w-auto cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              window.scrollTo(0, 0);
+            }}
           />
 
           {/* Desktop Navigation */}

@@ -72,7 +72,7 @@ const Index = () => {
                   <p className="text-primary text-xs md:text-sm font-semibold tracking-widest uppercase mb-3">
                     Curated Selection
                   </p>
-                  <h2 className="font-display text-3xl md:text-4xl font-semibold text-foreground">
+                  <h2 className="font-inter text-3xl md:text-4xl font-semibold text-foreground">
                     Featured Products
                   </h2>
                 </div>

@@ -3,12 +3,12 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
-import cotImg from '../../assets/category-cot.jpg';
+import cotImg from '../../assets/COT1.png';
 import sofaImg from '../../assets/sofa.png';
 import diwanImg from '../../assets/category-diwan.png';
 import chairImg from '../../assets/chair (2).png';
 import swingImg from '../../assets/HEALTH (5).png';
-import balconyImg from '../../assets/category-balcony.jpg';
+import balconyImg from '../../assets/ourvision.png';
 
 const CategorySlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -115,7 +115,7 @@ const CategorySlider = () => {
           <p className="font-inter text-xs sm:text-sm tracking-widest text-gray-500 mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
             BROWSE CATEGORIES
           </p>
-          <h2 className="font-inter text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#93a267' }}>
+          <h2 className="font-inter text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#000000' }}>
             Shop By Category
           </h2>
         </div>
@@ -132,7 +132,7 @@ const CategorySlider = () => {
               <img
                 src={category.image}
                 alt={category.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
 
               {/* Gradient Overlay */}
@@ -179,13 +179,13 @@ const CategorySlider = () => {
                 >
                   <div
                     onClick={() => handleCategoryClick(category)}
-                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[350px] pointer-events-auto"
+                    className="relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer h-[450px] pointer-events-auto"
                   >
                     {/* Image */}
                     <img
                       src={category.image}
                       alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
 
                     {/* Gradient Overlay */}

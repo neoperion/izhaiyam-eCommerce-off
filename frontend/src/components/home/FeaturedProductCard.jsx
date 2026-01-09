@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 
-const FeaturedProductCard = ({ product, isWishlisted }) =>
-{
+const FeaturedProductCard = ({ product, isWishlisted }) => {
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
     const dispatch = useDispatch();
@@ -18,58 +17,69 @@ const FeaturedProductCard = ({ product, isWishlisted }) =>
     const originalPrice = price;
 
     return (
-        <div className="w-80 bg-white rounded-lg shadow-lg overflow-hidden font-sans flex-shrink-0">
-            {/* Image Container */}
-            <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 h-80 flex items-center justify-center overflow-hidden">
-                <Link to={`/product/${_id}`} className="w-full h-full">
-                    <img
-                        src={image}
-                        alt={title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                </Link>
+        <div className="w-full max-w-sm">
+            <div className="bg-white rounded-none shadow-md overflow-hidden hover:shadow-lg transition-shadow">
 
-                {/* Best Seller Badge */}
-                {isFeatured && (
-                    <div className="absolute top-3 left-3 text-white px-3 py-1 text-sm font-bold rounded font-inter" style={{ backgroundColor: '#93a267' }}>
-                        Best Seller
-                    </div>
-                )}
+                {/* Image Container */}
+                <div className="relative bg-gradient-to-b from-orange-50 to-orange-100 aspect-square overflow-hidden group">
+                    <Link to={`/product/${_id}`} className="block w-full h-full">
+                        <img
+                            src={image}
+                            alt={title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                    </Link>
 
-                {/* Heart Icon */}
-                <button
-                    onClick={() => handleWishlistModification(_id, dispatch)}
-                    className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-300 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`}
-                    aria-label="Add to wishlist"
-                >
-                    <Heart className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"}`} />
-                </button>
-            </div>
-
-            {/* Content Container */}
-            <div className="p-4">
-                {/* Title */}
-                <Link to={`/product/${_id}`}>
-                    <h3 className="font-inter text-sm font-semibold text-gray-800 leading-tight mb-1 line-clamp-3 hover:text-orange-500 transition-colors">
-                        {title}
-                    </h3>
-                </Link>
-
-                {/* Brand */}
-                <p className="font-inter text-xs text-gray-600 mb-3">By Wooden Street</p>
-
-                {/* Rating */}
-
-
-                {/* Price Section */}
-                <div className="flex items-center gap-3">
-                    <span className="font-inter text-lg font-bold text-gray-900">₹{discountedPrice.toLocaleString()}</span>
-                    {discountPercentValue > 0 && (
-                        <>
-                            <span className="font-inter text-sm text-gray-500 line-through">₹{originalPrice.toLocaleString()}</span>
-                            <span className="font-inter text-sm font-semibold text-green-600">{discountPercentValue}% Off</span>
-                        </>
+                    {/* Badge */}
+                    {isFeatured && (
+                        <div className="absolute top-3 left-3 text-white px-3 py-1 rounded-none font-semibold text-sm" style={{ backgroundColor: '#93a267' }}>
+                            Bestseller
+                        </div>
                     )}
+
+                    {/* Wishlist Button */}
+                    <button
+                        onClick={() => handleWishlistModification(_id, dispatch)}
+                        className="absolute top-3 right-3 hover:scale-110 transition-transform"
+                    >
+                        <Heart
+                            size={24}
+                            className={isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"}
+                        />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-3 lg:p-4">
+
+                    {/* Brand */}
+                    <p className="text-gray-500 text-[8px] lg:text-xs font-normal mb-0.5 lg:mb-1">
+                        Wooden Street
+                    </p>
+
+                    {/* Product Name */}
+                    <Link to={`/product/${_id}`}>
+                        <h3 className="text-gray-800 font-medium text-[8px] lg:text-base mb-1 lg:mb-2 line-clamp-2 hover:text-orange-500 transition-colors leading-snug">
+                            {title}
+                        </h3>
+                    </Link>
+
+                    {/* Pricing */}
+                    <div className="flex flex-wrap items-baseline gap-1.5 lg:gap-2">
+                        <span className="text-[10px] lg:text-lg font-medium text-gray-900">
+                            ₹{discountedPrice.toLocaleString('en-IN')}
+                        </span>
+                        {discountPercentValue > 0 && (
+                            <>
+                                <span className="text-[8px] lg:text-xs text-gray-400 line-through">
+                                    ₹{originalPrice.toLocaleString('en-IN')}
+                                </span>
+                                <span className="text-green-600 font-medium text-[8px] lg:text-xs ml-auto">
+                                    {discountPercentValue}% OFF
+                                </span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import FooterSection from "../components/footerSection";
 import newsImage from "../assets/news.png";
@@ -13,63 +13,78 @@ import award3 from "../assets/award3.jpg";
 import award4 from "../assets/award4.jpg";
 
 export const AboutUsPage = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Enhanced Modern Hero Section */}
-      <section className="relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-24 md:py-32 px-6 overflow-hidden">
+      {/* Enhanced Modern Hero Section */}
+      <section className="relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 md:py-32 px-4 md:px-6 overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
 
         <div className="max-w-5xl mx-auto relative z-10">
           {/* Eyebrow Text */}
-          <p className="font-inter text-sm md:text-base font-semibold tracking-wider uppercase text-center mb-4" style={{ color: '#93a267' }}>
+          <p className="font-inter text-xs md:text-base font-semibold tracking-wider uppercase text-center mb-3 md:mb-4" style={{ color: '#93a267' }}>
             Weaving Tradition, Crafting Comfort
           </p>
 
           {/* Main Heading */}
-          <h1 className="font-inter text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 text-center leading-tight">
+          <h1 className="font-inter text-3xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 md:mb-6 text-center leading-tight">
             About <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">Izhaiyam</span>
           </h1>
 
           {/* Decorative Line */}
-          <div className="flex items-center justify-center gap-3 mb-12">
-            <div className="w-12 h-0.5 bg-gray-300"></div>
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#93a267' }}></div>
-            <div className="w-12 h-0.5 bg-gray-300"></div>
+          <div className="flex items-center justify-center gap-3 mb-8 md:mb-12">
+            <div className="w-8 md:w-12 h-0.5 bg-gray-300"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full" style={{ backgroundColor: '#93a267' }}></div>
+            <div className="w-8 md:w-12 h-0.5 bg-gray-300"></div>
           </div>
 
           {/* Description Paragraphs */}
-          <div className="space-y-8 max-w-3xl mx-auto">
-            <p className="font-inter text-xl md:text-2xl text-gray-800 leading-relaxed text-center font-light">
+          <div className="space-y-4 md:space-y-8 max-w-3xl mx-auto">
+            <p className="font-inter text-sm md:text-2xl text-gray-800 leading-relaxed text-center font-light">
               Where <span className="font-semibold text-gray-900">handloom tradition meets modern comfort</span>. We create exquisite rope furniture using <span className="font-semibold text-gray-900">time-honored weaving techniques</span> that bring natural elegance to your home.
             </p>
 
-            <p className="font-inter text-base md:text-lg text-gray-600 leading-relaxed text-center">
+            <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
               Every piece is meticulously handwoven by <span className="font-medium text-gray-800">skilled artisans</span> using traditional rope weaving methods passed down through generations. We preserve the rich heritage of Indian handloom craftsmanship while empowering local communities, especially women weavers, through fair wages and sustainable employment.
             </p>
 
-            <p className="font-inter text-base md:text-lg text-gray-600 leading-relaxed text-center">
+            <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
               From carefully selecting natural, eco-friendly materials to ensuring each knot is perfectly woven, we maintain the highest standards of quality. We deliver not just furniture, but <span className="font-medium text-gray-800">handcrafted masterpieces</span> that embody heritage, wellness, and timeless beauty.
             </p>
           </div>
 
-          {/* Stats Section - Enhanced */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>15+</p>
-              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Years of Excellence</p>
-              <p className="font-inter text-xs text-gray-500 mt-1">Trusted tradition</p>
+          {/* Stats Section - Enhanced - Horizontal Row on Mobile */}
+          <div className="mt-10 md:mt-16 grid grid-cols-3 gap-2 md:gap-8 max-w-4xl mx-auto">
+            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>15+</p>
+              <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Years of Excellence</p>
+              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Trusted tradition</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>200+</p>
-              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
-              <p className="font-inter text-xs text-gray-500 mt-1">Master craftspeople</p>
+            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>200+</p>
+              <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
+              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Master craftspeople</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-5xl md:text-6xl font-bold mb-2" style={{ color: '#93a267' }}>5K+</p>
-              <p className="font-inter text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
-              <p className="font-inter text-xs text-gray-500 mt-1">Across India</p>
+            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>5K+</p>
+              <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
+              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Across India</p>
             </div>
           </div>
         </div>
@@ -144,70 +159,70 @@ export const AboutUsPage = () => {
         <div className="max-w-7xl mx-auto">
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-16">Why Choose Us</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 lg:gap-12">
             {/* Handcrafted Excellence */}
-            <div className="flex gap-6 items-start p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start p-3 md:p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-center md:text-left">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                   </svg>
                 </div>
               </div>
               <div>
-                <h3 className="font-inter text-xl font-semibold text-gray-800 mb-3">Handcrafted Excellence</h3>
-                <p className="font-inter text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-inter text-sm md:text-xl font-semibold text-gray-800 mb-2 md:mb-3">Handcrafted Excellence</h3>
+                <p className="font-inter text-xs md:text-sm text-gray-600 leading-relaxed">
                   Every piece is meticulously crafted by skilled artisans using traditional techniques passed down through generations, ensuring unparalleled quality and attention to detail.
                 </p>
               </div>
             </div>
 
             {/* Artisan Empowerment */}
-            <div className="flex gap-6 items-start p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start p-3 md:p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-center md:text-left">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
               </div>
               <div>
-                <h3 className="font-inter text-xl font-semibold text-gray-800 mb-3">Artisan Empowerment</h3>
-                <p className="font-inter text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-inter text-sm md:text-xl font-semibold text-gray-800 mb-2 md:mb-3">Artisan Empowerment</h3>
+                <p className="font-inter text-xs md:text-sm text-gray-600 leading-relaxed">
                   We are committed to supporting local artisans, especially women craftsmen, by providing fair wages and sustainable employment opportunities.
                 </p>
               </div>
             </div>
 
             {/* Premium Quality */}
-            <div className="flex gap-6 items-start p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start p-3 md:p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-center md:text-left">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                   </svg>
                 </div>
               </div>
               <div>
-                <h3 className="font-inter text-xl font-semibold text-gray-800 mb-3">Premium Quality Materials</h3>
-                <p className="font-inter text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-inter text-sm md:text-xl font-semibold text-gray-800 mb-2 md:mb-3">Premium Quality Materials</h3>
+                <p className="font-inter text-xs md:text-sm text-gray-600 leading-relaxed">
                   We carefully source durable, sustainable materials and conduct rigorous quality checks to ensure every product meets our high standards.
                 </p>
               </div>
             </div>
 
             {/* Customer Satisfaction */}
-            <div className="flex gap-6 items-start p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start p-3 md:p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-center md:text-left">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
               <div>
-                <h3 className="font-inter text-xl font-semibold text-gray-800 mb-3">Customer Satisfaction</h3>
-                <p className="font-inter text-sm text-gray-600 leading-relaxed">
+                <h3 className="font-inter text-sm md:text-xl font-semibold text-gray-800 mb-2 md:mb-3">Customer Satisfaction</h3>
+                <p className="font-inter text-xs md:text-sm text-gray-600 leading-relaxed">
                   Your satisfaction is our priority. We offer transparent pricing, honest communication, and reliable support from browsing to delivery and beyond.
                 </p>
               </div>
@@ -233,7 +248,8 @@ export const AboutUsPage = () => {
               ]}
               bend={0}
               borderRadius={0.05}
-              scrollEase={0.01}
+              scrollEase={isMobile ? 0.05 : 0.01}
+              scrollSpeed={isMobile ? 4 : 2}
               textColor="#93a267"
               font="bold 24px Inter"
             />
