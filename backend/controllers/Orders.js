@@ -4,6 +4,8 @@ const CustomErrorHandler = require("../errors/customErrorHandler");
 const Product = require("../models/products");
 const { createNotification } = require("./notificationController");
 
+console.log(">>> ORDERS CONTROLLER LOADED: INCLUDES 'STOOL' FIX & TITLE FALLBACK <<<");
+
 const postUserOrders = async (req, res) => {
   const { orderDetails } = req.body;
   const { products } = orderDetails;
@@ -86,6 +88,59 @@ const postUserOrders = async (req, res) => {
           name: product.title,
           price: product.price, // Base price
           image: product.image,
+          category: (() => {
+              // Robust Category Extraction Logic (Updated)
+              try {
+                  const cats = product.categories || {};
+                  
+                  // 1. Extract potential arrays (handle legacy/mismatched keys)
+                  let allFeats = [];
+                  if (Array.isArray(cats.features)) allFeats.push(...cats.features);
+                  if (Array.isArray(cats.categories)) allFeats.push(...cats.categories); 
+                  if (Array.isArray(cats.others)) allFeats.push(...cats.others); // Include 'others' (e.g. kids, stool)
+                  
+                  // Normalize
+                  const normFeats = allFeats.map(f => (typeof f === 'string' ? f.toLowerCase() : ''));
+                  const locs = (Array.isArray(cats.location) ? cats.location : []).map(l => (typeof l === 'string' ? l.toLowerCase() : ''));
+
+                  // DEBUG LOGGING (Detailed)
+                  console.log(`[Order Snapshot] Product: "${product.title}"`);
+                  console.log(`[Order Snapshot] Raw Cats Structure:`, JSON.stringify(cats));
+                  console.log(`[Order Snapshot] Normalized Feats:`, normFeats);
+                  
+                  // Priority 1: Balcony (Location)
+                  if (locs.some(l => l.includes('balcony'))) return 'Balcony';
+                  
+                  // Priority 2: Product Types (Features - Partial Match)
+                  const check = (keyword) => normFeats.some(f => f.includes(keyword));
+                  
+                  if (check('chair')) return 'Chair';
+                  if (check('sofa')) return 'Sofa';
+                  if (check('swing')) return 'Swing';
+                  if (check('diwan')) return 'Diwan';
+                  if (check('cot')) return 'Cot';
+                  if (check('table')) return 'Table';
+                  if (check('cupboard')) return 'Cupboard';
+                  if (check('lighting')) return 'Lighting';
+                  if (check('stool')) return 'Stool';
+                  
+                  // Priority 3: First available feature if no match (Capitalized)
+                  if (normFeats.length > 0 && normFeats[0]) {
+                      return normFeats[0].charAt(0).toUpperCase() + normFeats[0].slice(1);
+                  }
+
+                  // Priority 4: Title Fallback (Last Resort)
+                  // If "Stool" is in the title but not in categories
+                  if (product.title.toLowerCase().includes('stool')) return 'Stool';
+                  if (product.title.toLowerCase().includes('chair')) return 'Chair';
+                  if (product.title.toLowerCase().includes('sofa')) return 'Sofa';
+
+                  return 'Others';
+              } catch (e) { 
+                  console.error("Category Snapshot Error:", e);
+                  return 'Others'; 
+              }
+          })(), // Snapshot Category Immediately
           
           // Customization Snapshot (Visuals only, no stock impact)
           customization: {
@@ -252,6 +307,15 @@ const getAllOrders = async (req, res) => {
         const firstWoodType = woodName ? ` (${woodName})` : '';
         const displayTitle = firstProductTitle + firstWoodType;
         
+        const orderItems = order.products.map(p => ({
+            productId: p.productId?._id,
+            name: p.name || p.productId?.title || 'Unknown',
+            quantity: p.quantity,
+            price: p.price,
+            image: p.image,
+            category: p.category || 'Others' // Expose Category
+        }));
+
         allOrders.push({
           id: order._id,
           customer: order.username || 'Unknown',
@@ -262,7 +326,8 @@ const getAllOrders = async (req, res) => {
           paymentId: order.payment?.razorpayPaymentId || 'N/A',
           status: order.deliveryStatus,
           date: new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          rawDate: order.date
+          rawDate: order.date,
+          orderItems: orderItems
         });
       });
     });
@@ -322,6 +387,7 @@ const getSpecificAdminOrder = async (req, res) => {
                  quantity: p.quantity,
                  woodType: p.woodType || null,
                  selectedColor: p.selectedColor || null,
+                 category: p.category || 'Others', // Expose Category
                  lineTotal: (p.woodPrice || p.price) * p.quantity
              };
         }),
@@ -644,4 +710,100 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder };
+// Get Top Selling Products (Aggregation)
+const getTopSellingProducts = async (req, res) => {
+  try {
+    const { range } = req.query; // weekly | monthly | yearly
+    
+    // 1. Calculate Date Range
+    const now = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+    
+    // Reset hours to start/end of day
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    if (range === 'weekly') {
+        // Start of current week (Monday)
+        const day = now.getDay(); // 0 (Sun) - 6 (Sat)
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is sunday
+        startDate.setDate(diff);
+        // End of current week (Sunday)
+        endDate.setDate(startDate.getDate() + 6);
+    } else if (range === 'monthly') {
+        // Start of current month
+        startDate.setDate(1);
+        // End of current month
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+    } else if (range === 'yearly') {
+        // Start of current year
+        startDate.setMonth(0, 1);
+        // End of current year
+        endDate = new Date(now.getFullYear(), 11, 31);
+        endDate.setHours(23, 59, 59, 999);
+    } else {
+         // Default to Monthly if missing or invalid
+        startDate.setDate(1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+    }
+
+    console.log(`>> AGG FILTERS: Range=${range || 'default'}, Start=${startDate.toISOString()}, End=${endDate.toISOString()}`);
+
+    const stats = await User.aggregate([
+      // 1. Match Orders by Date First (Optimization)
+      { $unwind: "$orders" },
+      { 
+        $match: { 
+          "orders.date": { $gte: startDate, $lte: endDate }
+        } 
+      },
+
+      // 2. Unwind Products
+      { $unwind: "$orders.products" },
+
+      // 3. Group by Product ID
+      {
+        $group: {
+          _id: "$orders.products.productId",
+          productName: { $first: "$orders.products.name" },
+          unitsSold: { $sum: { $ifNull: ["$orders.products.quantity", 1] } },
+          revenue: { 
+            $sum: { 
+              $multiply: [
+                { $ifNull: ["$orders.products.quantity", 1] }, 
+                { $ifNull: ["$orders.products.price", 0] }
+              ] 
+            } 
+          }
+        }
+      },
+
+      // 4. Sort
+      { $sort: { unitsSold: -1 } },
+
+      // 5. Limit
+      { $limit: 25 }
+    ]);
+
+    // Format for frontend
+    const formattedStats = stats.map(item => ({
+        productName: item.productName || "Unknown Product",
+        unitsSold: item.unitsSold,
+        revenue: item.revenue
+    }));
+
+    res.status(200).json({
+        success: true,
+        data: formattedStats
+    });
+
+  } catch (error) {
+    console.error("Top Selling Aggregation Error:", error);
+    throw new CustomErrorHandler(500, error.message);
+  }
+};
+
+module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts };

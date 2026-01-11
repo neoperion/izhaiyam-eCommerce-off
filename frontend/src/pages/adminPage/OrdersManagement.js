@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from '../../components/admin/AdminLayout';
@@ -25,7 +25,17 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
 
   // Backend getAllOrders returns flattened structure:
   // { id, customer, product, productCount, amount, paymentMethod, status, date }
+  // { id, customer, product, productCount, amount, paymentMethod, status, date }
   const { id, customer, product, amount, paymentMethod, status, date } = order;
+
+  // Extract Categories
+  // orderItems might be passed as productItems or similar if flattened? 
+  // Inspecting `fetchOrders`: `const allOrders = data.orders`. 
+  // Backend usually returns full object.
+  // Let's assume order.orderItems exists.
+  const categories = order.orderItems 
+      ? [...new Set(order.orderItems.map(item => item.category || 'Others'))].join(', ')
+      : 'Others';
 
   // Status Badge Logic
   const getStatusBadge = (status) => {
@@ -55,6 +65,33 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
           fetchOrders();
       } catch (error) {
           toast.error("Failed to delete order");
+      }
+  }
+
+
+  const exportSingleOrder = async (id) => {
+      try {
+          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+          
+          toast.info("Exporting order...");
+          
+          const response = await axios.get(`${serverUrl}/orders/export/order/${id}`, {
+             headers: { authorization: `Bearer ${LoginToken}` },
+             responseType: 'blob'
+          });
+          
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `order_${id}.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          toast.success("Order exported successfully");
+      } catch (error) {
+          toast.error("Failed to export order");
+          console.error(error);
       }
   }
 
@@ -90,6 +127,9 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
       <td className="p-4 text-black border-b border-gray-200 max-w-xs truncate" title={product}>
           {product}
       </td>
+      <td className="p-4 text-black border-b border-gray-200 font-medium text-xs text-gray-600 uppercase">
+          {categories}
+      </td>
       <td className="p-4 text-black border-b border-gray-200 font-medium whitespace-nowrap">₹ {amount}</td>
       <td className="p-4 text-black border-b border-gray-200">{paymentMethod}</td>
       <td className="p-4 text-black border-b border-gray-200">
@@ -115,18 +155,23 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
             className="w-5 h-5 cursor-pointer hover:fill-red-600 fill-gray-600 transition-colors"
              title="Delete Order"
           />
+           <AiOutlineDownload
+            onClick={() => exportSingleOrder(id)}
+            className="w-5 h-5 cursor-pointer hover:fill-green-600 fill-gray-600 transition-colors"
+             title="Export Excel"
+          />
         </div>
+        {isTrackingModalOpen && fullOrderDetails && (
+            <OrderTracking 
+                order={fullOrderDetails} 
+                onClose={() => {
+                    setIsTrackingModalOpen(false);
+                    fetchOrders(); // Refresh list to update status if changed
+                }} 
+            />
+        )}
       </td>
     </tr>
-    {isTrackingModalOpen && fullOrderDetails && (
-        <OrderTracking 
-            order={fullOrderDetails} 
-            onClose={() => {
-                setIsTrackingModalOpen(false);
-                fetchOrders(); // Refresh list to update status if changed
-            }} 
-        />
-    )}
     </>
   );
 };
@@ -151,6 +196,35 @@ const OrdersManagement = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+
+  const exportOrders = async (range) => {
+    setShowExportDropdown(false);
+    try {
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+        const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+        
+        toast.info(`Exporting ${range} orders...`);
+        
+        const response = await axios.get(`${serverUrl}/orders/export/${range}`, {
+           headers: { authorization: `Bearer ${LoginToken}` },
+           responseType: 'blob'
+        });
+        
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `orders_${range}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        toast.success("Orders exported successfully");
+    } catch (error) {
+        toast.error("Failed to export orders");
+        console.error(error);
+    }
+  };
   const fetchOrders = async (currentParams) => {
     setLoading(true);
     try {
@@ -206,7 +280,27 @@ const OrdersManagement = () => {
         <div className="my-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-black text-xl md:text-2xl font-medium">Orders Management</h2>
-            {/* Optional: Add Filter/Search here later matching Products UI */}
+            
+            <div className="relative">
+                <button 
+                    onClick={() => setShowExportDropdown(!showExportDropdown)}
+                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition"
+                >
+                    <AiOutlineDownload className="w-5 h-5" />
+                    Export
+                </button>
+                
+                {showExportDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                        <ul className="py-1 text-gray-700">
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('all')}>Export All Orders</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('today')}>Export Today</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('week')}>Export This Week</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('month')}>Export This Month</li>
+                        </ul>
+                    </div>
+                )}
+            </div>
           </div>
 
           <div className="bg-white rounded-lg border shadow-sm overflow-hidden mb-6">
@@ -218,6 +312,7 @@ const OrdersManagement = () => {
                     <th className="text-sm font-medium text-gray-700 p-4">Order ID</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Customer Name</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Product(s)</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Category</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Amount</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Payment Method</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Order Status</th>

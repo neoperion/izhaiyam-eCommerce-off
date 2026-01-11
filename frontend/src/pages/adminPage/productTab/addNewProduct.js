@@ -18,9 +18,9 @@ export const AddNewProduct = () => {
   const [displayOrder, setDisplayOrder] = useState("");
   const [isPinned, setIsPinned] = useState("no");
   const [categories, setCategories] = useState({
-    "Featured Categories": [],
+    "Featured": [],
     location: [],
-    features: [],
+    categories: [],
     others: [],
   });
   // Color Variants State
@@ -56,9 +56,9 @@ export const AddNewProduct = () => {
   });
 
   const productCategories = {
-    "Featured Categories": ["featured", "first order deal", "discounts"],
+    "Featured": ["featured", "first order deal", "discounts"],
     location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
-    features: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
+    categories: ["chairs", "tables", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 
@@ -89,7 +89,14 @@ export const AddNewProduct = () => {
       title: productTitle,
       description: productDescription,
       image: imgUrl,
-      categories: categories,
+      image: imgUrl,
+      // Map Frontend Keys -> Backend Schema
+      categories: {
+          "Featured Categories": categories["Featured"] || [],
+          location: categories.location || [],
+          features: categories.categories || [],
+          others: categories.others || []
+      },
       price: productPrice,
       stock: productStock,
       discountPercentValue: productDiscountPercentValue,

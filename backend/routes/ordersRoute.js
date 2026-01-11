@@ -1,5 +1,6 @@
 const express = require("express");
-const { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder } = require("../controllers/Orders");
+const { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts } = require("../controllers/Orders");
+const { exportOrders, exportOrderById } = require("../controllers/exportController");
 const { createRazorpayOrder, verifyPayment } = require("../controllers/paymentController");
 const { checkIfUserIsAnAdminMiddleware } = require("../middleware/adminAuthorisation");
 
@@ -18,5 +19,8 @@ router.route("/users/:id").patch(checkIfUserIsAnAdminMiddleware, updateUser);
 router.route("/users/:id/status").patch(checkIfUserIsAnAdminMiddleware, updateUserStatus);
 router.route("/users/:id").delete(checkIfUserIsAnAdminMiddleware, deleteUser);
 router.route("/updateTracking/:orderId").put(checkIfUserIsAnAdminMiddleware, updateOrderTracking);
+router.route("/export/:range").get(checkIfUserIsAnAdminMiddleware, exportOrders);
+router.route("/export/order/:id").get(checkIfUserIsAnAdminMiddleware, exportOrderById);
+router.route("/dashboard/top-selling").get(checkIfUserIsAnAdminMiddleware, getTopSellingProducts);
 
 module.exports = router;

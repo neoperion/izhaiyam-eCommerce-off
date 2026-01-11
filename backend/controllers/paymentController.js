@@ -152,6 +152,44 @@ const verifyPayment = async (req, res) => {
               name: product.title,
               price: product.price,
               image: product.image,
+              category: (() => {
+                  try {
+                      const cats = product.categories || {};
+                      let allFeats = [];
+                      if (Array.isArray(cats.features)) allFeats.push(...cats.features);
+                      if (Array.isArray(cats.categories)) allFeats.push(...cats.categories); 
+                      if (Array.isArray(cats.others)) allFeats.push(...cats.others);
+                      
+                      const normFeats = allFeats.map(f => (typeof f === 'string' ? f.toLowerCase() : ''));
+                      const locs = (Array.isArray(cats.location) ? cats.location : []).map(l => (typeof l === 'string' ? l.toLowerCase() : ''));
+
+                      if (locs.some(l => l.includes('balcony'))) return 'BALCONY';
+                      
+                      const check = (keyword) => normFeats.some(f => f.includes(keyword));
+                      if (check('chair')) return 'CHAIR';
+                      if (check('sofa')) return 'SOFA';
+                      if (check('swing')) return 'SWING';
+                      if (check('diwan')) return 'DIWAN';
+                      if (check('cot')) return 'COT';
+                      if (check('table')) return 'TABLE';
+                      if (check('cupboard')) return 'CUPBOARD';
+                      if (check('lighting')) return 'LIGHTING';
+                      if (check('stool')) return 'STOOL';
+                      
+                      // Fallback: Use Title
+                      if (product.title.toLowerCase().includes('stool')) return 'STOOL';
+                      if (product.title.toLowerCase().includes('chair')) return 'CHAIR';
+                      if (product.title.toLowerCase().includes('sofa')) return 'SOFA';
+
+                      if (normFeats.length > 0 && normFeats[0]) {
+                          return normFeats[0].trim().toUpperCase();
+                      }
+
+                      return 'OTHERS';
+                  } catch (e) { 
+                      return 'OTHERS'; 
+                  }
+              })(),
               customization: { enabled: false },
               selectedColor: {},
               wood: { type: "Not Selected", price: 0 },

@@ -20,7 +20,7 @@ import { AboutUsPage } from "../pages/aboutUsPage";
 import GalleryPage from "../pages/galleryPage";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { AdminDashboard } from "../pages/adminPage/dashboard";
+import { AdminDashboard } from "../pages/adminPage/newDashboard";
 import { ProductManagement } from "../pages/adminPage/productTab/";
 import { AddNewProduct } from "../pages/adminPage/productTab/addNewProduct";
 import { EditAndupdateProductModal } from "../pages/adminPage/productTab/editAndUpdateProductModal";
