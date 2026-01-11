@@ -74,6 +74,8 @@ const userSchema = mongoose.Schema(
             image: String, // Snapshot: Product Image URL
             price: Number, // Snapshot: Price at purchase
             
+            category: { type: String, required: true, default: "Others" }, // Snapshot: Product Category
+            
             // STRICT SEPARATION: Wood vs Customization
             wood: {
                 type: { type: String, required: true, default: "Not Selected" },

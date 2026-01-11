@@ -21,9 +21,9 @@ export const EditAndupdateProductModal = () => {
     isPinned: "no",
     description: "",
     categories: {
-      "Featured Categories": [],
+      "Featured": [],
       location: [],
-      features: [],
+      categories: [],
       others: [],
     },
     image: "",
@@ -48,6 +48,13 @@ export const EditAndupdateProductModal = () => {
           isFeatured: product.isFeatured ? "yes" : "no",
           isPinned: product.isPinned ? "yes" : "no",
           isCustomizable: product.isCustomizable ? "yes" : "no",
+          // Map Backend Schema -> Frontend Keys
+          categories: {
+              "Featured": product.categories?.["Featured Categories"] || [],
+              location: product.categories?.location || [],
+              categories: product.categories?.features || [],
+              others: product.categories?.others || [],
+          }
         };
         
         setProductDetails(formattedProduct);
@@ -147,9 +154,9 @@ export const EditAndupdateProductModal = () => {
 
 
   const productCategories = {
-    "Featured Categories": ["featured", "first order deal", "discounts"],
+    "Featured": ["featured", "first order deal", "discounts"],
     location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
-    features: ["chairs", "table", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
+    categories: ["chairs", "table", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 
@@ -184,7 +191,16 @@ export const EditAndupdateProductModal = () => {
       title,
       description,
       image,
-      categories,
+      title,
+      description,
+      image,
+      // Map Frontend Keys -> Backend Schema
+      categories: {
+          "Featured Categories": categories["Featured"] || [],
+          location: categories.location || [],
+          features: categories.categories || [],
+          others: categories.others || []
+      },
       price: parseFloat(price),
       stock: parseInt(stock),
       discountPercentValue,
