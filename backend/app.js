@@ -34,6 +34,8 @@ const allowedOrigins = [
   "https://izhaiyam-e-commerce-mpa2s3wu3-neo-perion.vercel.app",
   "https://www.izhaiyam.com",
   "https://izhaiyam.com",
+  "https://izhaiyam-ecommerce-off.onrender.com",
+  "https://api.izhaiyam.com",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
