@@ -27,7 +27,6 @@ export const EditAndupdateProductModal = () => {
       others: [],
     },
     image: "",
-    image: "",
     colorVariants: [],
     // New fields
     woodVariants: [],
