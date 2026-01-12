@@ -9,15 +9,21 @@ const checkIfUserIsAnAdminMiddleware = async (req, res, next) => {
   const token = authHeader?.split(" ")[1] || " ";
 
   let tokenVerification;
+  let decodedPayload;
   try {
-    jwt.verify(token, process.env.SECRET_TOKEN_KEY);
+    decodedPayload = jwt.verify(token, process.env.SECRET_TOKEN_KEY);
     tokenVerification = true;
   } catch (err) {
     console.log('Admin Auth Middleware Error (Verify):', err.message);
     tokenVerification = false;
   }
 
-  let checkIfTokenExist = await User.findOne({ verificationToken: token });
+  // Find user by Email/ID from payload NOT by token string match
+  // This is much more robust than requiring the DB to hold the exact current token string
+  let checkIfTokenExist = null;
+  if(tokenVerification && decodedPayload && decodedPayload.email) {
+      checkIfTokenExist = await User.findOne({ email: decodedPayload.email });
+  }
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new CustomErrorHandler(401, "Unauthorized,please relogin");

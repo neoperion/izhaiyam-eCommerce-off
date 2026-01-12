@@ -9,19 +9,21 @@ const isTokenvalid = async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new CustomErrorHandler(401, false);
   } else {
-    const tokenVerification = jwt.verify(token, process.env.SECRET_TOKEN_KEY, (err, decoded) => {
-      if (err) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-    let checkIfTokenExist = await User.findOne({ verificationToken: token });
+    let decodedPayload;
+    try {
+       decodedPayload = jwt.verify(token, process.env.SECRET_TOKEN_KEY);
+    } catch (err) {
+       throw new CustomErrorHandler(401, false);
+    }
+
+    if (!decodedPayload || !decodedPayload.email) {
+       throw new CustomErrorHandler(401, false);
+    }
+
+    // Robust User Lookup (By Email from Token, not Token Match)
+    let checkIfTokenExist = await User.findOne({ email: decodedPayload.email });
 
     if (!checkIfTokenExist) {
-      throw new CustomErrorHandler(401, false);
-    }
-    if (!tokenVerification && !checkIfTokenExist) {
       throw new CustomErrorHandler(401, false);
     } else {
       res.status(200).json({ success: true, user: checkIfTokenExist });
