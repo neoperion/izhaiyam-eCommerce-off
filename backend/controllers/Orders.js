@@ -3,6 +3,9 @@ const User = require("../models/userData");
 const CustomErrorHandler = require("../errors/customErrorHandler");
 const Product = require("../models/products");
 const { createNotification } = require("./notificationController");
+const { sendSMS } = require("../lib/twilio");
+
+console.log(">>> ORDERS CONTROLLER LOADED: INCLUDES 'STOOL' FIX & TITLE FALLBACK <<<");
 
 console.log(">>> ORDERS CONTROLLER LOADED: INCLUDES 'STOOL' FIX & TITLE FALLBACK <<<");
 
@@ -252,7 +255,8 @@ const postUserOrders = async (req, res) => {
       session.endSession();
     }
 
-    // Trigger New Order Notification
+
+    // Trigger New Order Notification (Socket.io)
     try {
         await createNotification({
             title: "New Order Received",
@@ -266,6 +270,19 @@ const postUserOrders = async (req, res) => {
         if(req.io) req.io.emit("order:new", formattedOrder);
         
     } catch(e) { console.error("Notification trigger failed", e); }
+
+    // SEND SMS: To User
+    await sendSMS(
+      orderDetails.phone,
+      `Hi ${orderDetails.username || 'Customer'}, your order has been placed successfully.\nOrder ID: ${formattedOrder.date}\nAmount: ₹${orderDetails.totalAmount}\nWe will notify you when shipped.`
+    );
+
+    // SEND SMS: To Admin
+    await sendSMS(
+      process.env.ADMIN_PHONE_NUMBER,
+      `New order received!\nOrder ID: ${formattedOrder.date}\nCustomer: ${formattedOrder.username || 'Guest'}\nAmount: ₹${orderDetails.totalAmount}`
+    );
+
 
     res.status(201).json({ message: "Order successful", user: updatedUser });
 
@@ -662,10 +679,69 @@ const updateOrderTracking = async (req, res) => {
       throw new CustomErrorHandler(500, "Failed to update tracking information");
     }
 
+
+    // SEND SMS: To User (Tracking Info)
+    await sendSMS(
+      user.phone || user.orders[orderIndex].phone,
+      `Your order ${orderId} has been shipped!\nCarrier: ${carrier}\nTracking ID: ${trackingId}\nYou can track it via the courier website.`
+    );
+
     res.status(200).json({
       success: true,
       message: "Tracking details updated successfully",
       trackingUrl
+    });
+
+  } catch (error) {
+    throw new CustomErrorHandler(500, error.message);
+  }
+};
+
+
+
+
+
+// Update Order Status (Admin only) - NEW FUNCTION FOR SMS
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body; // e.g., "Delivered", "Cancelled"
+
+    if (!orderId || !status) {
+      throw new CustomErrorHandler(400, "Order ID and Status are required");
+    }
+
+    const user = await User.findOne({ "orders._id": mongoose.Types.ObjectId(orderId) });
+
+    if (!user) {
+      throw new CustomErrorHandler(404, "Order not found");
+    }
+
+    // Update status
+    const updatedUser = await User.findOneAndUpdate(
+      { "orders._id": mongoose.Types.ObjectId(orderId) },
+      { $set: { "orders.$.deliveryStatus": status } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+        throw new CustomErrorHandler(500, "Failed to update status");
+    }
+    
+    // Find the specific order to get phone number
+    const order = updatedUser.orders.find(o => o._id.toString() === orderId);
+
+    // SEND SMS: To User
+    if (order) {
+        await sendSMS(
+          order.phone || user.phone,
+          `Your order ${orderId} status is now: ${status}`
+        );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Order status updated to ${status}`
     });
 
   } catch (error) {
@@ -806,4 +882,8 @@ const getTopSellingProducts = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts };
+=======
+module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts, updateOrderStatus };
+>>>>>>> cc7c13146cb0bb8da83b72b768b2faf058891232

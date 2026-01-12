@@ -5,12 +5,18 @@ const Product = require("../models/products");
 const CustomErrorHandler = require("../errors/customErrorHandler");
 const mongoose = require("mongoose");
 const { createNotification } = require("./notificationController");
+const { sendSMS } = require("../lib/twilio");
 
 // Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+} else {
+  console.warn("WARNING: Razorpay keys are missing. Payment operations will fail.");
+}
 
 // Create Razorpay Order
 const createRazorpayOrder = async (req, res) => {
@@ -40,6 +46,10 @@ const createRazorpayOrder = async (req, res) => {
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
+
+    if (!razorpay) {
+      throw new CustomErrorHandler(500, "Razorpay is not configured on the server");
+    }
 
     const order = await razorpay.orders.create(options);
 
@@ -312,6 +322,18 @@ const verifyPayment = async (req, res) => {
         if(req.io) req.io.emit("order:new", { ...orderDetails, orderId: razorpay_order_id });
 
     } catch(e) { console.error("Notification trigger failed", e); }
+
+    // SEND SMS: To User
+    await sendSMS(
+      orderDetails.phone,
+      `Hi ${orderDetails.username || 'Customer'}, your order has been placed successfully.\nOrder ID: ${razorpay_order_id}\nAmount: ₹${orderDetails.totalAmount}\nWe will notify you when shipped.`
+    );
+
+    // SEND SMS: To Admin
+    await sendSMS(
+      process.env.ADMIN_PHONE_NUMBER,
+      `New order received!\nOrder ID: ${razorpay_order_id}\nCustomer: ${orderDetails.username || 'Guest'}\nAmount: ₹${orderDetails.totalAmount}`
+    );
 
     res.status(200).json({
       success: true,
