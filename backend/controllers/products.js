@@ -85,25 +85,7 @@ const getAspecificProduct = async (req, res) => {
   if (!id) {
     throw new CustomErrorHandler(401, "parameters missing");
   }
-  const checkIfProductExist = await Product.findById({ _id: id }).select({
-    _id: 1,
-    title: 1,
-    stock: 1,
-    price: 1,
-    discountPercentValue: 1,
-    categories: 1,
-    image: 1,
-    description: 1,
-    colors: 1,
-    isFeatured: 1,
-    isCustomizable: 1,
-    colorVariants: 1,
-    displayOrder: 1,
-    isPinned: 1,
-    isWoodCustomizable: 1,
-    woodVariants: 1,
-    abTestConfig: 1,
-  });
+  const checkIfProductExist = await Product.findById({ _id: id }).select('-__v');
   if (!checkIfProductExist) {
     throw new CustomErrorHandler(404, "Products not found");
   }
