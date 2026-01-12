@@ -17,7 +17,7 @@ export const WhyChooseUsSection = () => {
             <h4 className="text-[24px]  text-center font-bold font-RobotoCondensed">Free Shipping</h4>
             <p className="text-center leading-[140%] text-to-be-wrapped">
               We offer free shipping on all orders, so you can shop with confidence knowing that there are no hidden
-              costs."
+              costs.
             </p>
           </div>
         </div>
@@ -53,7 +53,7 @@ export const WhyChooseUsSection = () => {
             <h4 className="text-[24px]  text-center font-bold font-RobotoCondensed">Secure and safe payment</h4>
             <span className="text-center leading-[140%] text-to-be-wrapped">
               We offer a range of safe payment options, so you can shop with confidence knowing that your information is
-              protected every step of the way."
+              protected every step of the way.
             </span>
           </div>
         </div>

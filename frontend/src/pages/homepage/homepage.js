@@ -15,6 +15,7 @@ const Homepage = () => {
       <FeaturesBadges />
       <FeaturedProducts />
       <FAQSection />
+      <WhyChooseUsSection />
       <TestimonialsSection />
       <FooterSection />
     </>
