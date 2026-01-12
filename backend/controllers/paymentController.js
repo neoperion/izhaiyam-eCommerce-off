@@ -6,10 +6,15 @@ const CustomErrorHandler = require("../errors/customErrorHandler");
 const mongoose = require("mongoose");
 
 // Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+} else {
+  console.warn("WARNING: Razorpay keys are missing. Payment operations will fail.");
+}
 
 // Create Razorpay Order
 const createRazorpayOrder = async (req, res) => {
@@ -26,6 +31,10 @@ const createRazorpayOrder = async (req, res) => {
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
+
+    if (!razorpay) {
+      throw new CustomErrorHandler(500, "Razorpay is not configured on the server");
+    }
 
     const order = await razorpay.orders.create(options);
 
