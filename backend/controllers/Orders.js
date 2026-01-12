@@ -882,8 +882,4 @@ const getTopSellingProducts = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts };
-=======
 module.exports = { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts, updateOrderStatus };
->>>>>>> cc7c13146cb0bb8da83b72b768b2faf058891232
