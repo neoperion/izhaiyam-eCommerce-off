@@ -1,3 +1,4 @@
+
 import { IoCloseOutline } from "react-icons/io5";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -134,80 +135,85 @@ export const FilterBySection = ({
       }}
     >
       <section
-        className={`flex flex-col h-full bg-white px-6 pt-4 pb-12 gap-6 shadow-2xl overflow-y-auto
+        className={`flex flex-col h-full bg-white overflow-y-auto
           ${isDrawer
-            ? "w-[90%] sm:w-[400px] absolute top-0 left-0 border-r border-sage-200"
-            : "w-[80%] max-w-[360px] sm:w-[60%] sm:max-w-[400px] md:w-[50%] md:max-w-[450px] lg:w-full lg:max-w-none lg:h-auto lg:static lg:shadow-none lg:p-0 lg:border-none absolute top-0 right-0"
+            ? "w-[90%] sm:w-[400px] absolute top-0 left-0 border-r border-sage-200 shadow-2xl"
+            : "w-[80%] max-w-[360px] sm:w-[60%] sm:max-w-[400px] md:w-[50%] md:max-w-[450px] lg:w-full lg:max-w-none lg:h-auto lg:static lg:shadow-none lg:border-none absolute top-0 right-0 shadow-2xl"
           }
         `}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="border-b-2 border-sage-200 pb-4 flex justify-between items-center">
-          <h2 className="font-inter text-2xl font-bold text-sage-900 text-center lg:text-left">
-            Filter Products
+        <div className="sticky top-0 z-10 bg-white border-b border-sage-200 px-6 py-5 flex justify-between items-center shadow-sm">
+          <h2 className="font-inter text-2xl font-bold text-sage-900">
+            Filters
           </h2>
           <button
-            className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-sage-100 transition-colors ${!isDrawer && "lg:hidden"}`}
+            className={`w-9 h-9 flex items-center justify-center rounded-full hover:bg-sage-100 transition-all duration-200 ${!isDrawer && "lg:hidden"}`}
             onClick={() => setIsFilterBySectionOpen(false)}
+            aria-label="Close filters"
           >
             <IoCloseOutline className="w-6 h-6 text-sage-700" />
           </button>
         </div>
+
         {/* Filter Options */}
-        <div className="w-full space-y-6">
+        <div className="flex-1 px-6 py-6 space-y-6 overflow-y-auto">
           <CategoriesSection {...{ setCheckedCategoryDOM }} />
           <PriceRange {...{ setCheckedPriceRangeDOM }} />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-3 lg:pt-4">
-          <motion.button
-            initial="initial"
-            whileTap="click"
-            variants={primaryBtnVariant}
-            className="w-full sm:w-auto sm:flex-1 px-6 py-3 rounded-md font-semibold text-white transition-all duration-300 shadow-md hover:shadow-lg font-inter"
-            style={{ backgroundColor: '#93A267' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#7d8c56'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#93A267'}
-            onClick={() => {
-              location.pathname === "/shop" &&
-                handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
-              location.pathname === "/search" &&
-                handleFilterByCategoriesAndPrice(
-                  dispatch,
-                  NoOfProductsPerPage,
-                  currentPageNo,
-                  sortedSearchedProductData
-                );
+        <div className="sticky bottom-0 bg-white border-t border-sage-200 px-6 py-4 shadow-lg">
+          <div className="flex gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold border-2 border-sage-300 bg-white text-sage-700 hover:bg-sage-50 transition-all duration-200 font-inter text-sm"
+              onClick={(e) => {
+                resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch);
 
-              setIsFilterFnApplied(true);
-              if (variant === "sidebar") {
-                isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
-              } else {
-                setIsFilterBySectionOpen(false);
-              }
-            }}
-          >
-            Apply Filters
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="btn-outline w-full sm:w-auto sm:flex-1"
-            onClick={(e) => {
-              resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch);
+                setIsFilterFnApplied(false);
+                if (variant === "sidebar") {
+                  isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+                } else {
+                  setIsFilterBySectionOpen(false);
+                }
+              }}
+            >
+              Clear All
+            </motion.button>
+            <motion.button
+              initial="initial"
+              whileTap="click"
+              whileHover={{ scale: 1.02 }}
+              variants={primaryBtnVariant}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold text-white transition-all duration-300 shadow-md hover:shadow-xl font-inter text-sm"
+              style={{ backgroundColor: '#93A267' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#7d8c56'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#93A267'}
+              onClick={() => {
+                location.pathname === "/shop" &&
+                  handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
+                location.pathname === "/search" &&
+                  handleFilterByCategoriesAndPrice(
+                    dispatch,
+                    NoOfProductsPerPage,
+                    currentPageNo,
+                    sortedSearchedProductData
+                  );
 
-              setIsFilterFnApplied(false);
-              if (variant === "sidebar") {
-                isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
-              } else {
-                setIsFilterBySectionOpen(false);
-              }
-            }}
-          >
-            Reset All
-          </motion.button>
+                setIsFilterFnApplied(true);
+                if (variant === "sidebar") {
+                  isScreenAbove1024 ? setIsFilterBySectionOpen(true) : setIsFilterBySectionOpen(false);
+                } else {
+                  setIsFilterBySectionOpen(false);
+                }
+              }}
+            >
+              Apply Filters
+            </motion.button>
+          </div>
         </div>
       </section>
     </motion.div>

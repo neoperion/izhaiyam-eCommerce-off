@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
 import { getAllProductsData } from "../../features/productSlice";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
 import API from "../../config";
 
@@ -153,7 +152,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     // 1. Load Razorpay Script
     const isScriptLoaded = await loadRazorpay();
     if (!isScriptLoaded) {
-      toast("Razorpay SDK failed to load. Are you online?", { type: "error" });
+      console.error("Razorpay SDK failed to load. Are you online?");
       return;
     }
 
@@ -197,15 +196,9 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
                 // I will update my controller to return the user as well.
               }
 
-              // For now, let's allow the success toast and clear form, assuming user will be refreshed on navigation or next load.
+              // For now, let's allow the success logic and clear form, assuming user will be refreshed on navigation or next load.
               // Ideally, fetch updated user data here.
               // Let's assume verifyPayment controller returns user (I will update it quickly or just add a fetch here).
-
-              toast("Order placed successfully!", {
-                type: "success",
-                autoClose: 4000,
-                position: "top-center",
-              });
 
               setCheckoutFormData((prevData) => {
                 return { // Reset form
@@ -232,7 +225,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
               // I probably need to fetch the user again to get the cleared cart/new order.
             }
           } catch (err) {
-            toast("Payment Verification Failed: " + (err.response?.data?.message || err.message), { type: "error" });
+            console.error("Payment Verification Failed: " + (err.response?.data?.message || err.message));
           }
         },
         prefill: {
@@ -250,17 +243,12 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
       const rzp1 = new window.Razorpay(options);
       rzp1.on("payment.failed", function (response) {
-        toast("Payment Failed: " + response.error.description, { type: "error" });
+        console.error("Payment Failed: " + response.error.description);
       });
       rzp1.open();
 
     } catch (error) {
       console.error(error);
-      toast(error.response?.data?.message || "Something went wrong during payment initiation", {
-        type: "error",
-        autoClose: false,
-        position: "top-center",
-      });
     }
   };
 

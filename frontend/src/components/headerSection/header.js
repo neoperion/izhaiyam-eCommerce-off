@@ -4,7 +4,6 @@ import { Menu, X, Heart, User, ShoppingBag, Search } from "lucide-react";
 import { NavTabs } from "./navTabs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import logoDark from "../../logoDark.png";
 
 export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScreen }) => {
@@ -22,16 +21,10 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
   // SEARCH ENTER BUTTON WONT WORK WHEN THE allProducts IS LOADING OR THERE IS AN ERROR
   const handleSearching = (e) => {
     if (isLoading && loadingOrErrorMessage === "Loading") {
-      toast("Hold on, while product is loading", {
-        type: "warning",
-        autoClose: 3000,
-      });
+      // Toast removed
     }
     if (isLoading && loadingOrErrorMessage !== "Loading") {
-      toast("Products couldn't be loaded", {
-        type: "error",
-        autoClose: 3000,
-      });
+      // Toast removed
     } else if (allProductsData.length > 0) {
       const searchValue =
         e.currentTarget.tagName === "INPUT"

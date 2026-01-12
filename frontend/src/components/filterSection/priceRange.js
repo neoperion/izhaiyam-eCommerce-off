@@ -90,7 +90,7 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
   return (
     <article className="flex flex-col gap-4 w-full mt-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg tablet:text-xl font-bold font-inter">Price Range</h3>
+        <h3 className="text-base font-bold font-inter">Price Range</h3>
         {isPriceSectionOpen ? (
           <RiArrowDropUpLine
             className="w-8 h-6 cursor-pointer"

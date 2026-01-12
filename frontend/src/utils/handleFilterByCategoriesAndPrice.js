@@ -1,6 +1,5 @@
 import { store } from "../store";
 import { setPlaceholderOfproductsDataCurrentlyRequested } from "../features/productSlice";
-import { toast } from "react-toastify";
 
 // FUNCTIONALITY FOR FILTERING BY PRICE
 export const priceRangeFn = (productsDataParams, priceRange) => {
@@ -27,40 +26,34 @@ export const handleFilterByCategoriesAndPrice = (
   sortedAllProductsData,
   doesTheFnCallNotNeedToast
 ) => {
-  const { priceRange, selectedSubCategoryForFilter, selectedCategory } = store.getState().filterByCategoryAndPrice;
+  const { priceRange, selectedSubCategoryForFilter } = store.getState().filterByCategoryAndPrice;
 
-  if (selectedSubCategoryForFilter && priceRange) {
-    let filteredProductsCategory = sortedAllProductsData.filter((productsData) =>
-      productsData.categories[selectedCategory].includes(selectedSubCategoryForFilter)
-    );
-    !doesTheFnCallNotNeedToast &&
-      toast("Categories and price range filter has been applied", {
-        type: "success",
+  // Check if we have any category filters
+  const hasCategoryFilters = Array.isArray(selectedSubCategoryForFilter) && selectedSubCategoryForFilter.length > 0;
+
+  if (hasCategoryFilters && priceRange) {
+    // Filter by multiple categories AND price range
+    let filteredProductsCategory = sortedAllProductsData.filter((productsData) => {
+      // Check if product matches ANY of the selected categories
+      return selectedSubCategoryForFilter.some(({ category, subCategory }) => {
+        return productsData.categories[category]?.includes(subCategory);
       });
+    });
     dispatch(setPlaceholderOfproductsDataCurrentlyRequested(priceRangeFn(filteredProductsCategory, priceRange)));
-  } else if (!selectedSubCategoryForFilter && !priceRange) {
+  } else if (!hasCategoryFilters && !priceRange) {
+    // No filters selected - show all products
     dispatch(setPlaceholderOfproductsDataCurrentlyRequested(sortedAllProductsData));
-    !doesTheFnCallNotNeedToast &&
-      toast("no filter criterias is selected", {
-        type: "info",
-        autoClose: 3000,
+  } else if (hasCategoryFilters) {
+    // Filter by multiple categories only
+    let filteredProductsCategory = sortedAllProductsData.filter((productsData) => {
+      // Check if product matches ANY of the selected categories
+      return selectedSubCategoryForFilter.some(({ category, subCategory }) => {
+        return productsData.categories[category]?.includes(subCategory);
       });
-  } else if (selectedSubCategoryForFilter) {
-    let filteredProductsCategory = sortedAllProductsData.filter((productsData) =>
-      productsData.categories[selectedCategory].includes(selectedSubCategoryForFilter)
-    );
-    !doesTheFnCallNotNeedToast &&
-      toast("Categories filter has been applied", {
-        type: "success",
-        autoClose: 3000,
-      });
+    });
     dispatch(setPlaceholderOfproductsDataCurrentlyRequested(filteredProductsCategory));
   } else if (priceRange) {
-    !doesTheFnCallNotNeedToast &&
-      toast("Price range filter has been applied", {
-        type: "success",
-        autoClose: 3000,
-      });
+    // Filter by price range only
     dispatch(setPlaceholderOfproductsDataCurrentlyRequested(priceRangeFn(sortedAllProductsData, priceRange)));
   }
 };

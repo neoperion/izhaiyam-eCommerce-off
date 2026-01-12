@@ -4,7 +4,6 @@ import { loginUser } from "./login";
 import { fetchForgotPasswordClick } from "./fetchForgotPasswordClick";
 import { fetchIsTokenValid } from "./fetchIsTokenValid";
 import { fetchResendEmailVerificationLink } from "./resendEmailVerification";
-import { toast } from "react-toastify";
 
 const initialState = {
   isLoggedIn: false,
@@ -41,17 +40,9 @@ export const authSlice = createSlice({
       })
       .addCase(RegisterUser.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "success",
-        });
       })
       .addCase(RegisterUser.rejected, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "error",
-        });
       })
 
       // login reducers
@@ -65,16 +56,9 @@ export const authSlice = createSlice({
 
         localStorage.setItem("UserData", JSON.stringify(payload.userData));
         state.userData = payload.userData;
-        toast(payload.message, {
-          type: "success",
-        });
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "error",
-        });
       })
       // fetch forgotpasssword click controller from server
       .addCase(fetchForgotPasswordClick.pending, (state) => {
@@ -82,15 +66,9 @@ export const authSlice = createSlice({
       })
       .addCase(fetchForgotPasswordClick.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        toast(payload, {
-          type: "success",
-        });
       })
       .addCase(fetchForgotPasswordClick.rejected, (state, { payload }) => {
         state.isLoading = false;
-        toast(payload, {
-          type: "error",
-        });
       })
       //resend email verification
       .addCase(fetchResendEmailVerificationLink.pending, (state) => {
@@ -98,15 +76,9 @@ export const authSlice = createSlice({
       })
       .addCase(fetchResendEmailVerificationLink.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        toast(payload, {
-          type: "success",
-        });
       })
       .addCase(fetchResendEmailVerificationLink.rejected, (state, { payload }) => {
         state.isLoading = false;
-        toast(payload, {
-          type: "error",
-        });
       })
       // fetch isTokenValid controller from servers
       .addCase(fetchIsTokenValid.pending, (state) => {

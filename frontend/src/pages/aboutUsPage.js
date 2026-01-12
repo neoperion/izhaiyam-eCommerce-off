@@ -57,15 +57,15 @@ export const AboutUsPage = () => {
           {/* Description Paragraphs */}
           <div className="space-y-4 md:space-y-8 max-w-3xl mx-auto">
             <p className="font-inter text-sm md:text-2xl text-gray-800 leading-relaxed text-center font-light">
-              Where <span className="font-semibold text-gray-900">handloom tradition meets modern comfort</span>. We create exquisite rope furniture using <span className="font-semibold text-gray-900">time-honored weaving techniques</span> that bring natural elegance to your home.
+              Founded by <span className="font-semibold text-gray-900">M. Suriya Kanniyappan</span>, Izhaiyam Handloom Furniture is <span className="font-semibold text-gray-900">Chennai’s first rope furniture manufacturing company</span>, dedicated to creating sustainable, handwoven, and health-friendly furniture for modern living spaces.
             </p>
 
             <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
-              Every piece is meticulously handwoven by <span className="font-medium text-gray-800">skilled artisans</span> using traditional rope weaving methods passed down through generations. We preserve the rich heritage of Indian handloom craftsmanship while empowering local communities, especially women weavers, through fair wages and sustainable employment.
+              With a unique combination of craftsmanship and eco-conscious design, Izhaiyam specializes in <span className="font-medium text-gray-800">cotton rope handwoven furniture</span>, offering durable, chemical-free, and breathable alternatives to conventional products. Every piece is designed to support a healthier lifestyle—crafted using natural materials that promote ventilation, posture support, and long-lasting comfort.
             </p>
 
             <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
-              From carefully selecting natural, eco-friendly materials to ensuring each knot is perfectly woven, we maintain the highest standards of quality. We deliver not just furniture, but <span className="font-medium text-gray-800">handcrafted masterpieces</span> that embody heritage, wellness, and timeless beauty.
+              Izhaiyam began with a simple yet powerful vision—to make <span className="font-medium text-gray-800">sustainability an everyday lifestyle choice</span>. With a B.Sc. in Visual Communication, our founder Suriya transformed her creativity into a meaningful business that stands for environmental responsibility and human well-being. Starting without any business background or external support, she built Izhaiyam while raising two daughters, proving that dreams grow stronger with purpose.
             </p>
           </div>
 
@@ -132,8 +132,8 @@ export const AboutUsPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-4xl mx-auto">
             {[
-              { name: "Founder Name 1", role: "Co-Founder & CEO" },
-              { name: "Founder Name 2", role: "Co-Founder & Creative Director" }
+              { name: "M. Suriya Kanniyappan", role: "Founder & Creative Director" },
+              { name: "N. Manivasagam", role: "Co-Founder & Production Head" }
             ].map((founder, i) => (
               <div key={i} className="text-center">
                 <div className="rounded-lg w-96 h-96 mb-8 overflow-hidden mx-auto">

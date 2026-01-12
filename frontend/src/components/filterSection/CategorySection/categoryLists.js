@@ -1,23 +1,28 @@
+
+
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategory, onSelect }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true); // Changed to true - open by default
 
   // Check if any subcategory within this category is selected
-  const isCategoryActive = subCategories.includes(selectedSubCategory);
+  const isCategoryActive = Array.isArray(selectedSubCategory)
+    ? selectedSubCategory.some(item => item.category === categoryTitle)
+    : false;
 
   return (
     <div className="border-b border-gray-100 last:border-b-0">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`w-full px-4 py-3.5 flex items-center justify-between transition-colors duration-150 hover:bg-gray-50 ${isCategoryActive ? "bg-purple-50" : ""
+        className={`w-full px-4 py-3.5 flex items-center justify-between transition-colors duration-150 hover:bg-sage-50 ${isCategoryActive ? "bg-sage-50" : ""
           }`}
         aria-expanded={isExpanded}
       >
         <span
-          className={`text-sm font-semibold font-inter transition-colors capitalize ${isCategoryActive ? "text-[#9933aa]" : "text-gray-700"
+          className={`text-sm font-semibold font-inter transition-colors capitalize ${isCategoryActive ? "text-sage-700" : "text-gray-700"
             }`}
         >
           {categoryTitle}
@@ -26,7 +31,7 @@ export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategor
           animate={{ rotate: isExpanded ? 180 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          <ChevronDown size={18} className="text-gray-400" />
+          <ChevronDown size={18} className={isCategoryActive ? "text-sage-600" : "text-gray-400"} />
         </motion.div>
       </button>
 
@@ -37,35 +42,31 @@ export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategor
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden bg-gray-50"
+            className="overflow-hidden bg-white border-l-2 border-sage-200"
           >
-            <div className="py-2 px-4 space-y-2">
+            <div className="py-2 px-4 space-y-2.5"
+            >
               {subCategories.map((subCategory, idx) => {
-                const isSelected = selectedSubCategory === subCategory;
+                // Check if this subcategory is in the selectedSubCategory array
+                const isSelected = Array.isArray(selectedSubCategory)
+                  ? selectedSubCategory.some(item => item.subCategory === subCategory)
+                  : false;
                 return (
                   <motion.label
                     key={subCategory}
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05, duration: 0.2 }}
-                    className="flex items-center cursor-pointer group"
+                    className="flex items-center cursor-pointer group py-1"
                   >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => onSelect(categoryTitle, subCategory)}
-                      className="w-4 h-4 rounded border-gray-300 cursor-pointer appearance-none border transition-all checked:bg-[#9933aa] checked:border-[#9933aa] relative"
-                      style={{
-                        backgroundImage: isSelected
-                          ? `url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e")`
-                          : "none",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
-                        backgroundSize: "100%",
-                      }}
+                      className="w-4 h-4 rounded border-gray-300 text-sage-600 focus:ring-sage-500 cursor-pointer accent-sage-600 transition-all hover:border-sage-400"
                     />
                     <span
-                      className={`ml-3 text-sm font-inter transition-colors capitalize ${isSelected ? "text-gray-900 font-medium" : "text-gray-600 group-hover:text-gray-900"
+                      className={`ml-3 text-sm font-inter transition-colors capitalize ${isSelected ? "text-sage-900 font-semibold" : "text-gray-600 group-hover:text-gray-900"
                         }`}
                     >
                       {subCategory}

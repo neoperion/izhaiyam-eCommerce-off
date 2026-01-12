@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { handleCartModification } from "../utils/handleCartModification";
 import { handleWishlistModification } from "../utils/handleWishlistModification";
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
-import { ProductLoader } from "../components/loaders/productLoader";
+import { LoadingIndicator } from "../components/application/loading-indicator/loading-indicator";
 import ExploreCard from "../components/home/ExploreCard";
 
 export const ProductDetailsPage = () => {
@@ -163,7 +163,7 @@ export const ProductDetailsPage = () => {
   let discountedPrice = currentDisplayPrice - (currentDisplayPrice * discountPercentValue) / 100;
 
   if (isLoading) {
-    return <ProductLoader />;
+    return <LoadingIndicator type="spinner" label="Loading product details..." />;
   }
 
   return (

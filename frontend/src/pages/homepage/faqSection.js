@@ -6,32 +6,36 @@ const FAQSection = () => {
 
   const faqs = [
     {
-      question: "What makes IZHAYAM furniture unique?",
-      answer: "IZHAYAM furniture is entirely hand-crafted by skilled artisans using traditional handloom techniques. Every piece reflects heritage craftsmanship, natural materials, and timeless design."
+      question: "What materials do you use for your furniture?",
+      answer: "We primarily use cotton rope, solid wood, MS frames, and eco-friendly finishes. All materials are selected for durability, comfort, and sustainability."
     },
     {
-      question: "What materials are used in your furniture?",
-      answer: "We use premium quality solid wood combined with handwoven natural fibers. All materials are carefully selected for durability, comfort, and long-lasting beauty."
+      question: "Is the rope used durable and safe?",
+      answer: "Yes. Our cotton ropes are tightly woven, breathable, and highly durable. They are safe for daily use and free from harmful chemicals."
     },
     {
-      question: "Do you offer customization options?",
-      answer: "Yes. Selected products can be customized in size, finish, and fabric. Please contact our support team to discuss your requirements."
+      question: "Do you take custom orders?",
+      answer: "Absolutely! We offer customization in sizes, colors, materials, and finishes to match your space and theme."
     },
     {
-      question: "How long does delivery take?",
-      answer: "Standard delivery usually takes 7–14 working days, depending on your location and product availability. Custom orders may take slightly longer."
+      question: "Is rope furniture suitable for outdoor use?",
+      answer: "Yes. We offer both indoor and outdoor rope furniture. For outdoor setups, we use weather-resistant materials and ropes designed to withstand exposure."
     },
     {
-      question: "Is your furniture suitable for modern homes?",
-      answer: "Absolutely. Our designs blend traditional craftsmanship with modern aesthetics, making them perfect for both contemporary and classic interiors."
+      question: "Do you deliver outside Chennai?",
+      answer: "Yes. We deliver across India. Delivery options and charges vary by location."
     },
     {
-      question: "How do I maintain handloom furniture?",
-      answer: "We recommend gentle cleaning with a soft dry cloth and avoiding prolonged exposure to moisture or direct sunlight to preserve the natural finish."
+      question: "How long does it take to manufacture an order?",
+      answer: "Depending on the product and quantity, the general manufacturing timeframe ranges from 7 to 30 days."
     },
     {
-      question: "Do you provide warranty or support?",
-      answer: "Yes. All our products come with quality assurance and customer support. For warranty details, please refer to our policies or contact us directly."
+      question: "How do I maintain rope furniture?",
+      answer: "Rope furniture is low-maintenance. Simple vacuuming or wiping with a dry cloth keeps it clean. For outdoor models, occasional dusting is enough."
+    },
+    {
+      question: "Do you offer bulk orders for commercial spaces?",
+      answer: "Yes. We handle bulk orders for cafés, restaurants, resorts, farmhouses, and dhabas."
     }
   ];
 

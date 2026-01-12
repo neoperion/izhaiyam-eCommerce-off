@@ -1,36 +1,76 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const PaginationSection = ({ setCurrentPageNo, NoOfProductsPerPage, currentPageNo }) => {
   const { placeholderOfproductsDataCurrentlyRequested } = useSelector((state) => state.productsData);
 
-  let pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(placeholderOfproductsDataCurrentlyRequested.length / NoOfProductsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  // Calculate total pages
+  const totalPages = Math.ceil(placeholderOfproductsDataCurrentlyRequested.length / NoOfProductsPerPage);
 
-  const handleChangePageNo = (number) => {
-    setCurrentPageNo(number);
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPageNo(newPage);
+
+      // Scroll to top of product grid
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
   };
 
+  // Don't show pagination if only 1 page
+  if (totalPages <= 1) return null;
+
+  const isPrevDisabled = currentPageNo === 1;
+  const isNextDisabled = currentPageNo === totalPages;
+
   return (
-    <div className="flex items-center justify-center gap-2 lg:gap-3 mt-12 mb-16">
-      <span className="font-inter text-sm lg:text-base font-medium text-gray-700 mr-2">Page:</span>
-      {pageNumbers.map((number, index) => {
-        return (
-          <button
-            key={index}
-            className={`font-inter w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full font-semibold text-sm lg:text-base transition-all duration-300 cursor-pointer ${currentPageNo === number
-              ? "text-white shadow-lg"
-              : "bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-              }`}
-            style={currentPageNo === number ? { backgroundColor: '#93a267' } : {}}
-            onClick={() => handleChangePageNo(number)}
-          >
-            {number}
-          </button>
-        );
-      })}
+    <div className="w-full flex justify-center my-12">
+      <div className="flex items-center justify-between gap-4 px-4 md:px-6 h-11 md:h-12 max-w-md w-full">
+        {/* Previous Button */}
+        <motion.button
+          whileTap={!isPrevDisabled ? { scale: 0.95 } : {}}
+          onClick={() => handlePageChange(currentPageNo - 1)}
+          disabled={isPrevDisabled}
+          className={`flex items-center gap-1.5 md:gap-2 font-inter text-sm md:text-base font-semibold transition-all duration-200 min-w-[80px] md:min-w-[90px] justify-center rounded-lg border-2 h-11 md:h-12 px-4
+            ${isPrevDisabled
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-sage-600 border-sage-600 hover:bg-sage-50 cursor-pointer shadow-sm hover:shadow-md'
+            }`}
+          aria-label="Previous page"
+          aria-disabled={isPrevDisabled}
+        >
+          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+          <span>Prev</span>
+        </motion.button>
+
+        {/* Page Indicator */}
+        <div className="flex-1 text-center">
+          <span className="font-inter text-sm md:text-base font-medium text-gray-600">
+            Page <span className="font-bold text-sage-900">{currentPageNo}</span> of <span className="font-bold text-sage-900">{totalPages}</span>
+          </span>
+        </div>
+
+        {/* Next Button */}
+        <motion.button
+          whileTap={!isNextDisabled ? { scale: 0.95 } : {}}
+          onClick={() => handlePageChange(currentPageNo + 1)}
+          disabled={isNextDisabled}
+          className={`flex items-center gap-1.5 md:gap-2 font-inter text-sm md:text-base font-semibold transition-all duration-200 min-w-[80px] md:min-w-[90px] justify-center rounded-lg border-2 h-11 md:h-12 px-4
+            ${isNextDisabled
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-sage-600 border-sage-600 hover:bg-sage-50 cursor-pointer shadow-sm hover:shadow-md'
+            }`}
+          aria-label="Next page"
+          aria-disabled={isNextDisabled}
+        >
+          <span>Next</span>
+          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+        </motion.button>
+      </div>
     </div>
   );
 };

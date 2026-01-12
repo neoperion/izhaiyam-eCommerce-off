@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import { createNewAdmin } from "./createNewAdmin";
 import { fetchIsUserAnAdmin } from "./checkIfUserIsAnAdmin";
 import { removeAdmin } from "./removeAdmin";
@@ -34,23 +33,11 @@ export const adminSlice = createSlice({
         state.isLoading = false;
         state.errorMessage = "";
         state.successMessage = "";
-
-        toast(payload, {
-          type: "success",
-          autoClose: 2000,
-          position: "top-center",
-        });
       })
       .addCase(createNewAdmin.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.errorMessage = "";
         state.successMessage = "";
-
-        toast(payload, {
-          type: "error",
-          autoClose: 2000,
-          position: "top-center",
-        });
       })
 
       // delete admin
@@ -59,21 +46,9 @@ export const adminSlice = createSlice({
       })
       .addCase(removeAdmin.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "success",
-          autoClose: 3000,
-          position: "top-center",
-        });
       })
       .addCase(removeAdmin.rejected, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "error",
-          autoClose: 3000,
-          position: "top-center",
-        });
       })
 
       // fetch admin data
@@ -82,22 +57,10 @@ export const adminSlice = createSlice({
       })
       .addCase(fetchAdminDatas.fulfilled, (state, { payload }) => {
         state.adminDatas = payload;
-
         state.userData = payload;
-        toast(payload, {
-          type: "success",
-          autoClose: 3000,
-          position: "top-center",
-        });
       })
       .addCase(fetchAdminDatas.rejected, (state, { payload }) => {
         state.isLoading = false;
-
-        toast(payload, {
-          type: "error",
-          autoClose: 3000,
-          position: "top-center",
-        });
       })
 
       // check if  user is an admin
@@ -109,11 +72,6 @@ export const adminSlice = createSlice({
       })
       .addCase(fetchIsUserAnAdmin.rejected, (state) => {
         state.checkingAdminStatusLoader = false;
-        toast("Only logged in administrator is allowed to page", {
-          type: "error",
-          autoClose: 2000,
-          position: "top-center",
-        });
       });
   },
 });
