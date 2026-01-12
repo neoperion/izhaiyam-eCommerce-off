@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 // Your chair photo
 import chairImg from "../assets/images (1).jpg";
 import googleIcon from "../assets/google.png";
+import GoogleAuth from "../components/GoogleAuth";
 
 // ---------------------- COMPONENT ----------------------
 export const LoginPage = () => {
@@ -232,13 +233,8 @@ export const LoginPage = () => {
             </div>
 
             {/* Google Button */}
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 border border-gray-300 rounded-lg bg-white h-10 px-4 text-xs font-medium shadow-sm hover:shadow-md transition-all hover:bg-gray-50"
-            >
-              <img src={googleIcon} alt="Google" className="w-4 h-4" />
-              Continue with Google
-            </button>
+            {/* Google Button */}
+            <GoogleAuth />
 
           </form>
         </motion.div>

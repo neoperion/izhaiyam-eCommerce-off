@@ -1,4 +1,5 @@
 import { RegisterUser } from "../features/authSlice/register";
+import GoogleAuth from "../components/GoogleAuth";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { validateEmail } from "../utils/emailRegexValidation";
@@ -226,6 +227,15 @@ export const RegisterPage = () => {
           >
             {isLoading ? "CREATING ACCOUNT..." : "REGISTER"}
           </motion.button>
+          
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-1">
+              <div className="h-px bg-gray-300 flex-1"></div>
+              <span className="text-gray-500 text-[10px]">OR CONTINUE WITH</span>
+              <div className="h-px bg-gray-300 flex-1"></div>
+            </div>
+            
+            <GoogleAuth />
 
           <span className="text-center text-stone-500 text-sm mt-2">
             Already have an account?{" "}

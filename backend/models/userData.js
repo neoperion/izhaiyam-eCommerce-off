@@ -41,6 +41,12 @@ const userSchema = mongoose.Schema(
     verificationToken: {
       type: String,
     },
+    avatar: String,
+    authType: {
+      type: String,
+      default: "local",
+      enum: ["local", "google", "facebook"],
+    },
     address: String,
     country: String,
     postalCode: Number,

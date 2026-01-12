@@ -14,6 +14,7 @@ const ordersRoute = require("./routes/ordersRoute");
 const addressRoute = require("./routes/addressRoutes");
 const instagramRoute = require("./routes/instagramRoute");
 const notificationRoute = require("./routes/notificationRoutes");
+const authRoutes = require("./routes/auth");
 const { clearAdminJwt } = require("./controllers/admin");
 
 cloudinary.config({
@@ -47,6 +48,11 @@ const io = new Server(server, {
 });
 
 //  middlewares
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none"); // or require-corp if needed, but unsafe-none is safer for broad compatibility
+  next();
+});
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
@@ -78,6 +84,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/auth", authRoute);
+app.use("/api/auth", authRoutes);
 app.use("/orders", ordersRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/address", addressRoute);
