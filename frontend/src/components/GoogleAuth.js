@@ -1,38 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import API from "../config";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setIsLoggedIn, getUserData } from "../features/authSlice";
+import { toast } from "react-toastify";
 
 const GoogleAuth = () => {
-  // Debug check to verify env var is loaded (security: only log first few chars)
-  const debugClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID 
-    ? process.env.REACT_APP_GOOGLE_CLIENT_ID.substring(0, 10) + "..." 
-    : "MISSING";
-  
-  console.log("GoogleAuth Initialized. ClientID loaded:", debugClientId);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Debug API URL to ensure we are hitting the correct backend
+  useEffect(() => {
+    console.log("GoogleAuth Component Mounted. Using API Base URL:", API);
+  }, []);
 
   const handleSuccess = async (res) => {
     try {
+      console.log("Google Sign-In Success. Token received. Authenticating with backend...");
+      
       const result = await axios.post(`${API}/api/auth/google-login`, {
         token: res.credential
       });
 
-      // Backend now returns: { message: "...", userData: { ...user, loginToken: ... } }
-      // This matches the format of the standard login response.
       const { userData } = result.data;
+      console.log("Backend Authentication Successful. User Data:", userData);
 
-      // 1. Set the token as requested by user originally
+      // 1. Save to LocalStorage
       if (userData.loginToken) {
         localStorage.setItem("token", userData.loginToken);
       }
-
-      // 2. Set the UserData object as required by the application's redux/store
       localStorage.setItem("UserData", JSON.stringify(userData));
 
-      window.location.reload();
+      // 2. Update Redux State
+      dispatch(setIsLoggedIn(true));
+      dispatch(getUserData(userData));
+
+      // 3. User Feedback & Navigation
+      toast.success("Login Successful! Redirecting...");
+      
+      // Navigate to home immediately
+      navigate("/");
+      
     } catch (error) {
-      console.error(error);
-      alert("Google Login Failed");
+      console.error("Google Backend Auth Error:", error);
+      const errorMessage = error.response?.data?.message || "Google Login Failed";
+      toast.error(errorMessage);
     }
   };
 
@@ -42,10 +56,11 @@ const GoogleAuth = () => {
         onSuccess={handleSuccess}
         onError={(err) => {
           console.error("Google Login Error:", err);
-          alert("Google Login Failed. Check console for details."); 
+          toast.error("Google Login Failed from Provider");
         }}
         theme="outline"
-        width="100%"
+        // Removed explicit width="100%" to avoid GSI warning. 
+        // Handles responsive width via container div.
       />
     </div>
   );
