@@ -6,50 +6,29 @@ import { setCart } from "../../features/wishlistAndCartSlice";
 import { useNavigate } from "react-router-dom";
 
 export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
-  const { _id, title, price, image, quantity, discountPercentValue, selectedColor } = cartData;
+  const { _id, title, price, image, quantity, discountPercentValue, selectedColor, woodType, cartItemId } = cartData;
   const currentImage = selectedColor ? selectedColor.imageUrl : image;
   const currentPrice = price;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
-  const [productQuantityInCart, setProductQuantityInCart] = useState(1);
+  const [productQuantityInCart, setProductQuantityInCart] = useState(quantity); // Init with props quantity
 
-  // on load of the app set quantity to persisted quantity
+  // Sync state if props change (external update)
   useEffect(() => {
-    for (let key of cart) {
-      const isSameProduct = key._id === _id;
-      const isSameVariant = selectedColor
-        ? key.selectedColor?.primaryColorName === selectedColor.primaryColorName || key.selectedColor?.colorName === selectedColor.colorName
-        : !key.selectedColor;
-
-      if (isSameProduct && isSameVariant) {
-        setProductQuantityInCart(key.quantity);
-      }
-    }
-  }, [cart, _id, selectedColor]);
+     setProductQuantityInCart(quantity);
+  }, [quantity]);
 
   // on quantity change
   useEffect(() => {
     if (productQuantityInCart < 1) return;
+    if (productQuantityInCart === quantity) return; // No change
 
-    const cartItem = cart.find(item =>
-      item._id === _id &&
-      (item.selectedColor ? item.selectedColor._id === selectedColor?._id : !selectedColor)
-    );
-
-    if (cartItem && cartItem.quantity !== parseInt(productQuantityInCart)) {
-      let newCart = [...cart];
-      for (let i = 0; i < newCart.length; i++) {
-        const key = newCart[i];
-        if (key._id === _id && (key.selectedColor ? key.selectedColor._id === selectedColor?._id : !selectedColor)) {
-          newCart[i] = { ...key, quantity: parseInt(productQuantityInCart) };
-          break;
-        }
-      }
-      dispatch(setCart(newCart));
-    }
-  }, [productQuantityInCart, _id, selectedColor, dispatch]);
+    // Dispatch update using cartItemId if possible
+    handleCartModification(_id, dispatch, productQuantityInCart - quantity, true, selectedColor, woodType, cartItemId);
+    
+  }, [productQuantityInCart, _id, selectedColor, woodType, dispatch, quantity, cartItemId]);
 
   // get the discount percent value if present
   let discountedPrice = currentPrice - (currentPrice * discountPercentValue) / 100;
@@ -82,6 +61,16 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
             {title}
           </h3>
 
+          {/* Wood Type Display (New) */}
+          {woodType && (
+             <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-xs text-gray-500">Wood:</span>
+                <span className="text-xs text-gray-800 font-medium capitalize">
+                    {typeof woodType === 'object' ? (woodType.name || woodType.woodType || '') : woodType}
+                </span>
+             </div>
+          )}
+
           {selectedColor && (
             <div className="flex items-center gap-1.5 mb-1">
               <span className="text-xs text-gray-500">Color:</span>
@@ -105,15 +94,15 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
             {discountPercentValue > 0 ? (
               <>
                 <p className="font-inter text-base font-semibold text-gray-900">
-                  ₹{discountedPrice.toFixed(2)}
+                  ₹{discountedPrice.toLocaleString("en-IN")}
                 </p>
                 <p className="font-inter text-xs text-gray-400 line-through">
-                  ₹{currentPrice.toFixed(2)}
+                  ₹{currentPrice.toLocaleString("en-IN")}
                 </p>
               </>
             ) : (
               <p className="font-inter text-base font-semibold text-gray-900">
-                ₹{currentPrice.toFixed(2)}
+                ₹{currentPrice.toLocaleString("en-IN")}
               </p>
             )}
           </div>
@@ -143,7 +132,7 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
           {/* Delete Button */}
           <button
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-colors"
-            onClick={() => handleCartModification(_id, dispatch, null, true, selectedColor)}
+            onClick={() => handleCartModification(_id, dispatch, null, true, selectedColor, woodType, cartItemId)}
             aria-label="Remove from cart"
           >
             <IoTrashOutline className="w-4 h-4" />

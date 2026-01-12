@@ -84,9 +84,12 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
                 <div className="w-[100%] flex flex-col px-[5%] gap-4">
                   {cart.map((cartData) => {
                     // Create unique key for customized products
-                    const uniqueKey = cartData.selectedColor
-                      ? `${cartData._id}-${cartData.selectedColor.colorName}`
-                      : cartData._id;
+                    // Create unique key using cartItemId if available, else fallback to composite key
+                    const uniqueKey = cartData.cartItemId 
+                      ? cartData.cartItemId
+                      : (cartData.selectedColor
+                          ? `${cartData._id}-${cartData.selectedColor.colorName}`
+                          : cartData._id) + (cartData.woodType ? `-${typeof cartData.woodType === 'object' ? (cartData.woodType.name || cartData.woodType.woodType || 'wood') : cartData.woodType}` : '');
 
                     return <SingleProductSection {...{ cartData, setIsCartSectionActive }} key={uniqueKey} />;
                   })}

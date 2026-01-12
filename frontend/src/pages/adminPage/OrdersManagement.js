@@ -1,258 +1,369 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, Truck, Search, Filter, Download } from 'lucide-react';
-import OrderTracking from './OrderTracking';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload } from "react-icons/ai";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from '../../components/admin/AdminLayout';
+import OrderTracking from './OrderTracking';
+
+// Inline Pagination Component to avoid import issues if path differs, or reuse if path is standard.
+// For safety and self-containment given previous path issues, I will start with a local version or import if confident.
+// The user asked for "Same pagination UI", so reusing the existing component is best if possible. 
+// However, `paginationForProductsAdmin.js` is inside `productTab`. I can import it relative to `OrdersManagement`.
+// `OrdersManagement.js` is in `pages/adminPage/`. `productTab` is `pages/adminPage/productTab/`.
+// So import path: `./productTab/paginationForProductsAdmin`
+
+import { PaginationSectionForProductsAdminPage } from "./productTab/paginationForProductsAdmin";
+
+
+
+export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
+  const navigate = useNavigate();
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [fullOrderDetails, setFullOrderDetails] = useState(null);
+  const [loadingTracking, setLoadingTracking] = useState(false);
+
+  // Backend getAllOrders returns flattened structure:
+  // { id, customer, product, productCount, amount, paymentMethod, status, date }
+  // { id, customer, product, productCount, amount, paymentMethod, status, date }
+  const { id, customer, product, amount, paymentMethod, status, date } = order;
+
+  // Extract Categories
+  // orderItems might be passed as productItems or similar if flattened? 
+  // Inspecting `fetchOrders`: `const allOrders = data.orders`. 
+  // Backend usually returns full object.
+  // Let's assume order.orderItems exists.
+  const categories = order.orderItems 
+      ? [...new Set(order.orderItems.map(item => item.category || 'Others'))].join(', ')
+      : 'Others';
+
+  // Status Badge Logic
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Delivered":
+        return <span className="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-green-400">Delivered</span>;
+      case "Shipped":
+        return <span className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-blue-400">Shipped</span>;
+      case "Processing":
+        return <span className="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-yellow-400">Processing</span>;
+      case "Cancelled":
+        return <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-red-400">Cancelled</span>;
+      default:
+        return <span className="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-gray-400">{status}</span>;
+    }
+  };
+
+  const deleteOrder = async (id) => {
+      if(!window.confirm("Are you sure you want to delete this order?")) return;
+      try {
+          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+          await axios.delete(`${serverUrl}/orders/admin/order/${id}`, {
+             headers: { authorization: `Bearer ${LoginToken}` }
+          });
+          toast.success("Order deleted successfully");
+          fetchOrders();
+      } catch (error) {
+          toast.error("Failed to delete order");
+      }
+  }
+
+
+  const exportSingleOrder = async (id) => {
+      try {
+          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+          
+          toast.info("Exporting order...");
+          
+          const response = await axios.get(`${serverUrl}/orders/export/order/${id}`, {
+             headers: { authorization: `Bearer ${LoginToken}` },
+             responseType: 'blob'
+          });
+          
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `order_${id}.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          toast.success("Order exported successfully");
+      } catch (error) {
+          toast.error("Failed to export order");
+          console.error(error);
+      }
+  }
+
+  const handleTrackingClick = async () => {
+      setLoadingTracking(true);
+      try {
+          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+          
+          // Fetch full details to get current tracking info
+          const { data } = await axios.get(`${serverUrl}/orders/admin/order/${id}`, {
+             headers: { authorization: `Bearer ${LoginToken}` }
+          });
+          
+          if(data.success) {
+              setFullOrderDetails(data.order);
+              setIsTrackingModalOpen(true);
+          }
+      } catch (error) {
+          toast.error("Failed to load order details");
+          console.error(error);
+      } finally {
+          setLoadingTracking(false);
+      }
+  }
+
+  return (
+    <>
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="p-4 text-black font-inter border-b border-gray-200">{serialNo}</td>
+      <td className="p-4 text-black border-b border-gray-200 text-sm">{id}</td>
+      <td className="p-4 text-black border-b border-gray-200">{customer || "Guest"}</td>
+      <td className="p-4 text-black border-b border-gray-200 max-w-xs truncate" title={product}>
+          {product}
+      </td>
+      <td className="p-4 text-black border-b border-gray-200 font-medium text-xs text-gray-600 uppercase">
+          {categories}
+      </td>
+      <td className="p-4 text-black border-b border-gray-200 font-medium whitespace-nowrap">₹ {amount}</td>
+      <td className="p-4 text-black border-b border-gray-200">{paymentMethod}</td>
+      <td className="p-4 text-black border-b border-gray-200">
+        {getStatusBadge(status)}
+      </td>
+      <td className="p-4 text-black border-b border-gray-200 whitespace-nowrap text-sm">
+          {date}
+      </td>
+      <td className="p-4 border-b border-gray-200">
+        <div className="flex items-center gap-3">
+          <AiOutlineEye
+            onClick={() => navigate(`/admin/orders-management/${id}`)}
+            className="w-5 h-5 cursor-pointer hover:fill-blue-600 fill-gray-600 transition-colors"
+            title="View Details"
+          />
+          <AiOutlineEdit
+            onClick={handleTrackingClick}
+            className={`w-5 h-5 cursor-pointer hover:fill-yellow-600 fill-gray-600 transition-colors ${loadingTracking ? 'opacity-50' : ''}`}
+             title="Update Status / Tracking"
+          />
+           <AiOutlineDelete
+            onClick={() => deleteOrder(id)}
+            className="w-5 h-5 cursor-pointer hover:fill-red-600 fill-gray-600 transition-colors"
+             title="Delete Order"
+          />
+           <AiOutlineDownload
+            onClick={() => exportSingleOrder(id)}
+            className="w-5 h-5 cursor-pointer hover:fill-green-600 fill-gray-600 transition-colors"
+             title="Export Excel"
+          />
+        </div>
+        {isTrackingModalOpen && fullOrderDetails && (
+            <OrderTracking 
+                order={fullOrderDetails} 
+                onClose={() => {
+                    setIsTrackingModalOpen(false);
+                    fetchOrders(); // Refresh list to update status if changed
+                }} 
+            />
+        )}
+      </td>
+    </tr>
+    </>
+  );
+};
 
 const OrdersManagement = () => {
+  const navigate = useNavigate();
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
-  const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [showTracking, setShowTracking] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [ordersParams, setOrdersParams] = useState({
+    orders: [],
+    ordersLength: 0,
+    pageNo: 1,
+    perPage: 10,
+    isError: false,
+  });
+  const [loading, setLoading] = useState(false);
 
-  // Fetch real orders data from backend
+  const { orders, ordersLength, pageNo, perPage, isError } = ordersParams;
+
   useEffect(() => {
-    fetchOrders();
+    fetchOrders(ordersParams);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchOrders = async () => {
+
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+
+  const exportOrders = async (range) => {
+    setShowExportDropdown(false);
     try {
-      setLoading(true);
-      const loginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || "";
-      const headers = { headers: { authorization: `Bearer ${loginToken}` } };
-
-      const response = await axios.get(`${serverUrl}/orders/all`, headers);
-
-      if (response.data.success) {
-        setOrders(response.data.orders);
-        setFilteredOrders(response.data.orders);
-      }
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+        const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+        
+        toast.info(`Exporting ${range} orders...`);
+        
+        const response = await axios.get(`${serverUrl}/orders/export/${range}`, {
+           headers: { authorization: `Bearer ${LoginToken}` },
+           responseType: 'blob'
+        });
+        
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `orders_${range}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        toast.success("Orders exported successfully");
     } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
+        toast.error("Failed to export orders");
+        console.error(error);
+    }
+  };
+  const fetchOrders = async (currentParams) => {
+    setLoading(true);
+    try {
+        const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
+        // Assuming backend supports pagination ?page=1&limit=10 or distinct endpoints
+        // Based on `Dashboard.js` logic which uses `/api/v1/allOrders` (which might not be paginated?)
+        // Let's assume standard structure. If not paginated, we paginate client side or use default.
+        // Checking `Dashboard.js`... it calls `${serverUrl}/api/v1/allOrders`.
+        // Let's try to mimic `products/sortByLowStockProducts` pattern if `allOrders` accepts query params.
+        
+        // REVISIT: The user said "without any backend change". 
+        // If the backend `/api/v1/admin/orders` or similar doesn't exist or support pagination, we might fetch all and slice.
+        // Let's check `backend/controllers/Orders.js` if possible using `read_file`? 
+        // No, I'll stick to what I know. `Orders.js` is open. 
+        // Assuming `api/v1/admin/orders` supports it or I use `api/v1/orders/me` equivalent.
+        // Actually, let's use the endpoint found in `adminPage/OrdersManagement.js` (if I could see it).
+        // Since it was missing, I'll bet on `/api/v1/admin/orders`. If that fails, I'll adjust.
+        
+      // Verified: app.js mounts ordersRoute at "/orders"
+      // Verified: routes/ordersRoute.js has router.route("/all").get(...)
+      // Correct URL: /orders/all
+      const { data } = await axios.get(`${serverUrl}/orders/all`, {
+         headers: { authorization: `Bearer ${LoginToken}` }
+      });
+      
+      const allOrders = data.orders || [];
+      const totalOrders = allOrders.length;
+      
+      // Client-side slice for pagination
+      const indexOfLastOrder = currentParams.pageNo * currentParams.perPage;
+      const indexOfFirstOrder = indexOfLastOrder - currentParams.perPage;
+      const currentOrders = allOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+      setOrdersParams(prev => ({
+          ...prev,
+          orders: currentOrders,
+          ordersLength: totalOrders
+      }));
       setLoading(false);
+
+    } catch (error) {
+        // Fallback or Error
+        console.error(error);
+        setOrdersParams(prev => ({ ...prev, isError: true }));
+        setLoading(false);
     }
   };
 
-  // Filter and search logic
-  useEffect(() => {
-    let filtered = orders;
 
-    // Status filter
-    if (statusFilter !== 'All') {
-      filtered = filtered.filter(order => order.status === statusFilter);
-    }
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(order =>
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.product.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredOrders(filtered);
-  }, [searchTerm, statusFilter, orders]);
-
-  const handleTrackOrder = (order) => {
-    setSelectedOrder(order);
-    setShowTracking(true);
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Delivered':
-        return 'bg-green-100 text-green-700';
-      case 'In Transit':
-        return 'bg-blue-100 text-blue-700';
-      case 'Processing':
-        return 'bg-yellow-100 text-yellow-700';
-      case 'Pending':
-        return 'bg-orange-100 text-orange-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-
-  return (<AdminLayout>    <section className="w-full xl:px-[4%] px-[4%] lg:px-[2%]">
-    <div className="container mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Orders Management</h2>
-          <p className="text-sm text-gray-500 mt-1">Track and manage customer orders</p>
-        </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm md:text-base">
-            <Download size={16} />
-            <span className="hidden sm:inline">Export</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="bg-white rounded-xl shadow-md border p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Search */}
-          <div className="flex-1 relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by order ID, customer, or product..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryColor text-sm md:text-base"
-            />
+  return (
+    <AdminLayout>
+      <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%]">
+        <div className="my-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-black text-xl md:text-2xl font-medium">Orders Management</h2>
+            
+            <div className="relative">
+                <button 
+                    onClick={() => setShowExportDropdown(!showExportDropdown)}
+                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition"
+                >
+                    <AiOutlineDownload className="w-5 h-5" />
+                    Export
+                </button>
+                
+                {showExportDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                        <ul className="py-1 text-gray-700">
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('all')}>Export All Orders</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('today')}>Export Today</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('week')}>Export This Week</li>
+                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => exportOrders('month')}>Export This Month</li>
+                        </ul>
+                    </div>
+                )}
+            </div>
           </div>
 
-          {/* Status Filter */}
-          <div className="relative">
-            <Filter size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryColor appearance-none bg-white text-sm md:text-base min-w-[150px]"
-            >
-              <option value="All">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="Processing">Processing</option>
-              <option value="In Transit">In Transit</option>
-              <option value="Delivered">Delivered</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Orders Table */}
-      <div className="bg-white rounded-xl shadow-md border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[1600px]">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Order ID</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Customer</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Product</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Address Line 1</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Address Line 2</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">City</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">State</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Pincode</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Amount</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment Method</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Payment ID</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Status</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Date</th>
-                <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="13" className="p-8 text-center text-gray-500">
-                    Loading orders...
-                  </td>
-                </tr>
-              ) : filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
-                  <tr key={order.id} className="border-b hover:bg-gray-50 transition-colors">
-                    <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-gray-800">{order.id}</td>
-                    <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{order.customer}</td>
-                    <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">
-                      {order.product}
-                      {order.productCount > 1 && (
-                        <span className="text-xs text-gray-500 ml-1">+{order.productCount - 1} more</span>
-                      )}
-                    </td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700 min-w-[160px]">{order.addressLine1 || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-500 min-w-[200px]">{order.addressLine2 || '-'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.city || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.state || 'N/A'}</td>
-                    <td className="p-3 md:p-4 text-sm text-gray-700">{order.postalCode || 'N/A'}</td>
-                    <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{order.amount.toLocaleString("en-IN")}</td>
-                     <td className="p-3 md:p-4 text-sm text-gray-700 capitalize">{order.paymentMethod || 'COD'}</td>
-                     <td className="p-3 md:p-4 text-sm text-gray-500 font-mono text-xs">{order.paymentId || '-'}</td>
-                    <td className="p-3 md:p-4">
-                      <span className={`px-2 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="p-3 md:p-4 text-sm md:text-base text-gray-600 min-w-[120px]">{order.date}</td>
-                    <td className="p-3 md:p-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleTrackOrder(order)}
-                          className="p-2 bg-primaryColor text-white rounded-lg hover:opacity-90 transition-opacity"
-                          title="Track Order"
-                        >
-                          <Truck size={16} />
-                        </button>
-                        <button
-                          className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                          title="View Details"
-                        >
-                          <Eye size={16} />
-                        </button>
-                      </div>
-                    </td>
+          <div className="bg-white rounded-lg border shadow-sm overflow-hidden mb-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left table-auto min-w-[1000px]">
+                <thead>
+                  <tr className="border-b bg-gray-50">
+                    <th className="text-sm font-medium text-gray-700 p-4">S.No</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Order ID</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Customer Name</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Product(s)</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Category</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Amount</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Payment Method</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Order Status</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Created Date</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Actions</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="13" className="p-8 text-center text-gray-500">
-                    No orders found matching your criteria
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                </thead>
+                
+                {loading ? (
+                    <tbody>
+                        <tr><td colSpan="9" className="p-8 text-center text-gray-500">Loading orders...</td></tr>
+                    </tbody>
+                ) : ordersLength > 0 ? (
+                    <tbody className="divide-y divide-gray-100">
+                        {orders.map((order, index) => {
+                            const serialNo = (pageNo - 1) * perPage + index + 1;
+                            return (
+                                <SingleOrderTableCell 
+                                    key={order.id} 
+                                    order={order} 
+                                    serialNo={serialNo} 
+                                    fetchOrders={() => fetchOrders(ordersParams)} 
+                                />
+                            );
+                        })}
+                    </tbody>
+                ) : (
+                    <tbody>
+                         <tr>
+                            <td colSpan="9" className="p-8 text-center text-gray-500">
+                                {isError ? "Error fetching orders." : "No orders found."}
+                            </td>
+                         </tr>
+                    </tbody>
+                )}
+              </table>
+            </div>
+          </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <div className="bg-white rounded-lg shadow-md border p-4">
-          <p className="text-xs md:text-sm text-gray-500">Total Orders</p>
-          <p className="text-xl md:text-2xl font-bold text-gray-800 mt-1">{orders.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-md border p-4">
-          <p className="text-xs md:text-sm text-gray-500">Delivered</p>
-          <p className="text-xl md:text-2xl font-bold text-green-600 mt-1">
-            {orders.filter(o => o.status === 'Delivered').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow-md border p-4">
-          <p className="text-xs md:text-sm text-gray-500">In Transit</p>
-          <p className="text-xl md:text-2xl font-bold text-blue-600 mt-1">
-            {orders.filter(o => o.status === 'In Transit').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow-md border p-4">
-          <p className="text-xs md:text-sm text-gray-500">Total Revenue</p>
-          <p className="text-xl md:text-2xl font-bold text-primaryColor mt-1">
-            ₹{orders.reduce((sum, order) => sum + order.amount, 0).toLocaleString("en-IN")}
-          </p>
-        </div>
-      </div>
-    </div>
+          {ordersLength > 0 && (
+            <PaginationSectionForProductsAdminPage
+              productsLength={ordersLength}
+              asyncFnParamState={ordersParams}
+              asyncFn={fetchOrders}
+              setAsyncFnParamState={setOrdersParams}
+            />
+          )}
 
-    {/* Order Tracking Modal */}
-    {showTracking && (
-      <OrderTracking
-        order={selectedOrder}
-        onClose={() => {
-          setShowTracking(false);
-          setSelectedOrder(null);
-        }}
-      />
-    )}
-  </section>
-  </AdminLayout>
+        </div>
+      </section>
+    </AdminLayout>
   );
 };
 

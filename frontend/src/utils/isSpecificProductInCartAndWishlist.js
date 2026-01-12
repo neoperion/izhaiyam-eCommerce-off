@@ -1,13 +1,20 @@
-export const isProductInCartFn = (_id, setIsProductInCart, cart, selectedColor = null) => {
-  let isProductInCart;
-  if (selectedColor) {
-      isProductInCart = cart.some((product) => product._id === _id && product.selectedColor?.colorName === selectedColor.colorName);
-  } else {
-      isProductInCart = cart.some((product) => product._id === _id && !product.selectedColor);
-  }
+export const isProductInCartFn = (_id, setIsProductInCart, cart, selectedColor = null, woodType = null) => {
+  const isProductInCart = cart.some((product) => {
+      if (product._id !== _id) return false;
+
+      const colorMatch = selectedColor 
+        ? (product.selectedColor?.primaryColorName === selectedColor.primaryColorName || product.selectedColor?.colorName === selectedColor.colorName)
+        : !product.selectedColor; // Match if no color in cart item either
+
+      const woodMatch = woodType
+        ? (product.woodType?.name === (woodType.woodType || woodType.name || woodType) || product.woodType === (woodType.woodType || woodType.name || woodType))
+        : !product.woodType;
+
+      return colorMatch && woodMatch;
+  });
   
-  if (isProductInCart) setIsProductInCart(true);
-  else setIsProductInCart(false);
+  // Directly set boolean
+  setIsProductInCart(isProductInCart);
 };
 
 export const isProductInWishlistFn = (_id, setIsWishlisted, wishlist) => {

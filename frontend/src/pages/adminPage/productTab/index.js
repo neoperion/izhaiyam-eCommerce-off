@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
-import { AddNewProduct } from "./addNewProduct";
 import { SingleProductTableCell } from "./singleProductTableCell";
 import axios from "axios";
 import { PaginationSectionForProductsAdminPage } from "./paginationForProductsAdmin";
 import AdminLayout from '../../../components/admin/AdminLayout';
+import { useNavigate } from "react-router-dom";
 
 export const ProductManagement = () => {
-  const [isAddNewProductClicked, setIsAddNewProductClicked] = useState(false);
+  const navigate = useNavigate();
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
   const [lowStockProductsParams, setLowStockProductsParams] = useState({
@@ -84,12 +84,11 @@ export const ProductManagement = () => {
   };
 
   return (<AdminLayout>    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
-    <AddNewProduct {...{ isAddNewProductClicked, setIsAddNewProductClicked, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} />
     <div className="container mx-auto mb-4">
       <div className="flex justify-end">
         <button
           className="flex items-center gap-2 bg-primaryColor hover:bg-lightPrimaryColor text-white font-medium px-6 py-3 rounded-md transition-colors duration-300"
-          onClick={() => setIsAddNewProductClicked(true)}
+          onClick={() => navigate('/admin/products/add')}
         >
           <IoAddOutline className="w-5 h-5" />
           Add New Product
@@ -135,45 +134,58 @@ export const ProductManagement = () => {
         </button>
       </div>
       {!closeSearchList && (
-        <>
-          <table className="w-full  text-left table-collapse overflow-x-auto block md:table admin-table-borderBottom">
+        <div className="bg-white rounded-lg border shadow-sm overflow-hidden mb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left table-auto min-w-[800px]">
             <thead>
-              <tr>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Si.No</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Id</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Name</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Price</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Stock</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Order</th>
-                <th className="text-sm font-medium text-black p-2 bg-gray-100">Modify</th>
+              <tr className="border-b">
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Si.No</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Id</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Name</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Price</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Stock</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Order</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Modify</th>
               </tr>
             </thead>
-            {/* if search is loading return loading or tbody/not found and  tbody/not found depends on the length of the products array */}
             {isSearchLoading ? (
-              <h2>Loading ..</h2>
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
             ) : productsLength > 0 ? (
-              <>
-                <tbody>
-                  {productsSearchedFor.map((products, index) => {
-                    const serialNo = (searchParameters.pageNo - 1) * searchParameters.perPage + index + 1;
-                    return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
-                  })}{" "}
-                </tbody>
-              </>
+              <tbody className="divide-y divide-gray-100">
+                {productsSearchedFor.map((products, index) => {
+                  const serialNo = (searchParameters.pageNo - 1) * searchParameters.perPage + index + 1;
+                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
+                })}
+              </tbody>
             ) : (
-              <span>Products not found</span>
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center text-gray-500">
+                    Products not found
+                  </td>
+                </tr>
+              </tbody>
             )}
           </table>
-
-          {productsLength > 0 && (
+          </div>
+        </div>
+      )}
+      
+      {productsLength > 0 && !closeSearchList && (
+        <div className="mt-4">
             <PaginationSectionForProductsAdminPage
               productsLength={productsLength}
               asyncFnParamState={searchParameters}
               asyncFn={searchProductFetch}
               setAsyncFnParamState={setSearchParameters}
             />
-          )}
-        </>
+        </div>
       )}
     </div>
 
@@ -181,49 +193,62 @@ export const ProductManagement = () => {
       <h3 className="text-black text-xl md:text-2xl font-medium mb-6">
         List of products arranged from order of low stocks to the highest
       </h3>
-      <table className="w-full  text-left table-collapse overflow-x-auto block md:table admin-table-borderBottom">
-        <thead>
-          <tr>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Si.No</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Id</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Name</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Price</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Stock</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Order</th>
-            <th className="text-sm font-medium text-black p-2 bg-gray-100">Modify</th>
-          </tr>
-        </thead>
+      <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left table-auto min-w-[800px]">
+            <thead>
+              <tr className="border-b">
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Si.No</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Id</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Name</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Price</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Stock</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Order</th>
+                <th className="text-sm font-medium text-gray-700 p-4 bg-gray-50">Modify</th>
+              </tr>
+            </thead>
 
-        {getLowStockProductsLoader ? (
-          <h2 className="mt-6 text-lg text-center">Loading ...</h2>
-        ) : lowStockProductsParams.productsLength > 0 ? (
-          <>
-            <tbody>
-              {lowStockProductsParams.lowStockProducts.map((products, index) => {
-                const serialNo = (lowStockProductsParams.pageNo - 1) * lowStockProductsParams.perPage + index + 1;
-                return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
-              })}
-            </tbody>
-          </>
-        ) : (
-          <h3 className="mt-6 text-lg text-center">
-            {lowStockProductsParams.isError ? (
-              <span>
-                Error loading products{" "}
-                <span
-                  className="text-primaryColor cursor-pointer ml-2 hover:text-lightPrimaryColor"
-                  onClick={() => fetchLowStockProducts(lowStockProductsParams)}
-                >
-                  {" "}
-                  Retry
-                </span>
-              </span>
+            {getLowStockProductsLoader ? (
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            ) : lowStockProductsParams.productsLength > 0 ? (
+              <tbody className="divide-y divide-gray-100">
+                {lowStockProductsParams.lowStockProducts.map((products, index) => {
+                  const serialNo = (lowStockProductsParams.pageNo - 1) * lowStockProductsParams.perPage + index + 1;
+                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
+                })}
+              </tbody>
             ) : (
-              "Products not found"
+              <tbody>
+                <tr>
+                  <td colSpan="7" className="p-8 text-center text-gray-500">
+                    <h3 className="text-base">
+                      {lowStockProductsParams.isError ? (
+                        <span>
+                          Error loading products{" "}
+                          <span
+                            className="text-primaryColor cursor-pointer ml-2 hover:text-lightPrimaryColor"
+                            onClick={() => fetchLowStockProducts(lowStockProductsParams)}
+                          >
+                            Retry
+                          </span>
+                        </span>
+                      ) : (
+                        "Products not found"
+                      )}
+                    </h3>
+                  </td>
+                </tr>
+              </tbody>
             )}
-          </h3>
-        )}
-      </table>
+          </table>
+        </div>
+      </div>
       <>
         {lowStockProductsParams.productsLength > 0 && (
           <PaginationSectionForProductsAdminPage

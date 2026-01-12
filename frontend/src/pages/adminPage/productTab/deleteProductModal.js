@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
+
+import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
 
@@ -38,7 +40,7 @@ export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id })
     }
   };
 
-  return (
+  return ReactDOM.createPortal(
     <>
       {isDeleteLoading && <FullpageSpinnerLoader />}
 
@@ -95,6 +97,7 @@ export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id })
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };

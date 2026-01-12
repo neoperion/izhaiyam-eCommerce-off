@@ -1,19 +1,7 @@
-
 # Izhaiyam eCommerce
 
-A full-stack e-commerce platform for furniture and home decor products, featuring user authentication, product management, shopping cart, and order processing.
 
-## 🚀 Repository
 
-This project consists of a React frontend and Node.js/Express backend with MongoDB database.
 
-## ✨ Key Features
 
-- **User Authentication** - Secure registration, login, and email verification
-- **Product Catalog** - Browse furniture by categories (Featured, Kitchen, Dining, Bedroom, Living Room, Office, Kids)
-- **Advanced Search & Filtering** - Sort by price, name, and date with category filters
-- **Shopping Cart** - Add, update, and manage cart items
-- **Order Management** - Place orders with multiple shipping methods
-- **Password Recovery** - Email-based password reset functionality
-- **Admin Panel** - Manage products, orders, and users
-- **Responsive Design** - Mobile-friendly interface with smooth animations
+

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import ReactDOM from "react-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
 
@@ -17,7 +17,7 @@ export const ProductDetailsModal = ({
     if (categories[key].length > 0) subCategoriesArr.push(...categories[key]);
   }
 
-  return (
+  return ReactDOM.createPortal(
     <>
       {" "}
       {isFetchingUpdatedDataLoading && <FullpageSpinnerLoader />}
@@ -58,6 +58,7 @@ export const ProductDetailsModal = ({
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };

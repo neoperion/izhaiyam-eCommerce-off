@@ -437,12 +437,11 @@ export const ProfilePage = () => {
                                 <div>
                                   <p className="text-xs text-gray-500 uppercase mb-1">Payment</p>
                                   <div className="flex items-center gap-2">
-                                     <span className="text-sm font-medium text-gray-900 capitalize">{order.payment?.method || 'COD'}</span>
-                                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold border ${
-                                         order.paymentStatus === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'
-                                     }`}>
-                                         {order.paymentStatus?.toUpperCase() || 'PENDING'}
-                                     </span>
+                                    <span className="text-sm font-medium text-gray-900 capitalize">{order.payment?.method || 'COD'}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold border ${order.paymentStatus === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'
+                                      }`}>
+                                      {order.paymentStatus?.toUpperCase() || 'PENDING'}
+                                    </span>
                                   </div>
                                 </div>
                                 <div>
@@ -486,29 +485,29 @@ export const ProfilePage = () => {
                           <div className="p-3 md:p-4">
                             {order.products.map((item, idx) => (
                               <div key={idx} className="flex items-center gap-2 md:gap-4 py-2 md:py-4 border-b last:border-0 border-gray-100">
-                                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                    {item.image || item.productId?.image ? (
-                                      <img src={item.image || item.productId?.image} alt={item.name || item.productId?.title} className="w-full h-full object-cover" />
-                                    ) : (
-                                      <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
+                                <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
+                                  {item.image || item.productId?.image ? (
+                                    <img src={item.image || item.productId?.image} alt={item.name || item.productId?.title} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-medium text-sm md:text-base text-gray-900 line-clamp-1">{item.name || item.productId?.title || 'Product Name Unavailable'}</h4>
+                                  <div className="flex flex-col gap-0.5">
+                                    <p className="text-xs md:text-sm text-gray-500">Qty: {item.quantity}</p>
+                                    {item.selectedColor && (
+                                      <div className="flex items-center gap-1">
+                                        <span className="text-xs text-gray-500">Color:</span>
+                                        <div
+                                          className="w-3 h-3 rounded-full border border-gray-200"
+                                          style={{ backgroundColor: item.selectedColor.hexCode || item.selectedColor.primaryHexCode || '#ccc' }}
+                                        ></div>
+                                        <span className="text-xs text-gray-600">{item.selectedColor.name || item.selectedColor.primaryColorName}</span>
+                                      </div>
                                     )}
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-sm md:text-base text-gray-900 line-clamp-1">{item.name || item.productId?.title || 'Product Name Unavailable'}</h4>
-                                    <div className="flex flex-col gap-0.5">
-                                        <p className="text-xs md:text-sm text-gray-500">Qty: {item.quantity}</p>
-                                        {item.selectedColor && (
-                                            <div className="flex items-center gap-1">
-                                                <span className="text-xs text-gray-500">Color:</span>
-                                                <div 
-                                                    className="w-3 h-3 rounded-full border border-gray-200"
-                                                    style={{ backgroundColor: item.selectedColor.hexCode || item.selectedColor.primaryHexCode || '#ccc' }}
-                                                ></div>
-                                                <span className="text-xs text-gray-600">{item.selectedColor.name || item.selectedColor.primaryColorName}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                  </div>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -549,58 +548,68 @@ export const ProfilePage = () => {
                       onClick={() => navigate('/shop')}
                       className="font-inter mt-6 px-8 py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all"
                     >
-                      BROWSE PRODUCTS
+                      CONTINUE SHOPPING
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {wishlist.map((product) => (
-                      <div
-                        key={product._id}
-                        className="flex items-center gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                  <div>
+                    <div className="space-y-3">
+                      {wishlist.map((product) => (
+                        <div
+                          key={product._id}
+                          className="flex items-center gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                        >
+                          {/* Product Image */}
+                          <div className="w-16 h-16 md:w-24 md:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                            <img
+                              src={product.image}
+                              alt={product.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          {/* Product Details */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-inter font-semibold text-sm md:text-base text-gray-900 mb-1 truncate">
+                              {product.title}
+                            </h3>
+                            <p className="font-inter text-xs md:text-sm text-gray-600 mb-1 md:mb-2 line-clamp-1 md:line-clamp-2 hidden sm:block">
+                              {product.description || 'No description available'}
+                            </p>
+                            <p className="font-inter text-base md:text-lg font-semibold text-[#93a267]">
+                              ₹{product.price?.toLocaleString()}
+                            </p>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex flex-col gap-2">
+                            <button
+                              onClick={() => navigate(`/product/${product._id}`)}
+                              className="px-3 md:px-6 py-1.5 md:py-2 bg-[#93a267] text-white font-inter font-medium rounded hover:bg-[#7d8c56] transition-all text-xs md:text-sm whitespace-nowrap"
+                            >
+                              View
+                            </button>
+                            <button
+                              onClick={() => {
+                                handleWishlistModification(product._id, dispatch);
+                              }}
+                              className="px-3 md:px-6 py-1.5 md:py-2 border-2 border-red-500 text-red-500 font-inter font-medium rounded hover:bg-red-50 transition-all text-xs md:text-sm whitespace-nowrap flex items-center justify-center gap-1 md:gap-2"
+                            >
+                              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+                              <span className="hidden sm:inline">Remove</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 md:mt-8 flex justify-center py-4 w-full">
+                      <button
+                        onClick={() => navigate('/shop')}
+                        className="font-inter px-6 md:px-8 py-2 md:py-3 bg-[#93a267] text-white font-semibold rounded hover:bg-[#7d8c56] transition-all text-sm md:text-base flex items-center gap-2"
                       >
-                        {/* Product Image */}
-                        <div className="w-16 h-16 md:w-24 md:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                          <img
-                            src={product.image}
-                            alt={product.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        {/* Product Details */}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-inter font-semibold text-sm md:text-base text-gray-900 mb-1 truncate">
-                            {product.title}
-                          </h3>
-                          <p className="font-inter text-xs md:text-sm text-gray-600 mb-1 md:mb-2 line-clamp-1 md:line-clamp-2 hidden sm:block">
-                            {product.description || 'No description available'}
-                          </p>
-                          <p className="font-inter text-base md:text-lg font-semibold text-[#93a267]">
-                            ₹{product.price?.toLocaleString()}
-                          </p>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2">
-                          <button
-                            onClick={() => navigate(`/product/${product._id}`)}
-                            className="px-3 md:px-6 py-1.5 md:py-2 bg-[#93a267] text-white font-inter font-medium rounded hover:bg-[#7d8c56] transition-all text-xs md:text-sm whitespace-nowrap"
-                          >
-                            View
-                          </button>
-                          <button
-                            onClick={() => {
-                              handleWishlistModification(product._id, dispatch);
-                            }}
-                            className="px-3 md:px-6 py-1.5 md:py-2 border-2 border-red-500 text-red-500 font-inter font-medium rounded hover:bg-red-50 transition-all text-xs md:text-sm whitespace-nowrap flex items-center justify-center gap-1 md:gap-2"
-                          >
-                            <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-                            <span className="hidden sm:inline">Remove</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                        CONTINUE SHOPPING
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

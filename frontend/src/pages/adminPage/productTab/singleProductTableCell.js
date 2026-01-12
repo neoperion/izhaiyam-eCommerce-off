@@ -3,12 +3,12 @@ import { useState } from "react";
 import { AiOutlineDelete, AiOutlineEdit, AiFillPushpin } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { DeleteProductModal } from "./deleteProductModal";
-import { EditAndupdateProductModal } from "./editAndUpdateProductModal";
 import { ProductDetailsModal } from "./productDetailsAdminPage";
+import { useNavigate } from "react-router-dom";
 
 export const SingleProductTableCell = ({ products, serialNo, fetchProductData }) => {
+  const navigate = useNavigate();
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
-  const [isEditAndUpdateModalOn, setIsEditAndUpdateModal] = useState(false);
   const [isProductDetailsModalOn, setIsProductDetailsModalOn] = useState(false);
   const [productDetails, setProductDetails] = useState({
     _id: "",
@@ -50,9 +50,9 @@ export const SingleProductTableCell = ({ products, serialNo, fetchProductData })
     }
   };
 
-  const handleEditAndUpdateClick = async () => {
-    let response = await fetchSpecificProductData(_id, setProductDetails, setIsFetchingUpdatedDataLoading);
-    response && setIsEditAndUpdateModal(true);
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    navigate(`/admin/products/edit/${_id}`);
   };
 
   const handleShowProductDetails = async () => {
@@ -62,21 +62,6 @@ export const SingleProductTableCell = ({ products, serialNo, fetchProductData })
 
   return (
     <>
-      <EditAndupdateProductModal
-        {...{
-          isEditAndUpdateModalOn,
-          setIsEditAndUpdateModal,
-          productDetails,
-          setProductDetails,
-          setIsFetchingUpdatedDataLoading,
-          isFetchingUpdatedDataLoading,
-          fetchProductData,
-        }}
-      />
-      <DeleteProductModal {...{ isDeleteModalOn, setIsDeleteModalOn, _id }} />
-      <ProductDetailsModal
-        {...{ isProductDetailsModalOn, setIsProductDetailsModalOn, productDetails, isFetchingUpdatedDataLoading }}
-      />
       <tr className="hover:bg-lightestSecondaryColor cursor-pointer" onClick={handleShowProductDetails}>
         <td className="p-2 text-black font-inter border border-b-0 border-LightSecondaryColor">{serialNo}</td>
         <td className="p-2 text-black border border-b-0 border-LightSecondaryColor">{_id}</td>
@@ -89,18 +74,28 @@ export const SingleProductTableCell = ({ products, serialNo, fetchProductData })
             <span>{displayOrder}</span>
           </div>
         </td>
-        <td className="p-2  border border-b-0 border-LightSecondaryColor  ">
+        <td className="p-2  border border-b-0 border-LightSecondaryColor  " onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center justify-center gap-2">
             {" "}
             <AiOutlineDelete
-              onClick={() => setIsDeleteModalOn(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDeleteModalOn(true);
+              }}
               className="w-5 h-5 cursor-pointer hover:fill-lightPrimaryColor fill-primaryColor"
             />{" "}
             <AiOutlineEdit
-              onClick={handleEditAndUpdateClick}
+              onClick={handleEditClick}
               className="w-5 h-5 cursor-pointer hover:fill-lightPrimaryColor fill-primaryColor"
             />
           </div>
+          
+          {isDeleteModalOn && <DeleteProductModal {...{ isDeleteModalOn, setIsDeleteModalOn, _id }} />}
+          {isProductDetailsModalOn && (
+            <ProductDetailsModal
+              {...{ isProductDetailsModalOn, setIsProductDetailsModalOn, productDetails, isFetchingUpdatedDataLoading }}
+            />
+          )}
         </td>
       </tr>
     </>

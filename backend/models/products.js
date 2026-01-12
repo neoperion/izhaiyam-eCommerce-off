@@ -63,9 +63,29 @@ const productSchema = new mongoose.Schema(
         hexCode: { type: String }, // Deprecated - use primaryHexCode
         
         imageUrl: { type: String },
-        stock: { type: Number, default: 0 },
+
       },
     ],
+    // New Wood Pricing & A/B Testing Fields
+    isWoodCustomizable: {
+      type: Boolean,
+      default: false,
+    },
+    woodVariants: [
+      {
+        woodType: { type: String, required: true }, // e.g., "Acacia", "Teak"
+        price: { type: Number, required: true },
+
+        isDefault: { type: Boolean, default: false },
+        description: { type: String }, // Optional micro-text like "Premium durability"
+      }
+    ],
+    abTestConfig: {
+      enabled: { type: Boolean, default: false },
+      groupAVariant: { type: String, default: "Acacia" }, // Default for Group A
+      groupBVariant: { type: String, default: "Teak" },   // Default for Group B
+      trafficSplit: { type: Number, default: 50 }, // Percentage for Group A (50 = 50/50)
+    },
     displayOrder: {
       type: Number,
       default: 0,

@@ -135,10 +135,10 @@ const FeaturedProducts = () => {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-12 gap-4">
           <div>
-            <p className="text-xs tracking-widest mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
+            <p className=" font-inter text-xs tracking-widest mb-2 uppercase font-medium" style={{ color: '#93a267' }}>
               CURATED SELECTION
             </p>
-            <h2 className="text-2xl md:text-4xl font-bold" style={{ color: '#93a267' }}>
+            <h2 className=" font-inter text-2xl md:text-4xl font-bold" style={{ color: '#93a267' }}>
               Featured Products
             </h2>
           </div>

@@ -126,7 +126,7 @@ export const TestimonialsSection = () => {
         <p className="font-inter text-xs sm:text-sm tracking-widest uppercase mb-2 font-medium" style={{ color: '#93a267' }}>
           What Our Customers Say
         </p>
-        <h2 className="font-inter text-3xl md:text-4xl font-bold" style={{ color: '#93a267' }}>
+        <h2 className="font-inter text-3xl md:text-4xl font-bold" style={{ color: '#000000' }}>
           Testimonials
         </h2>
       </div>

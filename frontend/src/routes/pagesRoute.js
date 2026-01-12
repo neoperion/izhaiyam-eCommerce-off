@@ -20,13 +20,17 @@ import { AboutUsPage } from "../pages/aboutUsPage";
 import GalleryPage from "../pages/galleryPage";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { AdminDashboard } from "../pages/adminPage/dashboard";
+import { AdminDashboard } from "../pages/adminPage/newDashboard";
 import { ProductManagement } from "../pages/adminPage/productTab/";
+import { AddNewProduct } from "../pages/adminPage/productTab/addNewProduct";
+import { EditAndupdateProductModal } from "../pages/adminPage/productTab/editAndUpdateProductModal";
 import { UserManagement } from "../pages/adminPage/user";
 import { AdminManagement } from "../pages/adminPage/adminManagement/admins";
 import OrdersManagement from "../pages/adminPage/OrdersManagement";
+import OrderDetails from "../pages/adminPage/OrderDetails";
 import { SettingsPage } from "../pages/adminPage/settings";
 import InstagramGalleryManager from "../pages/adminPage/InstagramGalleryManager";
+import NotificationsProtocol from "../pages/adminPage/Notifications";
 
 
 const PagesRoute = ({ setIsCartSectionActive }) => {
@@ -61,10 +65,15 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="product-Management" element={<ProductManagement />} />
           <Route path="products" element={<ProductManagement />} />
+          <Route path="products/add" element={<AddNewProduct />} />
+          <Route path="products/edit/:id" element={<EditAndupdateProductModal />} />
+
           <Route path="orders-Management" element={<OrdersManagement />} />
+          <Route path="orders-management/:id" element={<OrderDetails />} />
           <Route path="user-Management" element={<UserManagement />} />
           <Route path="admin-Management" element={<AdminManagement />} />
           <Route path="instagram-gallery" element={<InstagramGalleryManager />} />
+          <Route path="notifications" element={<NotificationsProtocol />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

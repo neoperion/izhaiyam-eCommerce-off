@@ -3,45 +3,160 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
+import { useNavigate, useParams } from "react-router-dom";
+import AdminLayout from "../../../components/admin/AdminLayout";
 
-export const EditAndupdateProductModal = ({
-  isEditAndUpdateModalOn,
-  setIsEditAndUpdateModal,
-  productDetails,
-  setProductDetails,
-  setIsFetchingUpdatedDataLoading,
-  isFetchingUpdatedDataLoading,
-  fetchProductData,
-}) => {
+export const EditAndupdateProductModal = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [isFetchingUpdatedDataLoading, setIsFetchingUpdatedDataLoading] = useState(false);
+  const [productDetails, setProductDetails] = useState({
+    title: "",
+    stock: "",
+    price: "",
+    discountPercentValue: "",
+    isFeatured: "no",
+    isCustomizable: "no",
+    displayOrder: "",
+    isPinned: "no",
+    description: "",
+    categories: {
+      "Featured": [],
+      location: [],
+      categories: [],
+      others: [],
+    },
+    image: "",
+    image: "",
+    colorVariants: [],
+    // New fields
+    woodVariants: [],
+    abTestConfig: {}
+  });
+
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
-  const { _id, title, stock, price, discountPercentValue, categories, image, isFeatured, description, isCustomizable: initialIsCustomizable, colorVariants: initialColorVariants, displayOrder, isPinned } = productDetails;
+  useEffect(() => {
+    const fetchProductData = async () => {
+      setIsFetchingUpdatedDataLoading(true);
+      try {
+        const { data: { product } } = await axios.get(`${serverUrl}/api/v1/products/getProduct/${id}`);
+        
+        // Ensure consistent data structure
+        const formattedProduct = {
+          ...product,
+          isFeatured: product.isFeatured ? "yes" : "no",
+          isPinned: product.isPinned ? "yes" : "no",
+          isCustomizable: product.isCustomizable ? "yes" : "no",
+          // Map Backend Schema -> Frontend Keys
+          categories: {
+              "Featured": product.categories?.["Featured Categories"] || [],
+              location: product.categories?.location || [],
+              categories: product.categories?.features || [],
+              others: product.categories?.others || [],
+          }
+        };
+        
+        setProductDetails(formattedProduct);
+        
+        if (product.colorVariants) {
+          setColorVariants(product.colorVariants);
+        }
+        if (product.isCustomizable) {
+          setIsCustomizable("yes");
+        } else {
+            setIsCustomizable("no");
+        }
+
+        if (product.isCustomizable) {
+          setIsCustomizable("yes");
+        } else {
+            setIsCustomizable("no");
+        }
+        
+        // Load Wood Config
+        if (product.isWoodCustomizable) {
+           setIsWoodCustomizable("yes");
+           setWoodVariants(product.woodVariants || []);
+           setAbTestConfig(product.abTestConfig || { enabled: false, groupAVariant: "Acacia", groupBVariant: "Teak", trafficSplit: 50 });
+        } else {
+           setIsWoodCustomizable("no");
+        }
+
+        setIsFetchingUpdatedDataLoading(false);
+      } catch (error) {
+        setIsFetchingUpdatedDataLoading(false);
+        toast.error("Failed to fetch product data");
+        navigate('/admin/products');
+      }
+    };
+
+    if (id) {
+      fetchProductData();
+    }
+  }, [id, serverUrl, navigate]);
+
+  const { title, stock, price, discountPercentValue, categories, image, description } = productDetails;
 
   // Color Variants State
-  const [isCustomizable, setIsCustomizable] = useState(initialIsCustomizable ? "yes" : "no");
-  const [colorVariants, setColorVariants] = useState(initialColorVariants || []);
+  const [isCustomizable, setIsCustomizable] = useState("no");
+  const [colorVariants, setColorVariants] = useState([]);
   const [newColor, setNewColor] = useState({ 
     primaryColorName: "", 
     primaryHexCode: "#000000", 
     secondaryColorName: "", 
     secondaryHexCode: "#000000",
     isDualColor: false,
-    stock: 0, 
+ 
     imageUrl: "" 
   });
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
 
+  // Wood Variants State
+  const [isWoodCustomizable, setIsWoodCustomizable] = useState("no");
+  const [woodVariants, setWoodVariants] = useState([]);
+  const [newWood, setNewWood] = useState({
+    woodType: "",
+    price: "",
+
+    description: "",
+    isDefault: false
+  });
+  const [abTestConfig, setAbTestConfig] = useState({
+    enabled: false,
+    groupAVariant: "Acacia",
+    groupBVariant: "Teak",
+    trafficSplit: 50
+  });
+
+  // Sync state when details load
   useEffect(() => {
-    if (initialColorVariants) {
-      setColorVariants(initialColorVariants);
-    }
-    setIsCustomizable(initialIsCustomizable ? "yes" : "no");
-  }, [initialColorVariants, initialIsCustomizable]);
+      // This logic is already handled in the fetch function, but double check
+      if (productDetails.isCustomizable === "yes") setIsCustomizable("yes");
+      else setIsCustomizable("no");
+      
+      if (productDetails.colorVariants) setColorVariants(productDetails.colorVariants);
+
+      // Sync Wood Config
+      if (productDetails.isWoodCustomizable === "yes" || productDetails.isWoodCustomizable === true) {
+         setIsWoodCustomizable("yes");
+         // Only overwrite if array is present to avoid wiping via empty update
+         if (productDetails.woodVariants && productDetails.woodVariants.length > 0) {
+             setWoodVariants(productDetails.woodVariants);
+         }
+         if (productDetails.abTestConfig) {
+             setAbTestConfig(productDetails.abTestConfig);
+         }
+      } else {
+         setIsWoodCustomizable("no");
+      }
+  }, [productDetails]);
+
 
   const productCategories = {
-    "Featured Categories": ["featured", "first order deal", "discounts"],
+    "Featured": ["featured", "first order deal", "discounts"],
     location: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"],
-    features: ["chairs", "table", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
+    categories: ["chairs", "table", "sets", "cupboards", "lighting", "sofa", "cot", "diwan", "swing"],
     others: ["kids"],
   };
 
@@ -49,7 +164,6 @@ export const EditAndupdateProductModal = ({
 
   const handleCategoryChange = (categoryName, selectedValue) => {
     if (selectedValue === "") {
-      // If empty option selected, remove the category
       setProductDetails((prev) => ({
         ...prev,
         categories: {
@@ -58,7 +172,6 @@ export const EditAndupdateProductModal = ({
         },
       }));
     } else {
-      // Set single selected value for that category
       setProductDetails((prev) => ({
         ...prev,
         categories: {
@@ -78,7 +191,16 @@ export const EditAndupdateProductModal = ({
       title,
       description,
       image,
-      categories,
+      title,
+      description,
+      image,
+      // Map Frontend Keys -> Backend Schema
+      categories: {
+          "Featured Categories": categories["Featured"] || [],
+          location: categories.location || [],
+          features: categories.categories || [],
+          others: categories.others || []
+      },
       price: parseFloat(price),
       stock: parseInt(stock),
       discountPercentValue,
@@ -89,14 +211,25 @@ export const EditAndupdateProductModal = ({
       isPinned: productDetails.isPinned === "yes",
       colorVariants: isCustomizable === "yes" ? colorVariants.map(c => ({
         variantName: c.variantName,
-        primaryColorName: c.primaryColorName || c.colorName, // Support legacy
-        primaryHexCode: c.primaryHexCode || c.hexCode, // Support legacy
+        primaryColorName: c.primaryColorName || c.colorName,
+        primaryHexCode: c.primaryHexCode || c.hexCode,
         secondaryColorName: c.secondaryColorName || "",
         secondaryHexCode: c.secondaryHexCode || "",
         isDualColor: c.isDualColor || false,
         imageUrl: c.imageUrl,
-        stock: parseInt(c.stock) || 0
+
       })) : [],
+      
+      // Wood Variants & AB Test Data
+      isWoodCustomizable: isWoodCustomizable === "yes",
+      woodVariants: isWoodCustomizable === "yes" ? woodVariants.map(w => ({
+        woodType: w.woodType,
+        price: parseFloat(w.price) || 0,
+
+        description: w.description,
+        isDefault: w.isDefault
+      })) : [],
+      abTestConfig: isWoodCustomizable === "yes" ? abTestConfig : { enabled: false },
     };
     console.log("Frontend Update Payload:", formData);
 
@@ -105,36 +238,12 @@ export const EditAndupdateProductModal = ({
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || " ";
 
-      const data = await axios.patch(`${serverUrl}/api/v1/products/editAndupdateProduct/${_id}`, formData, {
+      await axios.patch(`${serverUrl}/api/v1/products/editAndupdateProduct/${id}`, formData, {
         headers: {
           authorization: `Bearer ${LoginToken}`,
           "Content-Type": "application/json",
         },
       });
-
-      //resetting  form datas to default after submits
-      imgRef.current.value = null;
-      setProductDetails({
-        title: "",
-        stock: "",
-        price: "",
-        discountPercentValue: "",
-        isFeatured: "no",
-
-        isCustomizable: "no",
-        displayOrder: "",
-        isPinned: "no",
-        description: "",
-        categories: {
-          "Featured Categories": [],
-          location: [],
-          features: [],
-          others: [],
-        },
-        image: "",
-      });
-
-      imgRef.current.nextElementSibling.style.display = "none";
 
       toast.update(asyncCreateProductToastId, {
         render: "Product data has sucessfully been updated",
@@ -144,8 +253,8 @@ export const EditAndupdateProductModal = ({
       });
 
       setIsFetchingUpdatedDataLoading(false);
-      setIsEditAndUpdateModal(false);
-      fetchProductData && fetchProductData();
+      navigate('/admin/products');
+      
     } catch (error) {
       let errMessage;
 
@@ -259,7 +368,6 @@ export const EditAndupdateProductModal = ({
       secondaryColorName: "", 
       secondaryHexCode: "#000000",
       isDualColor: false,
-      stock: 0, 
       imageUrl: "" 
     });
   };
@@ -270,24 +378,35 @@ export const EditAndupdateProductModal = ({
     setColorVariants(updatedVariants);
   };
 
+  // Wood Variant Handlers
+  const addWoodVariant = () => {
+    if (!newWood.woodType || !newWood.price) {
+      toast.error("Please provide Wood Type and Price");
+      return;
+    }
+    setWoodVariants([...woodVariants, { ...newWood }]);
+    setNewWood({ woodType: "", price: "", description: "", isDefault: false });
+  };
+
+  const removeWoodVariant = (index) => {
+    const updated = [...woodVariants];
+    updated.splice(index, 1);
+    setWoodVariants(updated);
+  };
+
   return (
-    <>
-      {" "}
+    <AdminLayout>
       {isFetchingUpdatedDataLoading && <FullpageSpinnerLoader />}
-      <div
-        className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 flex items-center justify-center overflow-y-auto  h-[100vh]  z-[3000] translate-y-[100%] ${isEditAndUpdateModalOn && "translate-y-0"
-          } `}
-      >
-        <div className="fixed inset-0 transition-opacity">
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-[99%] h-[98%] shadow-xl transform transition-all sm:max-w-3xl sm:w-full">
-          <h2 className="text-xl sm:text-2xl font-bold text-center text-black">Update existing product</h2>
-          <AiOutlineClose
-            className="w-9 h-9 fill-primaryColor absolute right-5 cursor-pointer top-5"
-            onClick={() => setIsEditAndUpdateModal(false)}
-          />
-          <form action="" className="pt-8" onSubmit={UpdateProduct}>
+      <div className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] my-6">
+        <div className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-y-auto w-full shadow-md sm:max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-center text-black">Update existing product</h2>
+            <AiOutlineClose
+              className="w-8 h-8 fill-primaryColor cursor-pointer hover:fill-red-600 transition-colors"
+              onClick={() => navigate('/admin/products')}
+            />
+          </div>
+          <form action="" className="" onSubmit={UpdateProduct}>
             <div className="mb-6">
               <label className="block font-medium mb-2 text-black">Title</label>
               <input
@@ -314,8 +433,8 @@ export const EditAndupdateProductModal = ({
                 rows="4"
               />
             </div>
-            <div className="mb-6 flex gap-[2%] items-end justify-between">
-              <div className="w-[30%]">
+            <div className="mb-6 flex flex-wrap lg:flex-nowrap gap-[2%] items-end justify-between">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="price" className="font-bold text-black">
                   Price
                 </label>
@@ -331,7 +450,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%] mb-4 lg:mb-0">
                 <label htmlFor="stock" className="font-bold text-black">
                   Stock
                 </label>
@@ -347,7 +466,7 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%] mb-4 lg:mb-0">
                 <label htmlFor="discount" className="font-bold text-black">
                   Discount(%)
                 </label>
@@ -363,11 +482,11 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[20%]">
+              <div className="w-full lg:w-[20%]">
                 <label htmlFor="featured" className="font-bold block mb-2 text-black">Featured</label>
                 <select
                   id="featured"
-                  value={productDetails.isFeatured === true ? "yes" : "no"}
+                  value={productDetails.isFeatured === "yes" ? "yes" : "no"}
                   onChange={(e) => {
                     setProductDetails((prevData) => ({
                       ...prevData,
@@ -382,8 +501,8 @@ export const EditAndupdateProductModal = ({
               </div>
             </div>
 
-            <div className="mb-6 flex gap-[2%] items-end justify-between">
-              <div className="w-[30%]">
+            <div className="mb-6 flex flex-wrap lg:flex-nowrap gap-[2%] items-end justify-between">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="displayOrder" className="font-bold text-black">
                   Display Order
                 </label>
@@ -399,11 +518,11 @@ export const EditAndupdateProductModal = ({
                   className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="w-[30%]">
+              <div className="w-full lg:w-[30%] mb-4 lg:mb-0">
                 <label htmlFor="pinned" className="font-bold block mb-2 text-black">Pin to Top</label>
                 <select
                   id="pinned"
-                  value={productDetails.isPinned === true ? "yes" : "no"}
+                  value={productDetails.isPinned === "yes" ? "yes" : "no"}
                   onChange={(e) => {
                     setProductDetails((prevData) => ({
                       ...prevData,
@@ -416,7 +535,7 @@ export const EditAndupdateProductModal = ({
                   <option value="yes">Yes</option>
                 </select>
               </div>
-              <div className="w-[35%]">
+              <div className="w-full lg:w-[35%]">
                 <label htmlFor="customizable" className="font-bold block mb-2 text-black">Color Customization</label>
                 <select
                   id="customizable"
@@ -433,7 +552,7 @@ export const EditAndupdateProductModal = ({
             <section>
               <h2 className="text-lg font-bold mb-2 text-black">Select product categories</h2>
               <div className="mb-6">
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {Object.keys(productCategories).map((categoryTitle) => {
                     return (
                       <div key={categoryTitle} className="border border-gray-300 p-3 rounded-lg">
@@ -507,15 +626,7 @@ export const EditAndupdateProductModal = ({
                       className="h-[40px] w-[60px] p-1 border rounded cursor-pointer"
                     />
                   </div>
-                  <div className="w-[100px]">
-                    <label className="block text-sm font-medium mb-1 text-black">Stock</label>
-                    <input
-                      type="number"
-                      value={newColor.stock}
-                      onChange={(e) => setNewColor({ ...newColor, stock: e.target.value === '' ? '' : parseInt(e.target.value) })}
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
+
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1 text-black">Image</label>
                     <input
@@ -557,7 +668,7 @@ export const EditAndupdateProductModal = ({
                           <img src={variant.imageUrl} alt={displayName} className="w-12 h-12 object-cover rounded" />
                           <div className="flex-1">
                             <p className="font-bold text-black">{displayName}</p>
-                            <p className="text-sm text-black">Stock: {variant.stock}</p>
+
                           </div>
                           <button
                             type="button"
@@ -570,6 +681,121 @@ export const EditAndupdateProductModal = ({
                       );
                     })}
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Wood Variants Section */}
+            <div className="mb-4">
+               <div className="w-full lg:w-[35%] mb-4">
+                <label htmlFor="woodCustomizable" className="font-bold block mb-2 text-black">Wood Type Selection</label>
+                <select
+                  id="woodCustomizable"
+                  value={isWoodCustomizable}
+                  onChange={(e) => setIsWoodCustomizable(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="no">Disabled</option>
+                  <option value="yes">Enabled</option>
+                </select>
+              </div>
+            </div>
+
+            {isWoodCustomizable === "yes" && (
+              <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-yellow-50/20">
+                <h2 className="text-lg font-bold mb-4 text-black">Wood Type Pricing</h2>
+                
+                {/* A/B Test Config Toggle */}
+                 <div className="mb-4 flex items-center gap-4">
+                    <label className="font-medium text-black">Enable A/B Testing?</label>
+                     <input 
+                      type="checkbox" 
+                      checked={abTestConfig.enabled} 
+                      onChange={(e) => setAbTestConfig({...abTestConfig, enabled: e.target.checked})}
+                      className="w-5 h-5 accent-[#93a267]"
+                     />
+                     {abTestConfig.enabled && <span className="text-sm text-gray-500">(Acacia vs Teak Split)</span>}
+                 </div>
+
+                {/* Add Wood Input */}
+                <div className="flex flex-wrap gap-4 items-end mb-4 p-4 bg-white border border-gray-200 rounded">
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Wood Type *</label>
+                    <input
+                      type="text"
+                      value={newWood.woodType}
+                      onChange={(e) => setNewWood({ ...newWood, woodType: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="e.g. Teak"
+                    />
+                  </div>
+                  <div className="w-[120px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Price *</label>
+                    <input
+                      type="number"
+                      value={newWood.price}
+                      onChange={(e) => setNewWood({ ...newWood, price: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="₹"
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="block text-sm font-medium mb-1 text-black">Description (Optional)</label>
+                    <input
+                      type="text"
+                      value={newWood.description}
+                      onChange={(e) => setNewWood({ ...newWood, description: e.target.value })}
+                      className="w-full p-2 border rounded"
+                      placeholder="e.g. Premium durability"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                     <label className="text-sm font-medium text-black">Default?</label>
+                     <input 
+                      type="checkbox" 
+                      checked={newWood.isDefault} 
+                      onChange={(e) => setNewWood({...newWood, isDefault: e.target.checked})}
+                      className="w-5 h-5 accent-[#93a267]"
+                     />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addWoodVariant}
+                    className="bg-[#93a267] text-white px-4 py-2 rounded hover:bg-[#7a8856] transition-colors"
+                  >
+                    Add Wood
+                  </button>
+                </div>
+
+                {/* List Wood Variants */}
+                {woodVariants.length > 0 && (
+                   <div className="space-y-3">
+                      <div className="grid grid-cols-5 font-bold border-b pb-2 mb-2 bg-gray-100 p-2 rounded">
+                         <div className="col-span-1">Type</div>
+                         <div className="col-span-1">Price</div>
+
+                         <div className="col-span-1">Default</div>
+                         <div className="col-span-1">Action</div>
+                      </div>
+                      {woodVariants.map((wood, idx) => (
+                        <div key={idx} className="grid grid-cols-5 items-center p-2 border-b">
+                           <div className="font-medium text-black">{wood.woodType}</div>
+                           <div className="text-black">₹{wood.price}</div>
+
+                           <div className="text-black">{wood.isDefault ? "Yes" : "-"}</div>
+                           <div>
+                              <button
+                                type="button"
+                                onClick={() => removeWoodVariant(idx)}
+                                className="text-red-500 hover:text-red-700 font-bold"
+                              >
+                                Remove
+                              </button>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
                 )}
               </div>
             )}
@@ -604,6 +830,6 @@ export const EditAndupdateProductModal = ({
           </form>
         </div>
       </div>
-    </>
+    </AdminLayout>
   );
 };

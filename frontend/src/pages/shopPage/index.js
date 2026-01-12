@@ -54,10 +54,14 @@ const Index = () => {
     );
   }, [currentPageNo, NoOfProductsPerPage, placeholderOfproductsDataCurrentlyRequested, dispatch]);
 
-  // Scroll to top when page changes
+  // Scroll to top when page changes or component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPageNo]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSortingCriteriaSelection = (e) => {
     if (e.target.dataset.list) {
@@ -82,13 +86,13 @@ const Index = () => {
       {/* Mobile & Tablet Trigger (Floating) */}
       <div className="fixed left-4 bottom-6 lg:hidden z-40">
         <button
-          className="text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 animate-pulse"
+          className="text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300"
           style={{ backgroundColor: '#93A267' }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#7d8c56'; e.currentTarget.classList.remove('animate-pulse'); }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#93A267'; e.currentTarget.classList.add('animate-pulse'); }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#7d8c56'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#93A267'; }}
           onClick={() => setIsFilterBySectionOpen(true)}
         >
-          <FilterTriggerIcon className="w-8 h-8 fill-white text-white" />
+          <FilterTriggerIcon className="w-5 h-5 fill-white text-white" />
         </button>
       </div>
 
@@ -194,7 +198,7 @@ const Index = () => {
                 ) : placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
                   <>
                     {/* Products Grid */}
-                    <section className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                    <section className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-6 mb-12">
                       {productsDataForCurrentPage.map((productsData, index) => {
                         return <SingleProductBox key={index} productsData={productsData} />;
                       })}

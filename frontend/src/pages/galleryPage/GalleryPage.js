@@ -12,12 +12,12 @@ const GalleryPage = () => {
   // YouTube videos configuration (Preserved)
   const youtubeVideos = [
     {
-      id: 'dQw4w9WgXcQ', 
+      id: 'dQw4w9WgXcQ',
       title: 'Handcrafted Furniture Making Process',
       description: 'Watch our artisans craft beautiful furniture pieces'
     },
     {
-      id: 'dQw4w9WgXcQ', 
+      id: 'dQw4w9WgXcQ',
       title: 'Behind the Scenes: Workshop Tour',
       description: 'Explore our traditional woodworking workshop'
     },
@@ -92,7 +92,7 @@ const GalleryPage = () => {
 
 
   return (
-    <motion.div 
+    <motion.div
       className="gallery-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -103,13 +103,13 @@ const GalleryPage = () => {
         <div className="container-page">
           <div className="hero-icon">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="12" r="10" fill="#E63946"/>
+              <circle cx="12" cy="12" r="10" fill="#E63946" />
             </svg>
           </div>
-          <h1 className="gallery-hero-title font-display">
+          <h1 className="gallery-hero-title font-inter">
             Discover <span className="highlight">Furniture</span>
           </h1>
-          <h2 className="gallery-hero-subtitle font-display">Inspiration</h2>
+          <h2 className="gallery-hero-subtitle font-inter">Inspiration</h2>
           <p className="gallery-hero-text font-inter">
             Explore the elegance of our handcrafted furniture pieces.
           </p>
@@ -119,7 +119,7 @@ const GalleryPage = () => {
       <section className="instagram-section section-padding">
         <div className="container-page">
           {loading ? (
-             <div className="loading-state" style={{ textAlign: 'center', padding: '50px' }}>Loading Gallery...</div>
+            <div className="loading-state" style={{ textAlign: 'center', padding: '50px' }}>Loading Gallery...</div>
           ) : instagramPosts.length > 0 ? (
             <div className="instagram-grid">
               {instagramPosts.map((post, index) => (
@@ -128,52 +128,52 @@ const GalleryPage = () => {
                   ref={attachObserver}
                   data-id={`instagram-${index}`}
                   className={`instagram-card ${visibleItems.has(`instagram-${index}`) ? 'visible' : ''}`}
-                  style={{ 
-                      background: '#000', 
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)', 
-                      borderRadius: '8px', 
-                      overflow: 'hidden',
-                      position: 'relative'
+                  style={{
+                    background: '#000',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    position: 'relative'
                   }}
                 >
                   {/* Video Wrapper 9:16 Aspect Ratio */}
-                  <div style={{ position: 'relative', overflow: 'hidden', paddingTop: '177.77%' }}> 
-                        <iframe 
-                        src={`${post.embedUrl}/captioned/?autoplay=0&muted=1&playsinline=1`} 
-                        title={`Instagram post ${index}`}
-                        style={{ 
-                            position: 'absolute', 
-                            top: 0, 
-                            left: 0, 
-                            width: '100%', 
-                            height: '100%', 
-                            border: 'none',
-                            background: '#000'
-                        }} 
-                        scrolling="no" 
-                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                        loading="lazy"
-                      ></iframe>
+                  <div style={{ position: 'relative', overflow: 'hidden', paddingTop: '177.77%' }}>
+                    <iframe
+                      src={`${post.embedUrl}/captioned/?autoplay=0&muted=1&playsinline=1`}
+                      title={`Instagram post ${index}`}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        border: 'none',
+                        background: '#000'
+                      }}
+                      scrolling="no"
+                      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                      loading="lazy"
+                    ></iframe>
                   </div>
-                  
+
                   <div style={{ padding: '15px', background: '#fff' }}>
-                    <a 
-                        href={post.instagramUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ fontSize: '14px', color: '#0095f6', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    <a
+                      href={post.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: '14px', color: '#0095f6', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
                     >
-                        View on Instagram <span>↗</span>
+                      View on Instagram <span>↗</span>
                     </a>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-             <div className="empty-state" style={{ textAlign: 'center', padding: '50px' }}>
-                <h3 className="font-display" style={{ fontSize: '24px', marginBottom: '10px' }}>Gallery updating soon.</h3>
-                <p className="font-inter" style={{ color: '#666' }}>Follow us on Instagram.</p>
-             </div>
+            <div className="empty-state" style={{ textAlign: 'center', padding: '50px' }}>
+              <h3 className="font-inter" style={{ fontSize: '24px', marginBottom: '10px' }}>Gallery updating soon.</h3>
+              <p className="font-inter" style={{ color: '#666' }}>Follow us on Instagram.</p>
+            </div>
           )}
         </div>
       </section>
@@ -183,7 +183,7 @@ const GalleryPage = () => {
       <section className="youtube-section section-padding">
         <div className="container-page">
           <div className="section-header">
-            <h2 className="section-title font-display">YouTube Showcase</h2>
+            <h2 className="section-title font-inter">YouTube Showcase</h2>
           </div>
           <div className="youtube-grid">
             {youtubeVideos.map((video, index) => (

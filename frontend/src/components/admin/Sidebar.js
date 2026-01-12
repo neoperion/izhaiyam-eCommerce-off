@@ -6,10 +6,7 @@ import {
   Package,
   ShoppingCart,
   Users,
-  BarChart3,
   Settings,
-  Tag,
-  MessageSquare,
   LogOut,
   Image
 } from 'lucide-react';

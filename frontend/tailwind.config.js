@@ -75,9 +75,10 @@ module.exports = {
       },
       fontFamily: {
         // Primary fonts - Inter as default
-        display: ["Playfair Display", "Georgia", "serif"],
+        // Primary fonts - All mapped to Inter for consistency
+        display: ["Inter", "system-ui", "sans-serif"],
         inter: ["Inter", "system-ui", "sans-serif"],
-        outfit: ["Inter", "Outfit", "system-ui", "sans-serif"],
+        outfit: ["Inter", "system-ui", "sans-serif"],
         body: ["Inter", "system-ui", "sans-serif"],
 
         // Legacy support - all use Inter now
