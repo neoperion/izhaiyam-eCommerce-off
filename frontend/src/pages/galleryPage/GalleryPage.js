@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './GalleryPage.css';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import API from '../../config';
 
 const GalleryPage = () => {
   const [visibleItems, setVisibleItems] = useState(new Set());
@@ -48,7 +49,7 @@ const GalleryPage = () => {
 
     const fetchInstagramPosts = async () => {
       try {
-        const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+        const serverUrl = API;
         const response = await axios.get(`${serverUrl}/api/v1/instagram/public`);
         if (response.data && response.data.posts) {
           setInstagramPosts(response.data.posts);
