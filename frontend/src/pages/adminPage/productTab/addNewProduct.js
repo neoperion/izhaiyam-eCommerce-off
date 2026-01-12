@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import API from "../../../config";
 import AdminLayout from "../../../components/admin/AdminLayout";
 
 export const AddNewProduct = () => {
@@ -32,7 +33,7 @@ export const AddNewProduct = () => {
     secondaryColorName: "", 
     secondaryHexCode: "#000000",
     isDualColor: false,
- 
+  
     imageUrl: "" 
   });
 
@@ -83,7 +84,7 @@ export const AddNewProduct = () => {
   const createProduct = async (e) => {
     e.preventDefault();
 
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+    const serverUrl = API;
 
     const formData = {
       title: productTitle,
@@ -174,7 +175,7 @@ export const AddNewProduct = () => {
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || " ";
-      const { data } = await axios.post("http://localhost:5000/api/v1/products/upload", formData, {
+      const { data } = await axios.post(`${API}/api/v1/products/upload`, formData, {
         headers: {
           authorization: `Bearer ${LoginToken}`,
           "Content-Type": "multipart/form-data",
@@ -216,7 +217,7 @@ export const AddNewProduct = () => {
     setUploadingVariantImage(true);
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || " ";
-      const { data } = await axios.post("http://localhost:5000/api/v1/products/upload", formData, {
+      const { data } = await axios.post(`${API}/api/v1/products/upload`, formData, {
         headers: {
           authorization: `Bearer ${LoginToken}`,
           "Content-Type": "multipart/form-data",

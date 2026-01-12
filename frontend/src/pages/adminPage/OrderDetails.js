@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API from '../../config';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { ArrowLeft, Package, User, MapPin, CreditCard } from 'lucide-react';
 import { ProductLoader } from '../../components/loaders/productLoader';
@@ -8,7 +9,7 @@ import { ProductLoader } from '../../components/loaders/productLoader';
 const OrderDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+    const serverUrl = API;
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);

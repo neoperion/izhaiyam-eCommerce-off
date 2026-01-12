@@ -3,6 +3,7 @@ import axios from "axios";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import API from "../../config";
 import AdminLayout from '../../components/admin/AdminLayout';
 import OrderTracking from './OrderTracking';
 
@@ -56,7 +57,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
   const deleteOrder = async (id) => {
       if(!window.confirm("Are you sure you want to delete this order?")) return;
       try {
-          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
           await axios.delete(`${serverUrl}/orders/admin/order/${id}`, {
              headers: { authorization: `Bearer ${LoginToken}` }
@@ -71,7 +72,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
 
   const exportSingleOrder = async (id) => {
       try {
-          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
           
           toast.info("Exporting order...");
@@ -98,7 +99,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
   const handleTrackingClick = async () => {
       setLoadingTracking(true);
       try {
-          const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+          const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
           
           // Fetch full details to get current tracking info
@@ -178,7 +179,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
 
 const OrdersManagement = () => {
   const navigate = useNavigate();
-  const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+  const serverUrl = API;
 
   const [ordersParams, setOrdersParams] = useState({
     orders: [],

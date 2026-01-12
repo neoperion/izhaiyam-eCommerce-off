@@ -4,8 +4,10 @@ import axios from 'axios';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import FeaturedProductCard from './FeaturedProductCard';
 import { useSelector } from 'react-redux';
+import API from '../../config';
 
-const FeaturedProducts = () => {
+const FeaturedProducts = () =>
+{
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const scrollContainerRef = useRef(null);
@@ -13,12 +15,14 @@ const FeaturedProducts = () => {
     // Get wishlist from Redux (same as shop page)
     const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
 
-    useEffect(() => {
-        const fetchFeaturedProducts = async () => {
+    useEffect(() =>
+    {
+        const fetchFeaturedProducts = async () =>
+        {
             try {
                 setLoading(true);
                 // Fetch only featured products, limit to 8 for 2 rows
-                const { data } = await axios.get('/api/v1/products?featured=true&limit=8');
+                const { data } = await axios.get(`${API}/api/v1/products?featured=true&limit=8`);
                 setProducts(data.products || []);
             } catch (error) {
                 console.error('Failed to fetch featured products:', error);

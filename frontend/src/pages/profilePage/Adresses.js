@@ -3,13 +3,14 @@ import { AddressModal } from './AddressModal';
 import { FaHome, FaBriefcase, FaTrash, FaCheckCircle, FaStar } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import API from "../../config";
 
 export const Adresses = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [savedAddresses, setSavedAddresses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+    const serverUrl = API;
 
     const getAuthToken = () => {
         const userData = localStorage.getItem("UserData");

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
 import { useNavigate, useParams } from "react-router-dom";
-import API from "../../../../config";
+import API from "../../../config";
 import AdminLayout from "../../../components/admin/AdminLayout";
 
 export const EditAndupdateProductModal = () => {

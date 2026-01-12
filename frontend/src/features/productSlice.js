@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import API from "../config";
 
 const initialState = {
   allProductsData: [],
@@ -13,7 +14,7 @@ const initialState = {
   fetchingError: null,
 };
 
-const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+const serverUrl = API;
 
 export const getAllProductsData = createAsyncThunk("products/getAllProductsData", async (_, thunkAPI) => {
   try {

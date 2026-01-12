@@ -1,7 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import API from "../../config";
 
-const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+const serverUrl = API;
 
 export const RegisterUser = createAsyncThunk("users/register", async (userParameter, thunkAPI) => {
   try {

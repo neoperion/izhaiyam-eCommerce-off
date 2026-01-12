@@ -9,6 +9,7 @@ import { getAllProductsData } from "../../features/productSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
+import API from "../../config";
 
 export const CheckoutPage = ({ setIsCartSectionActive }) => {
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
@@ -55,7 +56,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
       const parsed = JSON.parse(userData);
       const token = parsed.loginToken;
-      const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+      const serverUrl = API;
 
       try {
         const response = await axios.get(`${serverUrl}/api/v1/address`, {
@@ -147,7 +148,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
   const placeOrderFn = async (e) => {
     e.preventDefault();
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000/";
+    const serverUrl = API;
 
     // 1. Load Razorpay Script
     const isScriptLoaded = await loadRazorpay();
@@ -158,7 +159,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
     try {
       // 2. Create Order on Backend (Validates Stock)
-      const { data: { key, id: order_id, currency, amount } } = await axios.post(`${serverUrl}orders/create-razorpay-order`, {
+      const { data: { key, id: order_id, currency, amount } } = await axios.post(`${serverUrl}/orders/create-razorpay-order`, {
         amount: totalAmountToBePaid,
         products: orderDetails.products // Send products for stock check
       });
@@ -175,7 +176,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
         handler: async function (response) {
           // 4. Verify Payment
           try {
-            const verifyRes = await axios.post(`${serverUrl}orders/verify-payment`, {
+            const verifyRes = await axios.post(`${serverUrl}/orders/verify-payment`, {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
