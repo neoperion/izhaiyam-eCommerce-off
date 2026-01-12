@@ -191,9 +191,6 @@ export const EditAndupdateProductModal = () => {
       title,
       description,
       image,
-      title,
-      description,
-      image,
       // Map Frontend Keys -> Backend Schema
       categories: {
           "Featured Categories": categories["Featured"] || [],

@@ -22,6 +22,14 @@ const createProducts = async (req, res) => {
       req.body.displayOrder = lastProduct && lastProduct.displayOrder ? lastProduct.displayOrder + 1 : 1;
   }
 
+  // Robust boolean casting
+  if (req.body.isFeatured !== undefined) {
+    req.body.isFeatured = req.body.isFeatured === true || req.body.isFeatured === "true" || req.body.isFeatured === "yes";
+  }
+  if (req.body.isPinned !== undefined) {
+      req.body.isPinned = req.body.isPinned === true || req.body.isPinned === "true" || req.body.isPinned === "yes";
+  }
+
   const product = await Product.create(req.body);
   console.log("Created Product:", product);
   
@@ -87,6 +95,7 @@ const getAspecificProduct = async (req, res) => {
     image: 1,
     description: 1,
     colors: 1,
+    isFeatured: 1,
     isCustomizable: 1,
     colorVariants: 1,
     displayOrder: 1,
@@ -163,6 +172,14 @@ const updateAspecificProduct = async (req, res) => {
           }
       }
       updatedData.displayOrder = newOrder;
+  }
+
+  // Robust boolean casting
+  if (updatedData.isFeatured !== undefined) {
+      updatedData.isFeatured = updatedData.isFeatured === true || updatedData.isFeatured === "true" || updatedData.isFeatured === "yes";
+  }
+  if (updatedData.isPinned !== undefined) {
+      updatedData.isPinned = updatedData.isPinned === true || updatedData.isPinned === "true" || updatedData.isPinned === "yes";
   }
 
   console.log("Update Product Request Body:", updatedData);
