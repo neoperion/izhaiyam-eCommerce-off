@@ -131,7 +131,9 @@ const userSchema = mongoose.Schema(
         tracking: {
           carrier: String,
           trackingId: String,
-          trackingUrl: String
+          trackingUrl: String,
+          liveLocationUrl: String,
+          expectedDeliveryDate: Date
         }
       },
     ],

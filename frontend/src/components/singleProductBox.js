@@ -38,11 +38,55 @@ export const SingleProductBox = ({ productsData }) => {
         {/* Image Container */}
         <div className="relative bg-gradient-to-b from-orange-50 to-orange-100 aspect-square overflow-hidden group">
           <Link to={`/product/${_id}`} className="block w-full h-full">
-            <img
-              src={image}
-              alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            {/* Desktop: Hover Swap */}
+            <div className="hidden lg:block w-full h-full relative">
+               <img
+                 src={productsData.images?.[0] || image}
+                 alt={title}
+                 className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${productsData.images?.length > 1 ? 'group-hover:opacity-0' : ''}`}
+               />
+               {productsData.images?.length > 1 && (
+                  <img
+                    src={productsData.images[1]}
+                    alt={title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+               )}
+            </div>
+
+            {/* Mobile: Horizontal Scroll with Arrows */}
+            <div className="lg:hidden w-full h-full relative group/mobile">
+                <div 
+                  className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                  id={`slider-${_id}`}
+                >
+                    {(productsData.images && productsData.images.length > 0 ? productsData.images : [image]).map((img, idx) => (
+                        <img key={idx} src={img} alt={title} className="w-full h-full flex-shrink-0 snap-center object-cover" />
+                    ))}
+                </div>
+                {(productsData.images && productsData.images.length > 1) && (
+                  <>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(`slider-${_id}`).scrollBy({ left: -200, behavior: 'smooth' });
+                      }}
+                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-white/70 rounded-full p-1 shadow-md z-10"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                         e.preventDefault();
+                         document.getElementById(`slider-${_id}`).scrollBy({ left: 200, behavior: 'smooth' });
+                      }}
+                       className="absolute right-1 top-1/2 -translate-y-1/2 bg-white/70 rounded-full p-1 shadow-md z-10"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </>
+                )}
+            </div>
           </Link>
 
           {/* Badge */}

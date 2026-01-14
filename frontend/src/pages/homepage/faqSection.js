@@ -99,7 +99,7 @@ const FAQSection = () => {
               >
                 <span
                   className="text-sm sm:text-base md:text-lg font-semibold pr-2"
-                  style={{ color: '#93a267' }}
+                  style={{ color: '#2c2c2c' }}
                 >
                   {faq.question}
                 </span>

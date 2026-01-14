@@ -7,6 +7,9 @@ import FAQSection from "./faqSection";
 import FooterSection from "../../components/footerSection";
 import FeaturesBadges from "./FeaturesBadges";
 
+import { FurnitureCareGuide } from "./FurnitureCareGuide";
+import { WhyChooseUsSection } from "./whyChooseUsSection";
+
 const Homepage = () => {
   return (
     <>
@@ -14,8 +17,9 @@ const Homepage = () => {
       <CategorySlider />
       <FeaturesBadges />
       <FeaturedProducts />
+      <FurnitureCareGuide />
+      <WhyChooseUsSection />
       <FAQSection />
-
       <TestimonialsSection />
       <FooterSection />
     </>

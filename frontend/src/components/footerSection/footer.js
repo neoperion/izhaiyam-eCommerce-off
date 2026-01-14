@@ -1,61 +1,16 @@
 import React from "react";
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
-import { FaPinterest } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { FaPinterest, FaWhatsapp } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   const quickLinks = ["Cot & Beds", "Tables", "Chairs", "Dining", "Decor"];
   const categories = ["Cot Shop", "Cot Store", "Gift Shop", "Catalog"];
   const support = ["Contact Us", "FAQs", "Shipping", "Policies"];
 
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
   return (
     <>
-      {/* Newsletter Section - Stay Updated - Only on Home Page */}
-      {isHomePage && (
-        <section className="bg-[#FFF7F2]">
-          <div className="container-page py-12 md:py-16">
-            <div className="text-center max-w-3xl mx-auto">
-              <p className="font-inter text-xs md:text-sm font-semibold tracking-widest uppercase mb-3" style={{ color: '#93a267' }}>
-                Newsletter
-              </p>
-              <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold mb-4" style={{ color: '#93a267' }}>
-                Stay Updated
-              </h2>
-              <p className="text-base md:text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-                Subscribe for our newsletter for exclusive updates, new furniture trends, and timeless design tips
-              </p>
 
-              <form className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto items-center">
-                <input
-                  className="flex-1 w-full px-6 py-4 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#93a267]"
-                  type="email"
-                  placeholder="Enter your email"
-                  name="email"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 inline-flex items-center gap-2 whitespace-nowrap text-white"
-                  style={{ backgroundColor: '#93a267' }}
-                >
-                  Subscribe
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
-              </form>
-
-              <p className="text-xs text-gray-600 mt-4">
-                Subscribe to enjoy exclusive discounts and updates
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
 
       <footer className="bg-primary text-primary-foreground">
         {/* Main Footer Content */}
@@ -82,7 +37,7 @@ export const Footer = () => {
               {/* Social Icons */}
               <div className="flex gap-4">
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/rithanyahandicrafts.kayirukattil"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
@@ -91,31 +46,13 @@ export const Footer = () => {
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/izhaiyam_handloom_furnitures/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://pinterest.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
-                  aria-label="Pinterest"
-                >
-                  <FaPinterest className="w-5 h-5" />
                 </a>
               </div>
             </div>
@@ -156,7 +93,7 @@ export const Footer = () => {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-sm text-white/80 group hover:text-white transition-colors font-inter">
                   <MapPin className="w-5 h-5 text-[#F5F5DC] flex-shrink-0 mt-0.5" />
-                  <span>123 Handloom Street, Textile District,<br />Tamil Nadu, India</span>
+                  <span>6/4 GST Road Vallencery, Guduvanchery,<br />Tamil Nadu, India</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm text-white/80 group hover:text-white transition-colors font-inter">
                   <Phone className="w-5 h-5 text-[#F5F5DC] flex-shrink-0" />
@@ -177,7 +114,7 @@ export const Footer = () => {
         <div className="border-t border-primary-foreground/20">
           <div className="container-page py-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/80 font-inter">
-              <p>&copy; 2024 IZHAYAM HANDLOOM FURNITURE. All rights reserved.</p>
+              <p>&copy; 2026 IZHAYAM HANDLOOM FURNITURE. All rights reserved.</p>
               <div className="flex gap-6">
                 <Link to="/" className="hover:text-primary-foreground transition-colors">
                   Privacy Policy
@@ -190,6 +127,18 @@ export const Footer = () => {
           </div>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/918825603528?text=Want%20to%20know%20more%20about%20your%20products"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#93a267] hover:bg-[#2f3e2f] text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+        aria-label="Chat on WhatsApp"
+        style={{ boxShadow: "0 4px 20px rgba(147, 162, 103, 0.4)" }}
+      >
+        <FaWhatsapp className="w-8 h-8" />
+      </a>
     </>
   );
 };

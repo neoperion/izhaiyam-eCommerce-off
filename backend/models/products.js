@@ -38,6 +38,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "Product's image is required"],
     },
+    images: {
+      type: [String],
+      default: [],
+    },
     categories: {
       "Featured Categories": { type: [String], enums: ["featured", "first order deal", "discounts"] },
       location: { type: [String], enums: ["kitchen", "dining", "bedroom", "living room", "office", "balcony"] },
@@ -63,6 +67,7 @@ const productSchema = new mongoose.Schema(
         hexCode: { type: String }, // Deprecated - use primaryHexCode
         
         imageUrl: { type: String },
+        images: { type: [String], default: [] },
 
       },
     ],

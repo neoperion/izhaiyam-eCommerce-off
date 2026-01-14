@@ -8,7 +8,7 @@ import AdminLayout from "../../../components/admin/AdminLayout";
 
 export const AddNewProduct = () => {
   const navigate = useNavigate();
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState([]); // Array of URLs
   const [productTitle, setProductTitle] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productDiscountPercentValue, setProductDiscountPercentValue] = useState(0);
@@ -34,7 +34,11 @@ export const AddNewProduct = () => {
     secondaryHexCode: "#000000",
     isDualColor: false,
   
-    imageUrl: "" 
+    primaryHexCode: "#000000", 
+    secondaryColorName: "", 
+    secondaryHexCode: "#000000",
+    isDualColor: false,
+    images: [] // Array of variant images
   });
 
   const [uploadingVariantImage, setUploadingVariantImage] = useState(false);
@@ -89,8 +93,8 @@ export const AddNewProduct = () => {
     const formData = {
       title: productTitle,
       description: productDescription,
-      image: imgUrl,
-      image: imgUrl,
+      image: imgUrls[0] || "", // Main image (backward comaptibility)
+      images: imgUrls, // Multiple images
       // Map Frontend Keys -> Backend Schema
       categories: {
           "Featured Categories": categories["Featured"] || [],
@@ -113,8 +117,8 @@ export const AddNewProduct = () => {
         secondaryColorName: c.secondaryColorName || "",
         secondaryHexCode: c.secondaryHexCode || "",
         isDualColor: c.isDualColor || false,
-        imageUrl: c.imageUrl,
-
+        imageUrl: c.images?.[0] || "", // Main variant image (backward compatibility)
+        images: c.images || []
       })) : [],
       // Wood Variants Data
       isWoodCustomizable: isWoodCustomizable === "yes",
@@ -165,13 +169,17 @@ export const AddNewProduct = () => {
   };
 
   const handleImageUpload = async (e) => {
-    let imageFile = e.currentTarget.files[0];
+    const files = Array.from(e.currentTarget.files);
+    if (files.length === 0) return;
+
     const formData = new FormData();
-    formData.append("image", imageFile);
+    files.forEach(file => {
+      formData.append("image", file);
+    });
 
     imgRef.current.nextElementSibling.style.display = "block";
-    imgRef.current.nextElementSibling.textContent = "uploading image ...";
-    const asyncImgUploadToastId = toast.loading("Pls wait, product image is currently being uploaded");
+    imgRef.current.nextElementSibling.textContent = "uploading images ...";
+    const asyncImgUploadToastId = toast.loading("Pls wait, product images are currently being uploaded");
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || " ";
@@ -181,21 +189,21 @@ export const AddNewProduct = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      const { image } = data;
-      setImgUrl(image.src);
+      
+      // Append new images to existing ones? Or replace? User behavior implies replace mostly for main input, but append is safer.
+      // Let's replace for now as it's a "file input" which usually resets selection
+      setImgUrls(prev => [...prev, ...data.images]); 
+      
       toast.update(asyncImgUploadToastId, {
-        render: "Product image has been successfully uploaded",
+        render: "Product images have been successfully uploaded",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
       imgRef.current.nextElementSibling.textContent = "uploaded";
     } catch (error) {
-      setImgUrl("");
-
       let errMessage;
-      if (!imageFile) errMessage = "No image selected";
-      else if (!error.response.data) errMessage = error.message;
+      if (!error.response || !error.response.data) errMessage = error.message;
       else {
         errMessage = error.response.data.message;
       }
@@ -209,10 +217,19 @@ export const AddNewProduct = () => {
     }
   };
 
+  const removeMainImage = (index) => {
+    setImgUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+
   const handleVariantImageUpload = async (e) => {
-    let imageFile = e.currentTarget.files[0];
+    const files = Array.from(e.currentTarget.files);
+    if (files.length === 0) return;
+
     const formData = new FormData();
-    formData.append("image", imageFile);
+    files.forEach(file => {
+      formData.append("image", file);
+    });
 
     setUploadingVariantImage(true);
     try {
@@ -223,10 +240,9 @@ export const AddNewProduct = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      const { image } = data;
-      setNewColor({ ...newColor, imageUrl: image.src });
+      setNewColor({ ...newColor, images: [...(newColor.images || []), ...data.images] });
       setUploadingVariantImage(false);
-      toast.success("Variant image uploaded");
+      toast.success("Variant images uploaded");
     } catch (error) {
       setUploadingVariantImage(false);
       toast.error("Variant image upload failed");
@@ -234,8 +250,8 @@ export const AddNewProduct = () => {
   };
 
   const addColorVariant = () => {
-    if (!newColor.primaryColorName || !newColor.imageUrl) {
-      toast.error("Please provide primary color name and image");
+    if (!newColor.primaryColorName || (!newColor.images || newColor.images.length === 0)) {
+      toast.error("Please provide primary color name and at least one image");
       return;
     }
     
@@ -256,7 +272,8 @@ export const AddNewProduct = () => {
       secondaryColorName: "", 
       secondaryHexCode: "#000000",
       isDualColor: false,
-      imageUrl: "" 
+      imageUrl: "",
+      images: []
     });
   };
 
@@ -482,14 +499,27 @@ export const AddNewProduct = () => {
                   </div>
 
                   <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1 text-black">Image</label>
+                    <label className="block text-sm font-medium mb-1 text-black">Images (Multiple)</label>
                     <input
                       type="file"
+                      multiple
                       onChange={handleVariantImageUpload}
                       className="w-full text-sm"
                     />
                     {uploadingVariantImage && <span className="text-xs text-blue-500">Uploading...</span>}
-                    {newColor.imageUrl && <span className="text-xs text-green-500">Image Ready</span>}
+                    {newColor.images && newColor.images.length > 0 && (
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                            {newColor.images.map((url, idx) => (
+                                <div key={idx} className="relative w-12 h-12">
+                                    <img src={url} alt="Variant" className="w-full h-full object-cover rounded"/>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setNewColor({...newColor, images: newColor.images.filter((_, i) => i !== idx)})}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">x</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -519,7 +549,11 @@ export const AddNewProduct = () => {
                                 : primaryHex
                             }}
                           ></div>
-                          <img src={variant.imageUrl} alt={displayName} className="w-12 h-12 object-cover rounded" />
+                          <div className="flex gap-1 overflow-x-auto max-w-[150px]">
+                              {variant.images && variant.images.map((img, i) => (
+                                <img key={i} src={img} alt={displayName} className="w-12 h-12 object-cover rounded flex-shrink-0" />
+                              ))}
+                          </div>
                           <div className="flex-1">
                             <p className="font-bold text-black">{displayName}</p>
 
@@ -654,16 +688,36 @@ export const AddNewProduct = () => {
               </div>
             )}
             <div className="mb-6 relative">
-              <label className="block font-bold mb-2 text-black">Image</label>
+              <label className="block font-bold mb-2 text-black">Product Images (Multiple Allowed)</label>
               <input
                 type="file"
+                multiple
                 ref={imgRef}
                 className="w-full p-4 border border-gray-300 rounded-lg "
                 onChange={handleImageUpload}
               />
+              <span className="text-xs text-gray-500 mt-1 block">Supported formats: JPG, PNG, WEBP. Max size: 5MB per img.</span>
               <h1 className="italics absolute left-[45%] sm:left-[55%] top-[38%]  hidden text-[#93a267] bottom-4 font-bold ">
                 {" "}
               </h1>
+              
+              {/* Image Previews */}
+              {imgUrls.length > 0 && (
+                  <div className="mt-4 grid grid-cols-4 sm:grid-cols-6 gap-4">
+                      {imgUrls.map((url, index) => (
+                          <div key={index} className="relative group aspect-square">
+                              <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover rounded-lg border border-gray-200" />
+                              <button
+                                type="button"
+                                onClick={() => removeMainImage(index)}
+                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                              >
+                                  <AiOutlineClose size={12} />
+                              </button>
+                          </div>
+                      ))}
+                  </div>
+              )}
             </div>
             <div className="flex items-center justify-end">
               <button type="submit" className="text-white bg-[#93a267] hover:bg-[#7a8856] px-6 py-2 rounded-lg transition-colors font-medium">

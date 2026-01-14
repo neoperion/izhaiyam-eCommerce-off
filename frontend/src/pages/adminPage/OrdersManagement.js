@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload, AiOutlineFilter } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import API from "../../config";
@@ -186,7 +186,9 @@ const OrdersManagement = () => {
     ordersLength: 0,
     pageNo: 1,
     perPage: 10,
+    perPage: 10,
     isError: false,
+    filterStatus: 'All', // Added Filter State
   });
   const [loading, setLoading] = useState(false);
 
@@ -251,7 +253,17 @@ const OrdersManagement = () => {
          headers: { authorization: `Bearer ${LoginToken}` }
       });
       
-      const allOrders = data.orders || [];
+      let allOrders = data.orders || [];
+      
+      // Filter Logic - Client Side (Status)
+      if (currentParams.filterStatus && currentParams.filterStatus !== 'All') {
+          const filterLower = currentParams.filterStatus.toLowerCase();
+          allOrders = allOrders.filter(order => {
+              const statusLower = (order.status || '').toLowerCase();
+              return statusLower === filterLower;
+          });
+      }
+      
       const totalOrders = allOrders.length;
       
       // Client-side slice for pagination
@@ -282,6 +294,31 @@ const OrdersManagement = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-black text-xl md:text-2xl font-medium">Orders Management</h2>
             
+            <div className="flex gap-4"> {/* Wrapper for Buttons */}
+            
+            {/* Filter Dropdown */}
+            <div>
+                 <div className="relative">
+                   <select
+                        value={ordersParams.filterStatus}
+                        onChange={(e) => {
+                            const newStatus = e.target.value;
+                            setOrdersParams(prev => ({ ...prev, filterStatus: newStatus, pageNo: 1 })); // Reset page to 1 on filter change
+                            fetchOrders({ ...ordersParams, filterStatus: newStatus, pageNo: 1 });
+                        }}
+                        className="appearance-none flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded shadow hover:border-gray-400 transition cursor-pointer pr-8 focus:outline-none focus:ring-2 focus:ring-primaryColor"
+                   >
+                        <option value="All">All Orders</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                   </select>
+                   <AiOutlineFilter className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                 </div>
+            </div>
+
             <div className="relative">
                 <button 
                     onClick={() => setShowExportDropdown(!showExportDropdown)}
@@ -301,6 +338,7 @@ const OrdersManagement = () => {
                         </ul>
                     </div>
                 )}
+            </div>
             </div>
           </div>
 

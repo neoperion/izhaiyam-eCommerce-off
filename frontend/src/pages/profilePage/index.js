@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Edit2, LogOut, Package, MapPin, Heart, HelpCircle, Wallet, Eye, EyeOff, Search, Plus, Trash2, User, Menu, X } from 'lucide-react';
+import { Edit2, LogOut, Package, MapPin, Heart, HelpCircle, Wallet, Eye, EyeOff, Search, Plus, Trash2, User, Menu, X, Calendar } from 'lucide-react';
 import { toast } from "react-toastify";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
@@ -451,26 +451,7 @@ export const ProfilePage = () => {
                               </div>
                             </div>
 
-                            {/* Status and Track button */}
-                            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2">
-                              {/* Tracking Details */}
-                              {order.tracking && order.tracking.trackingId && (
-                                <div className="w-full md:w-auto text-right md:text-right mb-1">
-                                  <p className="text-[10px] md:text-xs text-gray-500">Carrier: <span className="font-medium text-gray-800">{order.tracking.carrier}</span></p>
-                                  <p className="text-[10px] md:text-xs text-gray-500">Tracking ID: <span className="font-medium text-gray-800 select-all">{order.tracking.trackingId}</span></p>
-                                  <p className="text-[9px] md:text-[10px] text-gray-400 mt-0.5">Note: Paste this ID on the courier page if required</p>
-                                </div>
-                              )}
-
                               <div className="flex gap-2 md:gap-3 w-full md:w-auto justify-end">
-                                {order.tracking && order.tracking.trackingUrl && (
-                                  <button
-                                    onClick={() => window.open(order.tracking.trackingUrl, "_blank", "noopener")}
-                                    className="px-3 md:px-4 py-1.5 md:py-2 border border-[#93a267] text-[#93a267] rounded-lg text-xs md:text-sm font-medium hover:bg-[#93a267] hover:text-white transition-colors"
-                                  >
-                                    Track
-                                  </button>
-                                )}
                                 <div className={`px-2 md:px-4 py-1 md:py-2 rounded-full text-[10px] md:text-xs font-semibold
                                 ${order.deliveryStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                     order.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' :
@@ -479,7 +460,58 @@ export const ProfilePage = () => {
                                   {order.deliveryStatus?.charAt(0).toUpperCase() + order.deliveryStatus?.slice(1) || 'Pending'}
                                 </div>
                               </div>
-                            </div>
+                            
+                            {/* Enhanced Shipment Details Section */}
+                            {order.tracking && order.tracking.trackingId && (
+                                <div className="mt-4 border-t border-gray-200 pt-3">
+                                  <h4 className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    <Package size={12} /> Shipment Details
+                                  </h4>
+                                  <div className="bg-white border border-gray-200 rounded-md p-3 md:p-4 shadow-sm">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <div>
+                                         <p className="text-[10px] text-gray-500 mb-0.5 uppercase">Carrier</p>
+                                         <p className="text-xs md:text-sm font-semibold text-gray-800 capitalize">
+                                            {order.tracking.carrier === 'mettur_transports' ? 'Mettur Transports' : order.tracking.carrier}
+                                         </p>
+                                      </div>
+                                       <div>
+                                         <p className="text-[10px] text-gray-500 mb-0.5 uppercase">Tracking ID</p>
+                                         <p className="font-mono text-xs md:text-sm font-medium text-gray-800 select-all">{order.tracking.trackingId}</p>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Actions & Optional Info */}
+                                    <div className="flex flex-wrap gap-2 md:gap-3 mt-3 pt-3 border-t border-gray-100">
+                                       {/* Track Button */}
+                                       {order.tracking.trackingUrl && (
+                                          <a href={order.tracking.trackingUrl} target="_blank" rel="noopener noreferrer" 
+                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white rounded text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                                             <Package size={12} />
+                                             Track Shipment
+                                          </a>
+                                       )}
+                                       
+                                       {/* Live Location */}
+                                       {order.tracking.liveLocationUrl && (
+                                           <a href={order.tracking.liveLocationUrl} target="_blank" rel="noopener noreferrer" 
+                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100 transition-colors">
+                                             <MapPin size={12} />
+                                             Your Branch Location Track
+                                          </a>
+                                       )}
+                                       
+                                       {/* Expected Delivery */}
+                                       {order.tracking.expectedDeliveryDate && (
+                                           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded text-xs font-medium">
+                                             <Calendar size={12} />
+                                             <span>Expected: {new Date(order.tracking.expectedDeliveryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                          </div>
+                                       )}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                           </div>
 
                           <div className="p-3 md:p-4">

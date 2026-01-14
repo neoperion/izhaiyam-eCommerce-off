@@ -1,63 +1,163 @@
 import React from "react";
-import { FaTruck } from "react-icons/fa";
-import { AiOutlineSafety } from "react-icons/ai";
-import { BiUserVoice } from "react-icons/bi";
-import { TbDiscount2 } from "react-icons/tb";
+
+// Import Realistic Feature Images
+import imgSustainable from "../../assets/features/sustainable.png";
+import imgArtisan from "../../assets/features/artisan.png";
+import imgQuality from "../../assets/features/quality.png";
+import imgSupport from "../../assets/features/support.png";
+import imgCustom from "../../assets/features/custom.png";
 
 export const WhyChooseUsSection = () => {
+  const items = [
+    {
+      id: "01",
+      title: "Expertise",
+      description: "We leverage years of traditional weaving experience to deliver high-quality handcrafted artifacts.",
+      image: imgSustainable,
+      bgColor: "bg-[#93a267]/10",
+      accentColor: "text-[#D4A373]", // Earthy Gold
+      rotate: "-rotate-2",
+      translateY: "top-0",
+      dotPosition: "right-0"
+    },
+    {
+      id: "02",
+      title: "Custom Solutions",
+      description: "Each piece is tailored to your space, ensuring your home gets exactly what it needs.",
+      image: imgCustom,
+      bgColor: "bg-[#93a267]/10",
+      accentColor: "text-[#7AA0B8]", // Muted Blue
+      rotate: "rotate-3",
+      translateY: "top-20 md:top-32",
+      dotPosition: "left-0"
+    },
+    {
+      id: "03",
+      title: "Customer-Focused",
+      description: "We prioritize your satisfaction, offering dedicated support from selection to delivery.",
+      image: imgSupport,
+      bgColor: "bg-[#93a267]/10",
+      accentColor: "text-[#C06B6B]", // Soft Red
+      rotate: "-rotate-3",
+      translateY: "top-0",
+      dotPosition: "right-0"
+    },
+    {
+      id: "04",
+      title: "Innovation",
+      description: "Merging ancient techniques with modern design to keep your decor ahead of the curve.",
+      image: imgArtisan,
+      bgColor: "bg-[#93a267]/10",
+      accentColor: "text-[#6B9080]", // Sage
+      rotate: "rotate-2",
+      translateY: "top-20 md:top-32",
+      dotPosition: "left-0"
+    },
+    {
+      id: "05",
+      title: "Quality Commitment",
+      description: "We guarantee longevity. Our materials are chosen to withstand nature and time.",
+      image: imgQuality,
+      bgColor: "bg-[#93a267]/10",
+      accentColor: "text-[#E6B8A2]", // Terracotta
+      rotate: "-rotate-1",
+      translateY: "top-0",
+      dotPosition: "right-0"
+    },
+  ];
+
   return (
-    <div className="pt-20 pb-16 mb-20 bg-neutralColor w-[100%]">
-      <h2 className="text-[40px] text-center  font-bold ">Why choose us</h2>
-      <div className="flex items-start w-[18.5em] max-w-[92%] mx-auto gap-12  mt-10 flex-col tablet:w-[70%] md:flex-row md:w-[80%] md:flex-wrap md:justify-between">
-        <div className="flex w-[100%] md:basis-[45%]  items-start gap-4 tablet:gap-6 tablet:w-[90%] tablet:max-w-[384px]">
-          <div className="bg-primaryColor  p-8 rounded-[50%] mx-auto">
-            <FaTruck className="fill-secondaryColor w-9 h-9 md:w-12 md:h-12 tablet:w-12 tablet:h-12 " />
-          </div>
-          <div className="flex flex-col  gap-4">
-            <h4 className="text-[24px]  text-center font-bold font-RobotoCondensed">Free Shipping</h4>
-            <p className="text-center leading-[140%] text-to-be-wrapped">
-              We offer free shipping on all orders, so you can shop with confidence knowing that there are no hidden
-              costs.
-            </p>
-          </div>
+    <section className="w-full bg-white py-20 px-4 md:px-6 relative overflow-hidden">
+        
+      {/* Background Dashed Path (Desktop - Snake S-Shape) */}
+      <div className="absolute inset-0 pointer-events-none hidden lg:block max-w-6xl mx-auto">
+         <svg className="w-full h-full" viewBox="0 0 1200 1200" fill="none" preserveAspectRatio="none">
+            <path 
+                d="M200,150 C500,150 700,400 1000,400 C700,400 500,650 200,650 C500,650 700,900 1000,900 C700,900 500,1150 200,1150" 
+                stroke="#E5E7EB" 
+                strokeWidth="3" 
+                strokeDasharray="12 12"
+            />
+         </svg>
+      </div>
+
+       {/* Background Dashed Path (Mobile - Vertical Line) */}
+       <div className="absolute left-8 top-0 bottom-0 w-px border-l-2 border-dashed border-gray-200 lg:hidden"></div>
+
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="font-inter text-3xl md:text-5xl font-bold text-[#2f3e2f] mb-4">
+            Why Choose Izhaiyam?
+          </h2>
+          <p className="font-inter text-gray-500 max-w-xl mx-auto">
+             Here’s why homes across the country trust us with their decor.
+          </p>
         </div>
-        <div className="flex w-[100%] md:basis-[45%] flex-row items-start gap-4  tablet:gap-6 tablet:w-[90%] tablet:max-w-[384px]">
-          <div className="bg-primaryColor  p-8 rounded-[50%] mx-auto">
-            <BiUserVoice className="fill-secondaryColor w-9 h-9 md:w-12 md:h-12 tablet:w-12 tablet:h-12  " />
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="text-[24px]  text-center font-bold  font-RobotoCondensed">Customer Service</h4>
-            <span className="text-center leading-[140%] text-to-be-wrapped">
-              Our customer service team is available to help you with any issues or concerns. We're here to make sure
-              you are completely satisfied with your purchase
-            </span>
-          </div>
-        </div>
-        <div className="flex w-[100%] md:basis-[45%] flex-row items-start gap-4 tablet:gap-6 tablet:w-[90%] tablet:max-w-[384px]">
-          <div className="bg-primaryColor  p-8 rounded-[50%] mx-auto">
-            <TbDiscount2 className="fill-secondaryColor w-9 h-9 md:w-12 md:h-12 tablet:w-12 tablet:h-12  " />
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="text-[24px]  text-center font-bold font-RobotoCondensed">Exclusive Offers and Discounts</h4>
-            <span className="text-center leading-[140%] text-to-be-wrapped">
-              We're constantly updating our inventory with exclusive offers and products that you won't find anywhere
-              else. From limited-edition items to one-of-a-kind pieces, we have something for everyone
-            </span>
-          </div>
-        </div>
-        <div className="flex w-[100%] md:basis-[45%]  items-start gap-4 tablet:gap-6 tablet:w-[90%] tablet:max-w-[384px]">
-          <div className="bg-primaryColor  p-8 rounded-[50%] mx-auto">
-            <AiOutlineSafety className="fill-secondaryColor w-9 h-9 md:w-12 md:h-12 tablet:w-12 tablet:h-12  " />
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="text-[24px]  text-center font-bold font-RobotoCondensed">Secure and safe payment</h4>
-            <span className="text-center leading-[140%] text-to-be-wrapped">
-              We offer a range of safe payment options, so you can shop with confidence knowing that your information is
-              protected every step of the way.
-            </span>
-          </div>
+
+        <div className="flex flex-col gap-12 lg:gap-0 lg:block relative">
+            {items.map((item, index) => {
+                const isEven = index % 2 === 0;
+                
+                return (
+                    <div 
+                        key={index} 
+                        className={`
+                            relative flex flex-col lg:flex-row items-center w-full lg:mb-[-4rem]
+                            ${isEven ? 'lg:justify-start' : 'lg:justify-end'}
+                        `}
+                    >
+                        {/* THE CARD */}
+                        <div className={`
+                            relative w-full lg:w-[45%] bg-white p-3 shadow-xl rounded-[2rem] border border-gray-100 transition-transform duration-500 hover:scale-105 hover:z-20
+                            ${item.rotate}
+                        `}>
+                            {/* Inner Colored Container */}
+                            <div className={`${item.bgColor} rounded-[1.5rem] p-6 sm:p-8 h-full flex flex-col items-start gap-4`}>
+                                
+                                {/* Header: Icon + Title */}
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-sm shrink-0">
+                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-inter text-xl font-bold text-[#2f3e2f]">
+                                            {item.title}
+                                        </h3>
+                                        <div className={`h-1 w-12 rounded-full mt-1 ${item.accentColor.replace('text', 'bg')}/40`}></div>
+                                    </div>
+                                </div>
+                                
+                                {/* Description */}
+                                <p className="font-inter text-sm text-gray-600 leading-relaxed">
+                                    {item.description}
+                                </p>
+
+                                {/* Decorative Floating Circle behind */}
+                                <div className={`absolute -z-10 -top-6 -right-6 w-20 h-20 rounded-full opacity-20 ${item.accentColor.replace('text', 'bg')}`}></div>
+                            </div>
+
+                             {/* Connector Dot (Desktop) */}
+                            <div className={`
+                                hidden lg:block absolute top-1/2 w-4 h-4 rounded-full border-2 border-white shadow-md z-10
+                                ${item.accentColor.replace('text', 'bg')}
+                                ${isEven ? '-right-14 opacity-0' : '-left-14 opacity-0'} 
+                                {/* Note: In a 'timeline', dots are usually on the line. Since the line is S-curve background, strict dots are hard to align perfectly without complex math. 
+                                    I will omit the strict connector dots for the S-curve to keep it clean, or just let the card float.
+                                */}
+                            `}></div>
+                        </div>
+
+                         {/* Mobile Connector Dot */}
+                         <div className={`lg:hidden absolute left-[-2.1rem] top-8 w-4 h-4 rounded-full border-2 border-white shadow-md z-10 ${item.accentColor.replace('text', 'bg')}`}>
+                             {/* This aligns with the mobile vertical line defined at parent level */}
+                         </div>
+
+                    </div>
+                );
+            })}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

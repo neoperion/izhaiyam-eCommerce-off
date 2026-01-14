@@ -599,7 +599,7 @@ const deleteUser = async (req, res) => {
 const updateOrderTracking = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { carrier, trackingId } = req.body;
+    const { carrier, trackingId, liveLocationUrl, expectedDeliveryDate } = req.body;
 
     if (!orderId || !carrier || !trackingId) {
       throw new CustomErrorHandler(400, "Missing required fields");
@@ -636,6 +636,10 @@ const updateOrderTracking = async (req, res) => {
       SPEEDEX: {
         type: "LANDING",
         url: "https://spdexp.com/"
+      },
+      mettur_transports: {
+        type: "DIRECT",
+        url: "https://www.metturtransports.com/track.php?lrno="
       }
     };
 
@@ -654,20 +658,24 @@ const updateOrderTracking = async (req, res) => {
     }
 
     // Update order fields using findOneAndUpdate to avoid validation issues
+    const updateFields = {
+      "orders.$.tracking": {
+        carrier,
+        trackingId,
+        trackingUrl,
+        liveLocationUrl: liveLocationUrl || null,
+        expectedDeliveryDate: expectedDeliveryDate || null
+      },
+      "orders.$.deliveryStatus": "Shipped"
+    };
+
     const updatedUser = await User.findOneAndUpdate(
       {
         "_id": user._id,
         "orders._id": orderId
       },
       {
-        $set: {
-          "orders.$.tracking": {
-            carrier,
-            trackingId,
-            trackingUrl
-          },
-          "orders.$.deliveryStatus": "Shipped"
-        }
+        $set: updateFields
       },
       {
         new: true,
@@ -689,7 +697,9 @@ const updateOrderTracking = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Tracking details updated successfully",
-      trackingUrl
+      trackingUrl,
+      liveLocationUrl,
+      expectedDeliveryDate
     });
 
   } catch (error) {

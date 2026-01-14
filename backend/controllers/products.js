@@ -64,19 +64,33 @@ const uploadProductImages = async (req, res) => {
   if (!req.files || !req.files.image) {
     throw new CustomErrorHandler(400, "No image was uploaded");
   }
-  if (!req.files.image.mimetype.includes("image")) {
-    throw new CustomErrorHandler(415, "invalid image type");
-  }
-  if (req.files.image.size > 3 * 1024 * 1024) {
-    throw new CustomErrorHandler(400, "Image size has exceeded the limit");
-  }
-  const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
-    use_filename: true,
-    folder: "file-Auffur",
-  });
-  fs.unlinkSync(req.files.image.tempFilePath);
 
-  return res.status(201).json({ image: { src: result.secure_url } });
+  const images = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
+  const uploadedUrls = [];
+
+  for (const image of images) {
+    if (!image.mimetype.includes("image")) {
+      throw new CustomErrorHandler(415, "invalid image type");
+    }
+    if (image.size > 5 * 1024 * 1024) { // Increased limit to 5MB for better quality
+      throw new CustomErrorHandler(400, "Image size has exceeded the limit");
+    }
+
+    const result = await cloudinary.uploader.upload(image.tempFilePath, {
+      use_filename: true,
+      folder: "file-Auffur",
+      quality: "auto",
+      fetch_format: "auto"
+    });
+    fs.unlinkSync(image.tempFilePath);
+    uploadedUrls.push(result.secure_url);
+  }
+
+  // Return both legacy single image format and new array format
+  return res.status(201).json({ 
+    image: { src: uploadedUrls[0] }, 
+    images: uploadedUrls 
+  });
 };
 
 const getAspecificProduct = async (req, res) => {

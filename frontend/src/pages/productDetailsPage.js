@@ -103,10 +103,17 @@ export const ProductDetailsPage = () => {
 
   const isOutOfStock = currentStock === 0;
 
-  // Show only selected color's image when customization is active
-  const images = isCustomizationActive && selectedColor
-    ? [selectedColor.imageUrl]
-    : [image];
+  // Show derived images or fallback to single image
+  const images = (function() {
+    if (isCustomizationActive && selectedColor) {
+      if (selectedColor.images && selectedColor.images.length > 0) return selectedColor.images;
+      if (selectedColor.imageUrl) return [selectedColor.imageUrl];
+      // Fallback to main images if variant has none
+    }
+    
+    if (currentProduct?.images && currentProduct.images.length > 0) return currentProduct.images;
+    return [image];
+  })();
 
   let subCategoriesArr = [];
   for (let key in categories) {
@@ -176,10 +183,10 @@ export const ProductDetailsPage = () => {
               <img src={images[currentImageIndex]} alt={title} className="w-full h-full object-cover" />
               {images.length > 1 && (
                 <>
-                  <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all">
+                  <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
                     <ChevronLeft size={24} className="text-gray-800" />
                   </button>
-                  <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all">
+                  <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
                     <ChevronRight size={24} className="text-gray-800" />
                   </button>
                 </>
