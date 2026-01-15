@@ -6,7 +6,12 @@ import { Link } from "react-router-dom";
 export const Footer = () => {
   const quickLinks = ["Cot & Beds", "Tables", "Chairs", "Dining", "Decor"];
   const categories = ["Cot Shop", "Cot Store", "Gift Shop", "Catalog"];
-  const support = ["Contact Us", "FAQs", "Shipping", "Policies"];
+  const support = [
+    { name: "Contact Us", link: "/contactUs" },
+    { name: "Shipping Policy", link: "/shipping-policy" },
+    { name: "Return & Refund", link: "/return-refund-policy" },
+    { name: "Cancellation Policy", link: "/cancellation-policy" },
+  ];
 
   return (
     <>
@@ -76,11 +81,12 @@ export const Footer = () => {
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
               <h4 className="font-inter text-lg font-bold mb-6 text-white border-b border-white/30 pb-2 inline-block">Customer Support</h4>
               <ul className="space-y-3">
+
                 {support.map((item) => (
-                  <li key={item}>
-                    <Link to="/contact" className="font-inter text-sm text-white/80 hover:text-white transition-colors flex items-center gap-2 group">
+                  <li key={item.name}>
+                    <Link to={item.link} className="font-inter text-sm text-white/80 hover:text-white transition-colors flex items-center gap-2 group">
                       <span className="w-1.5 h-1.5 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                      {item}
+                      {item.name}
                     </Link>
                   </li>
                 ))}
@@ -116,10 +122,10 @@ export const Footer = () => {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/80 font-inter">
               <p>&copy; 2026 IZHAYAM HANDLOOM FURNITURE. All rights reserved.</p>
               <div className="flex gap-6">
-                <Link to="/" className="hover:text-primary-foreground transition-colors">
+                <Link to="/privacy-policy" className="hover:text-primary-foreground transition-colors">
                   Privacy Policy
                 </Link>
-                <Link to="/" className="hover:text-primary-foreground transition-colors">
+                <Link to="/terms-and-conditions" className="hover:text-primary-foreground transition-colors">
                   Terms of Service
                 </Link>
               </div>

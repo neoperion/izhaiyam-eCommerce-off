@@ -31,6 +31,11 @@ import OrderDetails from "../pages/adminPage/OrderDetails";
 import { SettingsPage } from "../pages/adminPage/settings";
 import InstagramGalleryManager from "../pages/adminPage/InstagramGalleryManager";
 import NotificationsProtocol from "../pages/adminPage/Notifications";
+import { PrivacyPolicy } from "../pages/policies/PrivacyPolicy";
+import { TermsConditions } from "../pages/policies/TermsConditions";
+import { ReturnRefundPolicy } from "../pages/policies/ReturnRefundPolicy";
+import { ShippingPolicy } from "../pages/policies/ShippingPolicy";
+import { CancellationPolicy } from "../pages/policies/CancellationPolicy";
 
 
 const PagesRoute = ({ setIsCartSectionActive }) => {
@@ -42,6 +47,13 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="/contactUs" element={<ContactUsPage />} />
+        
+        {/* Policy Pages */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-and-conditions" element={<TermsConditions />} />
+        <Route path="/return-refund-policy" element={<ReturnRefundPolicy />} />
+        <Route path="/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/cancellation-policy" element={<CancellationPolicy />} />
 
         {/* Admin Routes - consolidated under /admin */}
         <Route path="search" element={<SearchPage />} />

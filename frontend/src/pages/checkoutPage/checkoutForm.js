@@ -476,6 +476,13 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
       </button>
 
       {isLoading && <FullpageSpinnerLoader />}
+
+      <p className="mt-4 text-xs text-center text-gray-500 font-inter">
+        By placing an order, you agree to our 
+        <a href="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-800 mx-1">Terms</a>, 
+        <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-800 mx-1">Privacy</a>, and 
+        <a href="/return-refund-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-800 mx-1">Returns</a> policies.
+      </p>
     </form>
   );
 };
