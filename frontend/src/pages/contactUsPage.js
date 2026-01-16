@@ -188,10 +188,10 @@ export const ContactUsPage = () => {
                       <span className="font-inter text-xs md:text-sm font-semibold text-gray-600">Email</span>
                     </div>
                     <a
-                      href="mailto:contact@izhayamfurniture.com"
+                      href="mailto:orders@izhayam.com"
                       className="font-inter text-gray-700 text-sm md:text-base ml-11 md:ml-13 hover:text-[#93a267] transition-colors"
                     >
-                      contact@izhayamfurniture.com
+                      orders@izhayam.com
                     </a>
                   </motion.div>
 
@@ -209,10 +209,10 @@ export const ContactUsPage = () => {
                       <span className="font-inter text-xs md:text-sm font-semibold text-gray-600">Phone</span>
                     </div>
                     <a
-                      href="tel:+919876543210"
+                      href="tel:+918825603528"
                       className="font-inter text-gray-700 text-sm md:text-base ml-11 md:ml-13 hover:text-[#93a267] transition-colors"
                     >
-                      +91 98765 43210
+                      +91 88256 03528
                     </a>
                   </motion.div>
 
@@ -230,7 +230,7 @@ export const ContactUsPage = () => {
                       <span className="font-inter text-xs md:text-sm font-semibold text-gray-600">Address</span>
                     </div>
                     <p className="font-inter text-gray-700 text-sm md:text-base ml-11 md:ml-13">
-                      123 Handloom Street, Textile District, Tamil Nadu, India
+                      6/4 GST Road Vallencery, Guduvanchery, Tamil Nadu, India
                     </p>
                   </motion.div>
                 </div>
@@ -267,7 +267,7 @@ export const ContactUsPage = () => {
                       onChange={handleChange}
                       required
                       className="font-inter w-full px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#93a267] focus:border-transparent bg-white transition-all"
-                      placeholder="John Doe"
+                      placeholder="Enter your name"
                     />
                   </div>
 
@@ -284,7 +284,7 @@ export const ContactUsPage = () => {
                       onChange={handleChange}
                       required
                       className="font-inter w-full px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#93a267] focus:border-transparent bg-white transition-all"
-                      placeholder="john@example.com"
+                      placeholder="Enter your email"
                     />
                   </div>
 

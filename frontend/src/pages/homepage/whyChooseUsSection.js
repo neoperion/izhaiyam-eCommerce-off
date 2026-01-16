@@ -73,7 +73,7 @@ export const WhyChooseUsSection = () => {
       <div className="absolute inset-0 pointer-events-none hidden lg:block max-w-6xl mx-auto">
          <svg className="w-full h-full" viewBox="0 0 1200 1200" fill="none" preserveAspectRatio="none">
             <path 
-                d="M200,150 C500,150 700,400 1000,400 C700,400 500,650 200,650 C500,650 700,900 1000,900 C700,900 500,1150 200,1150" 
+                d="M270,250 C600,250 600,400 930,400 C600,400 600,650 270,650 C600,650 600,900 930,900 C600,900 600,1150 270,1150" 
                 stroke="#E5E7EB" 
                 strokeWidth="3" 
                 strokeDasharray="12 12"

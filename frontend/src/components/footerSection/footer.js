@@ -107,7 +107,7 @@ export const Footer = () => {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-white/80 group hover:text-white transition-colors font-inter">
                   <Mail className="w-5 h-5 text-[#F5F5DC] flex-shrink-0" />
-                  <span>contact@izhayamfurniture.com</span>
+                  <span>info@izhayam.com</span>
                 </li>
               </ul>
             </div>
@@ -115,6 +115,58 @@ export const Footer = () => {
         </div>
 
 
+
+        {/* Secure Payment & Trust Badges */}
+        <div className="border-t border-primary-foreground/20 bg-black/10">
+          <div className="container-page py-6">
+             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                {/* Security Trust Badge */}
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-full bg-[#93a267]/20 flex items-center justify-center text-[#93a267]">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                   </div>
+                   <div className="text-left">
+                      <h5 className="font-playfair font-bold text-white text-sm">100% Secure Payments</h5>
+                      <p className="font-inter text-xs text-white/60">Encrypted transactions & safe checkout</p>
+                   </div>
+                </div>
+
+                {/* Payment Methods */}
+                <div className="flex flex-wrap justify-center items-center gap-4">
+                   <span className="font-inter text-xs text-white/50 hidden md:inline-block">Partenred with</span>
+                   
+                   {/* Razorpay Logo (Text Representation for clean look) */}
+                   <div className="flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
+                      <span className="font-bold text-white tracking-tight border border-white/20 px-2 py-0.5 rounded text-sm bg-blue-900/40">Razorpay</span>
+                   </div>
+
+                   <div className="h-6 w-px bg-white/20 hidden md:block"></div>
+
+                   {/* Icons Row */}
+                   <div className="flex items-center gap-3 text-white/80">
+                      {/* Visa */}
+                      <div className="flex flex-col items-center gap-1" title="Visa">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">Cards</span>
+                      </div>
+                      
+                      {/* UPI */}
+                      <div className="flex flex-col items-center gap-1" title="UPI">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">UPI</span>
+                      </div>
+
+                      {/* Netbanking */}
+                      <div className="flex flex-col items-center gap-1" title="Netbanking">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><path d="M3 21h18"/><path d="M5 21v-7"/><path d="M19 21v-7"/><path d="M5 10a5 5 0 0 1 14 0"/><path d="M12 10v4"/></svg>
+                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">NetBanking</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
 
         {/* Copyright Bar */}
         <div className="border-t border-primary-foreground/20">

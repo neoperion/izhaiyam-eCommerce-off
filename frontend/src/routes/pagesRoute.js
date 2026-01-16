@@ -34,7 +34,7 @@ const AdminManagement = lazy(() => import("../pages/adminPage/adminManagement/ad
 const OrdersManagement = lazy(() => import("../pages/adminPage/OrdersManagement"));
 const OrderDetails = lazy(() => import("../pages/adminPage/OrderDetails"));
 const SettingsPage = lazy(() => import("../pages/adminPage/settings").then(module => ({ default: module.SettingsPage })));
-const InstagramGalleryManager = lazy(() => import("../pages/adminPage/InstagramGalleryManager"));
+const InstagramGalleryManager = lazy(() => import("../pages/adminPage/InstagramGalleryManager").then(module => ({ default: module.InstagramGalleryManager })));
 const NotificationsProtocol = lazy(() => import("../pages/adminPage/Notifications"));
 
 // Policies

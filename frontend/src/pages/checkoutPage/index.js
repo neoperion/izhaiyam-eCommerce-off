@@ -213,7 +213,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
                 });
                 
                 // Navigate to My Orders
-                navigate("profilePage/accountInformation");
+                navigate("/profilePage/accountInformation");
               }
 
 
