@@ -38,7 +38,29 @@ export const SEO = ({
             <meta name="twitter:description" content={metaDescription} />
             {image && <meta name="twitter:image" content={image} />}
 
-            {/* Structured Data (JSON-LD) */}
+            {/* Structured Data (JSON-LD) - Organization */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Organization",
+                    "name": "Izhaiyam Handloom Furniture",
+                    "url": siteUrl,
+                    "logo": `${siteUrl}/logo.jpg`,
+                    "sameAs": [
+                        "https://www.facebook.com/rithanyahandicrafts.kayirukattil",
+                        "https://www.instagram.com/izhaiyam_handloom_furnitures/"
+                    ],
+                    "contactPoint": {
+                        "@type": "ContactPoint",
+                        "telephone": "+91-88256-03528",
+                        "contactType": "customer service",
+                        "areaServed": "IN",
+                        "availableLanguage": "en"
+                    }
+                })}
+            </script>
+
+            {/* Additional Structured Data (JSON-LD) */}
             {data && (
                 <script type="application/ld+json">
                     {JSON.stringify(data)}
