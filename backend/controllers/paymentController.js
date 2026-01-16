@@ -6,6 +6,7 @@ const CustomErrorHandler = require("../errors/customErrorHandler");
 const mongoose = require("mongoose");
 const { createNotification } = require("./notificationController");
 const { sendSMS } = require("../lib/twilio");
+const { sendPaymentSuccessEmail, sendAdminPaymentReceivedEmail } = require("../services/emailService");
 
 // Initialize Razorpay
 let razorpay;
@@ -334,6 +335,21 @@ const verifyPayment = async (req, res) => {
       process.env.ADMIN_PHONE_NUMBER,
       `New order received!\nOrder ID: ${razorpay_order_id}\nCustomer: ${orderDetails.username || 'Guest'}\nAmount: ₹${orderDetails.totalAmount}`
     );
+
+    // SEND EMAIL: Payment Success + Admin Alert
+    try {
+        await sendPaymentSuccessEmail(
+            { email: orderDetails.email, username: orderDetails.username }, 
+            { _id: razorpay_order_id, id: razorpay_order_id, totalAmount: orderDetails.totalAmount }, 
+            razorpay_payment_id
+        );
+
+        await sendAdminPaymentReceivedEmail(
+            { email: orderDetails.email },
+            { _id: razorpay_order_id, id: razorpay_order_id, totalAmount: orderDetails.totalAmount },
+            razorpay_payment_id
+        );
+    } catch(e) { console.error("Email send warning:", e); }
 
     res.status(200).json({
       success: true,

@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
 
-export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id }) => {
+export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id, onSuccess }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
@@ -24,6 +24,8 @@ export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id })
 
       setIsDeleteLoading(false);
       setIsDeleteModalOn(false);
+      
+      if(onSuccess) onSuccess();
 
       toast("Product has been successfully deleted", {
         type: "success",

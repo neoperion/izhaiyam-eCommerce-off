@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { SEO } from "../components/SEO/SEO";
 import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { motion } from "framer-motion";
 import FooterSection from "../components/footerSection";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
@@ -11,6 +13,8 @@ import award1 from "../assets/award1.jpg";
 import award2 from "../assets/award2.jpeg";
 import award3 from "../assets/award3.jpg";
 import award4 from "../assets/award4.jpg";
+import aboutHeroImage from "../assets/about_us_hero.png";
+import ourMissionImage from "../assets/our_mission.png";
 
 export const AboutUsPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -29,69 +33,130 @@ export const AboutUsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Enhanced Modern Hero Section */}
-      {/* Enhanced Modern Hero Section */}
-      <section className="relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 md:py-32 px-4 md:px-6 overflow-hidden">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" style={{ backgroundColor: 'rgba(147, 162, 103, 0.05)' }}></div>
+      <SEO 
+        title="About Us - Tradition Meets Craftsmanship"
+        description="Discover the story of Izhaiyam Handloom Furniture. Founded to preserve traditional rope furniture making while empowering local artisans in Tamil Nadu."
+        canonical="https://www.izhaiyam.com/aboutUs"
+        type="article"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Izhaiyam Handloom Furniture",
+          "url": "https://www.izhaiyam.com",
+          "logo": "https://www.izhaiyam.com/logo.jpg",
+          "sameAs": [
+            "https://www.instagram.com/izhaiyam_furniture",
+            "https://www.facebook.com/izhaiyam"
+          ]
+        }}
+      />
+      {/* Enhanced Modern Hero Section with Image Background */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative w-full py-20 md:py-40 px-4 md:px-6 overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `url(${aboutHeroImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Dark Overlay for Readability */}
+        <div className="absolute inset-0 bg-black/50 z-0"></div>
 
-        <div className="max-w-5xl mx-auto relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-5xl mx-auto relative z-10 text-center"
+        >
           {/* Eyebrow Text */}
-          <p className="font-inter text-xs md:text-base font-semibold tracking-wider uppercase text-center mb-3 md:mb-4" style={{ color: '#93a267' }}>
+          <p className="font-inter text-xs md:text-sm font-bold tracking-[0.2em] uppercase text-center mb-3 md:mb-4 text-[#E8F0D6] drop-shadow-md">
             Weaving Tradition, Crafting Comfort
           </p>
 
           {/* Main Heading */}
-          <h1 className="font-inter text-3xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 md:mb-6 text-center leading-tight">
-            About <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">Izhaiyam</span>
+          <h1 className="font-playfair text-4xl md:text-7xl lg:text-8xl font-bold text-white mb-4 md:mb-6 leading-tight drop-shadow-lg">
+            About Izhaiyam
           </h1>
 
           {/* Decorative Line */}
           <div className="flex items-center justify-center gap-3 mb-8 md:mb-12">
-            <div className="w-8 md:w-12 h-0.5 bg-gray-300"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full" style={{ backgroundColor: '#93a267' }}></div>
-            <div className="w-8 md:w-12 h-0.5 bg-gray-300"></div>
+            <div className="w-8 md:w-12 h-0.5 bg-white/70"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#93a267]"></div>
+            <div className="w-8 md:w-12 h-0.5 bg-white/70"></div>
           </div>
 
-          {/* Description Paragraphs */}
+          {/* Description Paragraphs - White Text */}
           <div className="space-y-4 md:space-y-8 max-w-3xl mx-auto">
-            <p className="font-inter text-sm md:text-2xl text-gray-800 leading-relaxed text-center font-light">
-              Founded by <span className="font-semibold text-gray-900">M. Suriya Kanniyappan</span>, Izhaiyam Handloom Furniture is <span className="font-semibold text-gray-900">Chennai’s first rope furniture manufacturing company</span>, dedicated to creating sustainable, handwoven, and health-friendly furniture for modern living spaces.
-            </p>
-
-            <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
-              With a unique combination of craftsmanship and eco-conscious design, Izhaiyam specializes in <span className="font-medium text-gray-800">cotton rope handwoven furniture</span>, offering durable, chemical-free, and breathable alternatives to conventional products. Every piece is designed to support a healthier lifestyle—crafted using natural materials that promote ventilation, posture support, and long-lasting comfort.
-            </p>
-
-            <p className="font-inter text-sm md:text-lg text-gray-600 leading-relaxed text-center">
-              Izhaiyam began with a simple yet powerful vision—to make <span className="font-medium text-gray-800">sustainability an everyday lifestyle choice</span>. With a B.Sc. in Visual Communication, our founder Suriya transformed her creativity into a meaningful business that stands for environmental responsibility and human well-being. Starting without any business background or external support, she built Izhaiyam while raising two daughters, proving that dreams grow stronger with purpose.
+            <p className="font-inter text-sm md:text-xl text-white/90 leading-relaxed font-light drop-shadow-sm">
+              Founded by <span className="font-semibold text-white">M. Suriya Kanniyappan</span>, Izhaiyam Handloom Furniture is <span className="font-semibold border-b border-[#93a267]">Chennai’s first rope furniture manufacturing company</span>, dedicated to creating sustainable, handwoven, and health-friendly furniture.
             </p>
           </div>
+        </motion.div>
+      </motion.section>
 
-          {/* Stats Section - Enhanced - Horizontal Row on Mobile */}
-          <div className="mt-10 md:mt-16 grid grid-cols-3 gap-2 md:gap-8 max-w-4xl mx-auto">
-            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>15+</p>
+      {/* Stats Section - Moved outside Hero for cleaner look */}
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="py-12 bg-white relative -mt-10 z-20"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="grid grid-cols-3 gap-2 md:gap-8 shadow-2xl rounded-2xl bg-white border border-gray-100 p-6 md:p-8">
+            <div className="text-center">
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">6+</p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Years of Excellence</p>
-              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Trusted tradition</p>
             </div>
-            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>200+</p>
+            <div className="text-center border-l border-gray-100">
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">40+</p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
-              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Master craftspeople</p>
             </div>
-            <div className="text-center p-2 md:p-6 rounded-lg md:rounded-2xl bg-white shadow-sm md:shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <p className="font-inter text-2xl md:text-6xl font-bold mb-1 md:mb-2" style={{ color: '#93a267' }}>5K+</p>
+            <div className="text-center border-l border-gray-100">
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">800+</p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
-              <p className="font-inter text-[8px] md:text-xs text-gray-500 mt-0.5 md:mt-1 hidden md:block">Across India</p>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
+
+      {/* OUR MISSION SECTION - Custom Image Background */}
+      <motion.section 
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="w-full py-24 px-6 flex items-center justify-center relative my-12"
+        style={{
+          backgroundImage: `url(${ourMissionImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center'
+        }}
+      >
+        {/* Overlay for Readability */}
+        <div className="absolute inset-0 bg-black/40 z-0"></div>
+
+        <div className="max-w-4xl mx-auto relative z-10 text-center bg-white/10 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-white/20 shadow-2xl">
+          <h2 className="font-playfair text-3xl md:text-5xl font-bold text-white mb-6">Our Mission</h2>
+          <p className="font-inter text-lg md:text-xl text-white/90 leading-relaxed font-light">
+            “Our mission is to create furniture that supports a healthy future generation — sustainable, breathable, chemical-free, and crafted with care.”
+— M. Suriya Kanniyappan, Founder
+          </p>
+        </div>
+      </motion.section>
 
       {/* Our Articles Section */}
-      <section className="w-full bg-gray-50 py-24 px-6">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="w-full bg-gray-50 py-24 px-6"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Articles</h2>
 
@@ -123,10 +188,16 @@ export const AboutUsPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Our Founder Section */}
-      <section className="w-full bg-white py-24 px-6">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="w-full bg-white py-24 px-6"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Founders</h2>
 
@@ -149,13 +220,26 @@ export const AboutUsPage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Brand Story Section */}
-      <BrandStorySection />
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <BrandStorySection />
+      </motion.div>
 
       {/* Our Awards Section */}
-      <section className="w-full bg-white py-24 px-6">
+      <motion.section 
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-white py-24 px-6"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Awards</h2>
 
@@ -178,7 +262,7 @@ export const AboutUsPage = () => {
             />
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <FooterSection />

@@ -18,7 +18,7 @@ import { PaginationSectionForProductsAdminPage } from "./productTab/paginationFo
 
 
 
-export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
+export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDeleted }) => {
   const navigate = useNavigate();
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
   const [fullOrderDetails, setFullOrderDetails] = useState(null);
@@ -63,7 +63,8 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders }) => {
              headers: { authorization: `Bearer ${LoginToken}` }
           });
           toast.success("Order deleted successfully");
-          fetchOrders();
+          if(onOrderDeleted) onOrderDeleted(id);
+          else fetchOrders(); // Fallback
       } catch (error) {
           toast.error("Failed to delete order");
       }
@@ -193,6 +194,14 @@ const OrdersManagement = () => {
   const [loading, setLoading] = useState(false);
 
   const { orders, ordersLength, pageNo, perPage, isError } = ordersParams;
+
+  const handleOrderDelete = (deletedId) => {
+      setOrdersParams(prev => ({
+          ...prev,
+          orders: prev.orders.filter(order => order.id !== deletedId),
+          ordersLength: prev.ordersLength - 1
+      }));
+  };
 
   useEffect(() => {
     fetchOrders(ordersParams);
@@ -374,6 +383,7 @@ const OrdersManagement = () => {
                                     order={order} 
                                     serialNo={serialNo} 
                                     fetchOrders={() => fetchOrders(ordersParams)} 
+                                    onOrderDeleted={handleOrderDelete}
                                 />
                             );
                         })}

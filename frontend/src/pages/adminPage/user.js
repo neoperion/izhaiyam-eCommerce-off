@@ -103,7 +103,13 @@ export const UserManagement = () => {
       if (response.data.success) {
         showMessage('success', 'User updated successfully');
         setShowEditModal(false);
-        fetchUsers();
+        // Optimistic update
+        const updatedUsers = users.map(u => 
+            u.id === selectedUser.id 
+                ? { ...u, name: editForm.name, email: editForm.email, adminStatus: editForm.adminStatus, status: editForm.verificationStatus === 'verified' ? 'Verified' : 'Pending' } 
+                : u
+        );
+        setUsers(updatedUsers);
       }
     } catch (error) {
       console.error('Error updating user:', error);
@@ -116,6 +122,12 @@ export const UserManagement = () => {
   // Update verification status
   const handleStatusChange = async (userId, currentStatus) => {
     const newStatus = currentStatus === 'Verified' ? 'pending' : 'verified';
+    const newStatusLabel = newStatus === 'verified' ? 'Verified' : 'Pending';
+
+    // Optimistic Update Setup
+    const previousUsers = [...users];
+    const optimisticUsers = users.map(u => u.id === userId ? { ...u, status: newStatusLabel } : u);
+    setUsers(optimisticUsers);
     
     try {
       const loginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || "";
@@ -129,11 +141,15 @@ export const UserManagement = () => {
 
       if (response.data.success) {
         showMessage('success', `User status changed to ${newStatus}`);
-        fetchUsers();
+        // No fetch needed, already updated
+      } else {
+          // Revert on failure (optional but good practice)
+           setUsers(previousUsers);
       }
     } catch (error) {
       console.error('Error updating status:', error);
       showMessage('error', error.response?.data?.msg || 'Failed to update status');
+      setUsers(previousUsers);
     }
   };
 
@@ -157,7 +173,9 @@ export const UserManagement = () => {
       if (response.data.success) {
         showMessage('success', 'User deleted successfully');
         setShowDeleteModal(false);
-        fetchUsers();
+        // Optimistic delete
+        const remainingUsers = users.filter(u => u.id !== selectedUser.id);
+        setUsers(remainingUsers);
       }
     } catch (error) {
       console.error('Error deleting user:', error);

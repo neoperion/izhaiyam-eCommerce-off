@@ -128,6 +128,9 @@ export const Footer = () => {
                 <Link to="/terms-and-conditions" className="hover:text-primary-foreground transition-colors">
                   Terms of Service
                 </Link>
+                <Link to="/data-deletion" className="hover:text-primary-foreground transition-colors">
+                  Data Deletion
+                </Link>
               </div>
             </div>
           </div>

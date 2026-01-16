@@ -1,9 +1,10 @@
+import { SEO } from "../components/SEO/SEO";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
 import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import FooterSection from "../components/footerSection";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { handleCartModification } from "../utils/handleCartModification";
 import { handleWishlistModification } from "../utils/handleWishlistModification";
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
@@ -47,6 +48,18 @@ export const ProductDetailsPage = () => {
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    const { current } = scrollRef;
+    if (current) {
+      if (direction === "left") {
+        current.scrollBy({ left: -300, behavior: "smooth" });
+      } else {
+        current.scrollBy({ left: 300, behavior: "smooth" });
+      }
+    }
+  };
 
   // A/B Testing & Default Wood Logic
   useEffect(() => {
@@ -173,8 +186,34 @@ export const ProductDetailsPage = () => {
     return <LoadingIndicator type="spinner" label="Loading product details..." />;
   }
 
+  const productSchema = { // SEO: Product Schema
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": title,
+    "image": image,
+    "description": description,
+    "brand": {
+      "@type": "Brand",
+      "name": "Izhaiyam"
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "INR",
+      "price": currentDisplayPrice,
+      "availability": isOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <SEO 
+        title={title}
+        description={description || `Buy ${title} online at Izhaiyam. Handcrafted wooden furniture.`}
+        canonical={`https://www.izhaiyam.com/product/${_id}`}
+        image={image}
+        type="product"
+        data={productSchema}
+      />
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Image Section - Left Column */}
@@ -385,8 +424,16 @@ export const ProductDetailsPage = () => {
               </div>
 
               {/* Horizontal Scrolling Container */}
-              <div className="relative">
-                <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+              <div className="relative group">
+                <button
+                  onClick={() => scroll("left")}
+                  className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg border border-gray-100 transition-all -ml-5 opacity-0 group-hover:opacity-100"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+
+                <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory scroll-smooth">
                   {similarProducts.map((product) => {
                     const wishlistItem = wishlist.find(item => item._id === product._id);
                     return (
@@ -402,6 +449,14 @@ export const ProductDetailsPage = () => {
                     );
                   })}
                 </div>
+
+                <button
+                  onClick={() => scroll("right")}
+                  className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg border border-gray-100 transition-all -mr-5 opacity-0 group-hover:opacity-100"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight size={24} />
+                </button>
               </div>
             </div>
           );

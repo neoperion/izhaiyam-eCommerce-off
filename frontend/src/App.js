@@ -11,6 +11,7 @@ import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
+import { HelmetProvider } from 'react-helmet-async';
 import { useLocation } from "react-router-dom";
 import WelcomeModal from "./components/welcomeModal/WelcomeModal";
 
@@ -92,6 +93,7 @@ function App() {
   }, []);
 
   return (
+    <HelmetProvider>
     <SocketProvider>
     <SocketListener />
     <div className="App-container lg:text-[18px]">
@@ -135,6 +137,7 @@ function App() {
       />
     </div>
     </SocketProvider>
+    </HelmetProvider>
   );
 }
 

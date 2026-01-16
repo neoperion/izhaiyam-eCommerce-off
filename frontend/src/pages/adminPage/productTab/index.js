@@ -83,6 +83,26 @@ export const ProductManagement = () => {
     }
   };
 
+  const handleProductDelete = (deletedId) => {
+    // Optimistically update search results
+    if (productsLength > 0) {
+      setSearchedProductDataAdminPage(prev => ({
+        ...prev,
+        productsSearchedFor: prev.productsSearchedFor.filter(p => p._id !== deletedId),
+        productsLength: prev.productsLength - 1
+      }));
+    }
+
+    // Optimistically update low stock list
+    if (lowStockProductsParams.productsLength > 0) {
+      setLowStockProductsParams(prev => ({
+         ...prev,
+         lowStockProducts: prev.lowStockProducts.filter(p => p._id !== deletedId),
+         productsLength: prev.productsLength - 1
+      }));
+    }
+  };
+
   return (<AdminLayout>    <section className="w-[100%] xl:px-[4%] tablet:px-[6%] px-[4%] lg:px-[2%] ">
     <div className="container mx-auto mb-4">
       <div className="flex justify-end">
@@ -160,7 +180,7 @@ export const ProductManagement = () => {
               <tbody className="divide-y divide-gray-100">
                 {productsSearchedFor.map((products, index) => {
                   const serialNo = (searchParameters.pageNo - 1) * searchParameters.perPage + index + 1;
-                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters) }} key={products._id} />;
+                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => searchProductFetch(searchParameters), onProductDeleted: handleProductDelete }} key={products._id} />;
                 })}
               </tbody>
             ) : (
@@ -220,7 +240,7 @@ export const ProductManagement = () => {
               <tbody className="divide-y divide-gray-100">
                 {lowStockProductsParams.lowStockProducts.map((products, index) => {
                   const serialNo = (lowStockProductsParams.pageNo - 1) * lowStockProductsParams.perPage + index + 1;
-                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams) }} key={products._id} />;
+                  return <SingleProductTableCell {...{ products, serialNo, fetchProductData: () => fetchLowStockProducts(lowStockProductsParams), onProductDeleted: handleProductDelete }} key={products._id} />;
                 })}
               </tbody>
             ) : (

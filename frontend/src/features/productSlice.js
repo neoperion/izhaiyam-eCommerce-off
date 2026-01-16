@@ -2,9 +2,20 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import API from "../config";
 
+const getCachedProducts = () => {
+  try {
+    const cached = localStorage.getItem("allProductsData");
+    return cached ? JSON.parse(cached) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const cachedData = getCachedProducts();
+
 const initialState = {
-  allProductsData: [],
-  isLoading: true,
+  allProductsData: cachedData,
+  isLoading: cachedData.length === 0,
   placeholderOfproductsDataCurrentlyRequested: [],
   productsDataForCurrentPage: [],
   sortedAllProductsData: [],
@@ -77,13 +88,23 @@ export const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getAllProductsData.pending, (state) => {
-        state.isLoading = true;
+        // Only set loading true if we don't have data
+        if (state.allProductsData.length === 0) {
+          state.isLoading = true;
+        }
       })
       .addCase(getAllProductsData.fulfilled, (state, { payload }) => {
         // setting the objects to empty array before fetched data is received,instead of undefined, to prevent error in Array methods in the frontend
         payload = payload ? payload : [];
         state.isLoading = false;
         state.allProductsData = payload;
+        
+        // Cache the new data
+        try {
+          localStorage.setItem("allProductsData", JSON.stringify(payload));
+        } catch (e) {
+          console.warn("Failed to cache products data");
+        }
       })
       .addCase(getAllProductsData.rejected, (state, { payload }) => {
         state.isLoading = true;

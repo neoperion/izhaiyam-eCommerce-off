@@ -1,24 +1,45 @@
 /* Policies.css - Shared styles for policy pages */
 .policy-container h1 {
-  @apply text-3xl font-bold text-primary mb-6;
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 700; /* font-bold */
+  color: hsl(var(--primary)); /* text-primary */
+  margin-bottom: 1.5rem; /* mb-6 */
 }
 
 .policy-container h2 {
-  @apply text-xl font-semibold text-primary mb-3 mt-6;
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75rem;
+  font-weight: 600; /* font-semibold */
+  color: hsl(var(--primary)); /* text-primary */
+  margin-bottom: 0.75rem; /* mb-3 */
+  margin-top: 1.5rem; /* mt-6 */
 }
 
 .policy-container h3 {
-  @apply text-lg font-medium text-gray-800 mb-2 mt-4;
+  font-size: 1.125rem; /* text-lg */
+  line-height: 1.75rem;
+  font-weight: 500; /* font-medium */
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 0.5rem; /* mb-2 */
+  margin-top: 1rem; /* mt-4 */
 }
 
 .policy-container p {
-  @apply text-base text-gray-600 leading-relaxed mb-4;
+  font-size: 1rem; /* text-base */
+  line-height: 1.625; /* leading-relaxed */
+  color: #4b5563; /* text-gray-600 */
+  margin-bottom: 1rem; /* mb-4 */
 }
 
 .policy-container ul {
-  @apply list-disc list-inside text-gray-600 mb-4 ml-4;
+  list-style-type: disc; /* list-disc */
+  list-style-position: inside; /* list-inside */
+  color: #4b5563; /* text-gray-600 */
+  margin-bottom: 1rem; /* mb-4 */
+  margin-left: 1rem; /* ml-4 */
 }
 
 .policy-container li {
-  @apply mb-2;
+  margin-bottom: 0.5rem; /* mb-2 */
 }

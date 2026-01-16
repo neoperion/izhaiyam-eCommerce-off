@@ -6,7 +6,7 @@ import { DeleteProductModal } from "./deleteProductModal";
 import { ProductDetailsModal } from "./productDetailsAdminPage";
 import { useNavigate } from "react-router-dom";
 
-export const SingleProductTableCell = ({ products, serialNo, fetchProductData }) => {
+export const SingleProductTableCell = ({ products, serialNo, fetchProductData, onProductDeleted }) => {
   const navigate = useNavigate();
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isProductDetailsModalOn, setIsProductDetailsModalOn] = useState(false);
@@ -90,7 +90,7 @@ export const SingleProductTableCell = ({ products, serialNo, fetchProductData })
             />
           </div>
           
-          {isDeleteModalOn && <DeleteProductModal {...{ isDeleteModalOn, setIsDeleteModalOn, _id }} />}
+          {isDeleteModalOn && <DeleteProductModal {...{ isDeleteModalOn, setIsDeleteModalOn, _id, onSuccess: () => onProductDeleted(_id) }} />}
           {isProductDetailsModalOn && (
             <ProductDetailsModal
               {...{ isProductDetailsModalOn, setIsProductDetailsModalOn, productDetails, isFetchingUpdatedDataLoading }}

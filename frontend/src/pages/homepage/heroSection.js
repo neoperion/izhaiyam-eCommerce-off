@@ -44,7 +44,7 @@ export function HeroSection() {
 
 
          {/* Content Area (Top Reserved Space) */}
-         <div className="absolute top-0 left-0 w-full z-10 px-6 pt-12 pb-4 flex flex-col gap-5">
+         <div className="absolute top-0 left-0 w-full z-10 px-5 pt-12 pb-4 flex flex-col gap-5">
              
              {/* Text Content */}
              <div className="space-y-4 animate-fade-in-up">
@@ -63,10 +63,10 @@ export function HeroSection() {
              </div>
 
              {/* Action Buttons */}
-             <div className="flex gap-4 mt-2 w-full animate-fade-in-up delay-100">
+             <div className="flex gap-3 mt-2 w-full animate-fade-in-up delay-100">
                 <Link 
                     to="/shop" 
-                    className="flex-1 h-12 bg-[#2f3e2f] text-[#fdfbf7] rounded-full flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
+                    className="flex-1 h-12 bg-[#2f3e2f] text-[#fdfbf7] rounded-full flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform whitespace-nowrap"
                 >
                     <span className="font-medium text-sm">Explore Collection</span>
                     <ArrowUpRight size={16} />
@@ -74,7 +74,7 @@ export function HeroSection() {
                 
                 <Link 
                     to="/contactUs"
-                    className="px-6 h-12 rounded-full border border-[#2f3e2f]/20 text-[#2f3e2f] font-medium text-sm flex items-center justify-center active:bg-[#2f3e2f]/5 backdrop-blur-sm"
+                    className="px-5 h-12 rounded-full border border-[#2f3e2f]/20 text-[#2f3e2f] font-medium text-sm flex items-center justify-center active:bg-[#2f3e2f]/5 backdrop-blur-sm whitespace-nowrap"
                 >
                     Custom Orders
                 </Link>

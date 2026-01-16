@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { SEO } from "../components/SEO/SEO";
 import { Mail, Phone, MapPin, Loader2, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import FooterSection from "../components/footerSection";
 import contactImage from "../assets/image.png";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const ContactUsPage = () => {
   const [formData, setFormData] = useState({
@@ -28,17 +31,28 @@ export const ContactUsPage = () => {
     setSubmitStatus(null);
 
     try {
-      // Simulate form submission - replace with actual backend integration
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // API Call to Backend
+      // Base URL is likely proxied or set in axios defaults, but we'll use relative path
+      // If deployed, ensure access to correct backend URL. 
+      // Assuming proxy is set up in package.json or axios global config.
+      // If not, we might need `${process.env.REACT_APP_BACKEND_URL}/api/v1/contact`
+      // For now, using relative path `/api/v1/contact` which works with proxy.
+      
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/v1/contact`, formData);
 
-      setSubmitStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
+      if (response.status === 200) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        toast.success("Message sent successfully!");
+        
+        setTimeout(() => {
+          setSubmitStatus(null);
+        }, 5000);
+      }
     } catch (error) {
+      console.error("Contact Form Error:", error);
       setSubmitStatus("error");
+      toast.error(error.response?.data?.msg || "Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -46,6 +60,26 @@ export const ContactUsPage = () => {
 
   return (
     <>
+      <SEO 
+        title="Contact Us - Visit Our Showroom"
+        description="Get in touch with Izhaiyam Handloom Furniture. Visit our showroom in Tamil Nadu or contact us for custom orders. +91 98765 43210."
+        canonical="https://www.izhaiyam.com/contactUs"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FurnitureStore",
+          "name": "Izhaiyam Handloom Furniture",
+          "image": "https://www.izhaiyam.com/static/media/image.png",
+          "url": "https://www.izhaiyam.com",
+          "telephone": "+919876543210",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Handloom Street",
+            "addressLocality": "Textile District",
+            "addressRegion": "Tamil Nadu",
+            "addressCountry": "IN"
+          }
+        }}
+      />
       <div className="min-h-screen bg-white">
         {/* TOPIC SECTION - About IZHAYAM */}
         <section className="py-16 px-4" style={{ backgroundColor: '#FFF7F2' }}>

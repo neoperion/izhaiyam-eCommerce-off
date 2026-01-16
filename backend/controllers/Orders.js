@@ -4,6 +4,7 @@ const CustomErrorHandler = require("../errors/customErrorHandler");
 const Product = require("../models/products");
 const { createNotification } = require("./notificationController");
 const { sendSMS } = require("../lib/twilio");
+const { sendOrderConfirmationEmail, sendAdminNewOrderEmail, sendOrderStatusEmail } = require("../services/emailService");
 
 console.log(">>> ORDERS CONTROLLER LOADED: INCLUDES 'STOOL' FIX & TITLE FALLBACK <<<");
 
@@ -282,6 +283,19 @@ const postUserOrders = async (req, res) => {
       process.env.ADMIN_PHONE_NUMBER,
       `New order received!\nOrder ID: ${formattedOrder.date}\nCustomer: ${formattedOrder.username || 'Guest'}\nAmount: ₹${orderDetails.totalAmount}`
     );
+
+    // SEND EMAIL: Customer + Admin
+    try {
+        await sendOrderConfirmationEmail(
+          { email: email, username: formattedOrder.username }, 
+          { _id: formattedOrder.date, totalAmount: orderDetails.totalAmount }
+        );
+        
+        await sendAdminNewOrderEmail(
+           { email: email, username: formattedOrder.username },
+           { _id: formattedOrder.date, totalAmount: orderDetails.totalAmount }
+        );
+    } catch(e) { console.error("Email send warning:", e); }
 
 
     res.status(201).json({ message: "Order successful", user: updatedUser });
@@ -693,6 +707,18 @@ const updateOrderTracking = async (req, res) => {
       user.phone || user.orders[orderIndex].phone,
       `Your order ${orderId} has been shipped!\nCarrier: ${carrier}\nTracking ID: ${trackingId}\nYou can track it via the courier website.`
     );
+    
+    // SEND EMAIL: To User (Tracking Info)
+    try {
+        await sendOrderStatusEmail(
+          { email: user.email, username: user.username },
+          { 
+              _id: orderId, 
+              tracking: { carrier, trackingId, trackingUrl } 
+          },
+          "Shipped"
+        );
+    } catch(e) { console.error("Email send warning:", e); }
 
     res.status(200).json({
       success: true,
@@ -747,6 +773,17 @@ const updateOrderStatus = async (req, res) => {
           order.phone || user.phone,
           `Your order ${orderId} status is now: ${status}`
         );
+    }
+
+    // SEND EMAIL: To User (Status Update)
+    if (order) {
+        try {
+            await sendOrderStatusEmail(
+                { email: user.email, username: user.username },
+                { _id: orderId },
+                status
+            );
+        } catch(e) { console.error("Email send warning:", e); }
     }
 
     res.status(200).json({

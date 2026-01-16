@@ -41,6 +41,8 @@ const userSchema = mongoose.Schema(
     verificationToken: {
       type: String,
     },
+    resetOtp: String,
+    resetOtpExpiry: Date,
     avatar: String,
     authType: {
       type: String,

@@ -14,6 +14,7 @@ const ordersRoute = require("./routes/ordersRoute");
 const addressRoute = require("./routes/addressRoutes");
 const instagramRoute = require("./routes/instagramRoute");
 const notificationRoute = require("./routes/notificationRoutes");
+const sitemapRoute = require("./routes/sitemapRoute");
 const authRoutes = require("./routes/auth");
 const { clearAdminJwt } = require("./controllers/admin");
 
@@ -53,13 +54,22 @@ app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none"); // or require-corp if needed, but unsafe-none is safer for broad compatibility
   next();
 });
+const compression = require("compression");
+// ... imports
+
+app.use(compression()); // Enable Gzip compression
+
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
 }));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
 app.use(
   fileUpload({
     useTempFiles: true,
@@ -89,7 +99,10 @@ app.use("/orders", ordersRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/address", addressRoute);
 app.use("/api/v1/instagram", instagramRoute);
-app.use("/api/v1/admin/notifications", notificationRoute); // Mounted under /admin/notifications as per plan/requirements
+app.use("/api/v1/admin/notifications", notificationRoute); 
+app.use("/api/v1/webhooks/resend", require("./routes/resendWebhookRoute")); // Resend Webhooks
+app.use("/api/v1/contact", require("./routes/contactRoute")); // Contact Form Route
+app.use("/sitemap.xml", sitemapRoute);
 app.use(errorHandler);
 app.use(pathNotFound);
 

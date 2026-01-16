@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { validateEmail } from "../utils/emailRegexValidation";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
-import { fetchForgotPasswordClick } from "../features/authSlice/fetchForgotPasswordClick";
 import { fetchResendEmailVerificationLink } from "../features/authSlice/resendEmailVerification";
 import { FullpageSpinnerLoader } from "../components/loaders/spinnerIcon";
 import { motion } from "framer-motion";
@@ -30,15 +29,7 @@ export const LoginPage = () => {
 
   // Forgot password
   const handleForgotPassword = () => {
-    if (!loginDetails.email) {
-      toast("Please enter your email address", { type: "info" });
-      return;
-    }
-    if (!validateEmail(loginDetails.email)) {
-      toast("Please enter a valid email", { type: "error" });
-      return;
-    }
-    dispatch(fetchForgotPasswordClick(loginDetails.email));
+    navigate("/forgot-password");
   };
 
   // Resend verification mail
