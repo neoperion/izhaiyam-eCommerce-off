@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 import FooterSection from "../components/footerSection";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
+import suriyaImage from "../assets/team/suriya_kanniyappan.jpg";
+import manivasagamImage from "../assets/team/manivasagam.png";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
 import BrandStorySection from "../components/BrandStorySection";
 import MissionVisionSection from "../components/MissionVisionSection"; // Imported new section
 
 // Import award images
-import award1 from "../assets/award1.jpg";
 import award2 from "../assets/award2.jpeg";
 import award3 from "../assets/award3.jpg";
-import award4 from "../assets/award4.jpg";
 import aboutHeroImage from "../assets/about_us_hero.png";
 import ourMissionImage from "../assets/our_mission.png";
 
@@ -31,6 +31,20 @@ export const AboutUsPage = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Founders data with individual images
+  const founders = [
+    { 
+      name: "M. Suriya Kanniyappan", 
+      role: "Founder & Creative Director",
+      image: suriyaImage
+    },
+    { 
+      name: "N. Manivasagam", 
+      role: "Co-Founder & Production Head",
+      image: manivasagamImage
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -93,7 +107,7 @@ export const AboutUsPage = () => {
           {/* Description Paragraphs - White Text */}
           <div className="space-y-4 md:space-y-8 max-w-3xl mx-auto">
             <p className="font-inter text-sm md:text-xl text-white/90 leading-relaxed font-light drop-shadow-sm">
-              Founded by <span className="font-semibold text-white">M. Suriya Kanniyappan</span>, Izhaiyam Handloom Furniture is <span className="font-semibold border-b border-[#93a267]">Chennai’s first rope furniture manufacturing company</span>, dedicated to creating sustainable, handwoven, and health-friendly furniture.
+              Founded by <span className="font-semibold text-white">M. Suriya Kanniyappan</span>, Izhaiyam Handloom Furniture is <span className="font-semibold border-b border-[#93a267]">Chennai's first rope furniture manufacturing company</span>, dedicated to creating sustainable, handwoven, and health-friendly furniture.
             </p>
           </div>
         </motion.div>
@@ -118,7 +132,7 @@ export const AboutUsPage = () => {
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
             </div>
             <div className="text-center border-l border-gray-100">
-              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">800+</p>
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">1500+</p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
             </div>
           </div>
@@ -181,16 +195,13 @@ export const AboutUsPage = () => {
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Founders</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-4xl mx-auto">
-            {[
-              { name: "M. Suriya Kanniyappan", role: "Founder & Creative Director" },
-              { name: "N. Manivasagam", role: "Co-Founder & Production Head" }
-            ].map((founder, i) => (
+            {founders.map((founder, i) => (
               <div key={i} className="text-center">
-                <div className="rounded-lg w-96 h-96 mb-8 overflow-hidden mx-auto">
+                <div className="rounded-lg w-80 h-96 md:w-96 md:h-[28rem] mb-8 overflow-hidden mx-auto shadow-xl">
                   <img
-                    src={founderImage}
+                    src={founder.image}
                     alt={founder.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <p className="font-inter text-2xl font-light text-gray-800">{founder.name}</p>
@@ -227,10 +238,8 @@ export const AboutUsPage = () => {
             <CircularGallery
               items={[
                 { image: founderImage, text: 'Founder' },
-                { image: award1, text: 'Award 2024' },
                 { image: award2, text: 'Excellence' },
-                { image: award3, text: 'Innovation' },
-                { image: award4, text: 'Achievement' }
+                { image: award3, text: 'Innovation' }
               ]}
               bend={0}
               borderRadius={0.05}

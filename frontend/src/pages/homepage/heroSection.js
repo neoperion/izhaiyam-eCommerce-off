@@ -4,7 +4,7 @@ import { ArrowUpRight, ChevronRight } from "lucide-react";
 
 // Import New Editorial Images
 import imgChair from "../../assets/hero/editorial_chair.png";
-import imgDecor from "../../assets/hero/editorial_decor.png";
+import imgDesktopHero from "../../assets/hero/hero_desktop.jpg";
 import imgBadge from "../../assets/hero/badge_logo.png";
 // Mobile Specific Assets
 import imgMobileVertical from "../../assets/hero/mobile_vertical.png";
@@ -27,58 +27,90 @@ export function HeroSection() {
 
   return (
     <>
-      <section className="block lg:hidden w-full h-[85vh] relative overflow-hidden bg-[#e9e8e4]">
+      {/* ============================================================ */}
+      {/* MOBILE HERO - Fullscreen Immersive (< 1024px)                  */}
+      {/* ============================================================ */}
+      <section className="block lg:hidden w-full min-h-[100svh] relative overflow-hidden">
          
-         {/* Background Image - Pushed Down to reveal top space */}
-         <div className="absolute inset-x-0 bottom-0 h-[70%] z-0">
+         {/* Full Background Image */}
+         <div className="absolute inset-0 z-0">
              <img 
-                src={imgMobileVertical} 
-                alt="Handwoven Swing" 
-                className="w-full h-full object-cover animate-[scale_20s_linear_infinite]" 
-                style={{ objectPosition: "center top" }}
+                src={imgDesktopHero} 
+                alt="Izhaiyam Handloom Furniture" 
+                className="w-full h-full object-cover"
+                style={{ objectPosition: "center center" }}
              />
-             {/* Smooth fade at the top of the image to blend with background */}
-             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#e9e8e4] to-transparent"></div>
+             {/* Dark gradient overlay for text readability */}
+             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
          </div>
 
+         {/* Floating Brand Badge - Top Right */}
+         <div className="absolute top-6 right-5 z-20">
+             <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg">
+                 <img src="/favicon.ico" alt="Izhaiyam" className="w-8 h-8 object-contain" />
+             </div>
+         </div>
 
-
-         {/* Content Area (Top Reserved Space) */}
-         <div className="absolute top-0 left-0 w-full z-10 px-5 pt-12 pb-4 flex flex-col gap-5">
+         {/* Content Area - Positioned at Bottom */}
+         <div className="absolute bottom-0 left-0 right-0 z-10 px-5 pb-8 pt-20 bg-gradient-to-t from-black/60 to-transparent">
              
-             {/* Text Content */}
-             <div className="space-y-4 animate-fade-in-up">
-                 
-                 <h1 className="font-playfair text-[2.75rem] leading-[1.1] text-[#2f3e2f] tracking-tight drop-shadow-sm">
-                    Weaving <span className="italic text-[#93a267]">Comfort</span> <br/>
-                    Into Life.
-                 </h1>
-
-                 {/* Minimal Divider */}
-                 <div className="w-16 h-1 bg-[#2f3e2f]/20 rounded-full"></div>
-
-                 <p className="font-inter text-[#4a5e4a] text-sm leading-relaxed max-w-[95%] font-medium">
-                    Experience the warmth of handcrafted rope furniture. Sustainable, breathable, and designed for the modern Indian home.
-                 </p>
+             {/* Tagline Badge */}
+             <div className="inline-flex items-center gap-2 mb-4">
+                 <div className="w-6 h-[2px] bg-[#93a267]"></div>
+                 <span className="font-inter text-xs uppercase tracking-[0.2em] text-white/80 font-medium">
+                     Handcrafted Since 2019
+                 </span>
              </div>
 
-             {/* Action Buttons */}
-             <div className="flex gap-3 mt-2 w-full animate-fade-in-up delay-100">
+             {/* Main Heading */}
+             <h1 className="font-playfair text-[2.5rem] leading-[1.1] text-white tracking-tight mb-4">
+                Weaving <span className="italic text-[#c4d49a]">Comfort</span> <br/>
+                Into Life.
+             </h1>
+
+             {/* Description */}
+             <p className="font-inter text-white/70 text-sm leading-relaxed mb-6 max-w-[90%]">
+                Experience the warmth of handcrafted rope furniture. Sustainable, breathable, and designed for the modern Indian home.
+             </p>
+
+             {/* CTA Buttons */}
+             <div className="flex gap-3">
                 <Link 
                     to="/shop" 
-                    className="flex-1 h-12 bg-[#2f3e2f] text-[#fdfbf7] rounded-full flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform whitespace-nowrap"
+                    className="flex-1 h-14 bg-[#93a267] text-white rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform font-medium"
                 >
-                    <span className="font-medium text-sm">Explore Collection</span>
-                    <ArrowUpRight size={16} />
+                    <span>Explore Collection</span>
+                    <ArrowUpRight size={18} />
                 </Link>
                 
                 <Link 
                     to="/contactUs"
-                    className="px-5 h-12 rounded-full border border-[#2f3e2f]/20 text-[#2f3e2f] font-medium text-sm flex items-center justify-center active:bg-[#2f3e2f]/5 backdrop-blur-sm whitespace-nowrap"
+                    className="h-14 px-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium flex items-center justify-center active:bg-white/20 transition-colors"
                 >
-                    Custom Orders
+                    Custom
                 </Link>
              </div>
+
+             {/* Bottom Features Strip */}
+             <div className="flex items-center justify-between mt-6 pt-5 border-t border-white/10">
+                 <div className="flex items-center gap-2">
+                     <div className="w-2 h-2 rounded-full bg-[#93a267]"></div>
+                     <span className="text-white/60 text-xs font-inter">Free Delivery</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                     <div className="w-2 h-2 rounded-full bg-[#93a267]"></div>
+                     <span className="text-white/60 text-xs font-inter">100% Natural</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                     <div className="w-2 h-2 rounded-full bg-[#93a267]"></div>
+                     <span className="text-white/60 text-xs font-inter">5 Yr Warranty</span>
+                 </div>
+             </div>
+         </div>
+
+         {/* Swipe Up Indicator */}
+         <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 opacity-60 animate-bounce">
+             <ChevronRight size={24} className="text-white rotate-90" />
          </div>
       </section>
 
@@ -142,39 +174,30 @@ export function HeroSection() {
             style={{ transform: `translate(-50%, -50%) translate(${offset.x * 1.5}px, ${offset.y * 1.5}px)` }}
          ></div>
 
-         {/* Main Hero Image - The Chair */}
-         <div className="relative z-10 w-full max-w-lg lg:max-w-xl aspect-square">
+         {/* Main Hero Image - Desktop: Full showcase image */}
+         <div className="relative z-10 w-full max-w-2xl lg:max-w-3xl aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
              <img 
-                src={imgChair} 
-                alt="Editorial Rope Chair" 
-                className="w-full h-full object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-700"
-                style={{ transform: `translate(${-offset.x}px, ${-offset.y}px)` }}
+                src={imgDesktopHero} 
+                alt="Izhaiyam Handloom Furniture Showcase" 
+                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                style={{ transform: `translate(${-offset.x * 0.5}px, ${-offset.y * 0.5}px)` }}
              />
-             
-             {/* Overlapping Decor Image - Floating Lamp */}
-             <div 
-                className="absolute -top-10 -right-10 w-40 md:w-56 aspect-square hidden md:block animate-float-slow"
-                style={{ transform: `translate(${offset.x * 2}px, ${offset.y * 2}px)` }}
-             >
-                 <img src={imgDecor} alt="Decor Detail" className="w-full h-full object-contain drop-shadow-lg" />
-             </div>
-
-             {/* Badge */}
-             <div className="absolute bottom-10 -left-6 md:-left-12 w-28 h-28 md:w-36 md:h-36 bg-[#93a267]/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl overflow-hidden border border-white/10">
-                 <div className="absolute inset-0 flex items-center justify-center">
-                    <img src="/favicon.ico" alt="Izhaiyam" className="w-1/2 h-1/2 object-contain opacity-90" />
-                 </div>
-                 <svg viewBox="0 0 100 100" className="relative z-10 w-full h-full p-2 animate-[spin_12s_linear_infinite]">
-                     <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent"/>
-                     <text className="text-[11px] uppercase tracking-[0.2em] font-bold fill-[#2f3e2f]">
-                         <textPath href="#curve">
-                          izhayam|Handloom|Furniture
-                         </textPath>
-                     </text>
-                 </svg>
-             </div>
          </div>
 
+         {/* Badge */}
+         <div className="absolute bottom-10 -left-6 md:-left-12 w-28 h-28 md:w-36 md:h-36 bg-[#93a267]/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl overflow-hidden border border-white/10 z-20">
+             <div className="absolute inset-0 flex items-center justify-center">
+                <img src="/favicon.ico" alt="Izhaiyam" className="w-1/2 h-1/2 object-contain opacity-90" />
+             </div>
+             <svg viewBox="0 0 100 100" className="relative z-10 w-full h-full p-2 animate-[spin_12s_linear_infinite]">
+                 <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent"/>
+                 <text className="text-[11px] uppercase tracking-[0.2em] font-bold fill-[#2f3e2f]">
+                     <textPath href="#curve">
+                      EST 2019 izhayam Handloom
+                     </textPath>
+                 </text>
+             </svg>
+         </div>
       </div>
 
     </section>

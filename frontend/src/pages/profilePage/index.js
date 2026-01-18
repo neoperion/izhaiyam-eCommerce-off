@@ -8,6 +8,7 @@ import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
 import FooterSection from "../../components/footerSection";
 import { Adresses } from "./Adresses";
 import { handleWishlistModification } from "../../utils/handleWishlistModification";
+import { withWatermark } from "../../utils/withWatermark";
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
@@ -519,7 +520,7 @@ export const ProfilePage = () => {
                               <div key={idx} className="flex items-center gap-2 md:gap-4 py-2 md:py-4 border-b last:border-0 border-gray-100">
                                 <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
                                   {item.image || item.productId?.image ? (
-                                    <img src={item.image || item.productId?.image} alt={item.name || item.productId?.title} className="w-full h-full object-cover" />
+                                    <img src={withWatermark(item.image || item.productId?.image)} alt={item.name || item.productId?.title} className="w-full h-full object-cover" />
                                   ) : (
                                     <Package className="w-8 h-8 text-gray-400 m-auto mt-4" />
                                   )}
@@ -594,7 +595,7 @@ export const ProfilePage = () => {
                           {/* Product Image */}
                           <div className="w-16 h-16 md:w-24 md:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                             <img
-                              src={product.image}
+                              src={withWatermark(product.image)}
                               alt={product.title}
                               className="w-full h-full object-cover"
                             />

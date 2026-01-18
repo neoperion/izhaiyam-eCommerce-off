@@ -1,7 +1,7 @@
 import { SEO } from "../components/SEO/SEO";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
-import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import FooterSection from "../components/footerSection";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
@@ -10,6 +10,7 @@ import { handleWishlistModification } from "../utils/handleWishlistModification"
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
 import { LoadingIndicator } from "../components/application/loading-indicator/loading-indicator";
 import ExploreCard from "../components/home/ExploreCard";
+import { withWatermark } from "../utils/withWatermark";
 
 export const ProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export const ProductDetailsPage = () => {
   const [isProductInCart, setIsProductInCart] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const scrollRef = useRef(null);
 
   const scroll = (direction) => {
@@ -218,19 +220,26 @@ export const ProductDetailsPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Image Section - Left Column */}
           <div className="flex flex-col gap-4 h-full sticky top-24">
-            <div className="relative bg-[#FFF7F2] rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-              <img src={images[currentImageIndex]} alt={title} className="w-full h-full object-cover" />
+            <div 
+              className="relative bg-[#FFF7F2] rounded-lg overflow-hidden aspect-square flex items-center justify-center cursor-zoom-in group"
+              onClick={() => setIsLightboxOpen(true)}
+            >
+              <img src={withWatermark(images[currentImageIndex])} alt={title} className="w-full h-full object-cover" />
+              {/* Zoom hint overlay */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
+                <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-70 transition-opacity duration-300" />
+              </div>
               {images.length > 1 && (
                 <>
-                  <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
+                  <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
                     <ChevronLeft size={24} className="text-gray-800" />
                   </button>
-                  <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
+                  <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10">
                     <ChevronRight size={24} className="text-gray-800" />
                   </button>
                 </>
               )}
-              <button className={`absolute top-4 right-4 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`} onClick={() => handleWishlistModification(_id, dispatch)} aria-label="Add to wishlist">
+              <button className={`absolute top-4 right-4 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`} onClick={(e) => { e.stopPropagation(); handleWishlistModification(_id, dispatch); }} aria-label="Add to wishlist">
                 <Heart className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"}`} />
               </button>
             </div>
@@ -238,7 +247,7 @@ export const ProductDetailsPage = () => {
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {images.map((img, idx) => (
                   <button key={idx} onClick={() => setCurrentImageIndex(idx)} className={`flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 transition-all ${currentImageIndex === idx ? 'border-[#93a267] scale-105' : 'border-gray-200 hover:border-[#93a267]/50'}`}>
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={withWatermark(img)} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -462,6 +471,85 @@ export const ProductDetailsPage = () => {
           );
         })()}
       </div>
+
+      {/* Fullscreen Image Lightbox */}
+      {isLightboxOpen && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+          onClick={() => setIsLightboxOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setIsLightboxOpen(false);
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+          }}
+          tabIndex={0}
+          ref={(el) => el && el.focus()}
+        >
+          {/* Close Button */}
+          <button 
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
+            aria-label="Close lightbox"
+          >
+            <X className="w-6 h-6 md:w-8 md:h-8 text-white" />
+          </button>
+
+          {/* Image Counter */}
+          {images.length > 1 && (
+            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-50 px-4 py-2 bg-white/10 rounded-full text-white text-sm font-medium">
+              {currentImageIndex + 1} / {images.length}
+            </div>
+          )}
+
+          {/* Main Image */}
+          <div 
+            className="relative w-full h-full flex items-center justify-center p-4 md:p-12"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={withWatermark(images[currentImageIndex])} 
+              alt={title} 
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              style={{ maxHeight: '90vh', maxWidth: '90vw' }}
+            />
+          </div>
+
+          {/* Navigation Arrows */}
+          {images.length > 1 && (
+            <>
+              <button 
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-50 p-3 md:p-4 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 text-white" />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-50 p-3 md:p-4 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-white" />
+              </button>
+            </>
+          )}
+
+          {/* Thumbnail Strip */}
+          {images.length > 1 && (
+            <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-2 md:gap-3 px-4 py-3 bg-black/50 rounded-full max-w-[90vw] overflow-x-auto">
+              {images.map((img, idx) => (
+                <button 
+                  key={idx}
+                  onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                  className={`flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-all ${currentImageIndex === idx ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                >
+                  <img src={withWatermark(img)} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <FooterSection />
     </div>

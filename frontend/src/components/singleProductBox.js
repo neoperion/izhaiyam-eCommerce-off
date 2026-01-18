@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { handleWishlistModification } from "../utils/handleWishlistModification";
 import { handleCartModification } from "../utils/handleCartModification";
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
+import { withWatermark } from "../utils/withWatermark";
 
 export const SingleProductBox = ({ productsData }) => {
   const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = productsData;
@@ -41,13 +42,13 @@ export const SingleProductBox = ({ productsData }) => {
             {/* Desktop: Hover Swap */}
             <div className="hidden lg:block w-full h-full relative">
                <img
-                 src={productsData.images?.[0] || image}
+                 src={withWatermark(productsData.images?.[0] || image)}
                  alt={title}
                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${productsData.images?.length > 1 ? 'group-hover:opacity-0' : ''}`}
                />
                {productsData.images?.length > 1 && (
                   <img
-                    src={productsData.images[1]}
+                    src={withWatermark(productsData.images[1])}
                     alt={title}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
@@ -61,7 +62,7 @@ export const SingleProductBox = ({ productsData }) => {
                   id={`slider-${_id}`}
                 >
                     {(productsData.images && productsData.images.length > 0 ? productsData.images : [image]).map((img, idx) => (
-                        <img key={idx} src={img} alt={title} className="w-full h-full flex-shrink-0 snap-center object-cover" />
+                        <img key={idx} src={withWatermark(img)} alt={title} className="w-full h-full flex-shrink-0 snap-center object-cover" />
                     ))}
                 </div>
                 {(productsData.images && productsData.images.length > 1) && (

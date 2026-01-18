@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { withWatermark } from '../../utils/withWatermark';
 
-const ExploreCard = ({ title, image, link, category }) => {
+const ExploreCard = ({ title, image, link, category }) =>
+{
     return (
         <div className="w-full max-w-sm bg-white rounded-none shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
             {/* Image Container */}
             <div className="relative bg-gradient-to-b from-orange-50 to-orange-100 aspect-square overflow-hidden">
                 <Link to={link} className="block w-full h-full">
                     <img
-                        src={image}
+                        src={withWatermark(image)}
                         alt={title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

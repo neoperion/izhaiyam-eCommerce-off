@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleCartModification } from "../../utils/handleCartModification";
 import { setCart } from "../../features/wishlistAndCartSlice";
 import { useNavigate } from "react-router-dom";
+import { withWatermark } from "../../utils/withWatermark";
 
 export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
   const { _id, title, price, image, quantity, discountPercentValue, selectedColor, woodType, cartItemId } = cartData;
@@ -43,7 +44,7 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
         }}
       >
         <img
-          src={currentImage}
+          src={withWatermark(currentImage)}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

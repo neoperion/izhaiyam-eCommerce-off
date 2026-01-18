@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { handleSetShippingMethodValue } from "../../utils/handleSetShippingMethodValueFn";
 import { settingTotalProductPriceAndTotalQuantityValue } from "../../utils/settingTotalProductPriceAndquantityValue";
 import { Package } from 'lucide-react';
+import { withWatermark } from "../../utils/withWatermark";
 
 export const OrderSummary = ({ setTotalAmountToBePaid }) => {
   const [shippingMethodValue, setShippingMethodValue] = useState(0);
@@ -50,7 +51,7 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
                 {/* Product Image */}
                 <div className="w-24 h-24 bg-white rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
                   <img
-                    src={cartItem.selectedColor ? cartItem.selectedColor.imageUrl : cartItem.image}
+                    src={withWatermark(cartItem.selectedColor ? cartItem.selectedColor.imageUrl : cartItem.image)}
                     alt={cartItem.title}
                     className="w-full h-full object-cover"
                   />

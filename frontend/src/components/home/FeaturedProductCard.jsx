@@ -3,8 +3,10 @@ import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
+import { withWatermark } from '../../utils/withWatermark';
 
-const FeaturedProductCard = ({ product, isWishlisted }) => {
+const FeaturedProductCard = ({ product, isWishlisted }) =>
+{
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
     const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
                 <div className="relative bg-gradient-to-b from-orange-50 to-orange-100 aspect-square overflow-hidden group">
                     <Link to={`/product/${_id}`} className="block w-full h-full">
                         <img
-                            src={image}
+                            src={withWatermark(image)}
                             alt={title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
