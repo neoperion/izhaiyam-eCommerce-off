@@ -168,7 +168,7 @@ export function HeroSection() {
                      <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent"/>
                      <text className="text-[11px] uppercase tracking-[0.2em] font-bold fill-[#2f3e2f]">
                          <textPath href="#curve">
-                             Handloom Furniture • Est 2024 •
+                          izhayam|Handloom|Furniture
                          </textPath>
                      </text>
                  </svg>

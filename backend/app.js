@@ -65,16 +65,20 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
 }));
+
+// File upload middleware MUST come before express.json() to handle multipart/form-data first
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
+
 app.use(express.json({
   verify: (req, res, buf) => {
     req.rawBody = buf.toString();
   }
 }));
-app.use(
-  fileUpload({
-    useTempFiles: true,
-  })
-);
 
 // Attach IO to request object
 app.use((req, res, next) => {

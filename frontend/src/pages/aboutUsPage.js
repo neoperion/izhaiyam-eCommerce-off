@@ -7,6 +7,7 @@ import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
 import BrandStorySection from "../components/BrandStorySection";
+import MissionVisionSection from "../components/MissionVisionSection"; // Imported new section
 
 // Import award images
 import award1 from "../assets/award1.jpg";
@@ -124,30 +125,8 @@ export const AboutUsPage = () => {
         </div>
       </motion.section>
 
-      {/* OUR MISSION SECTION - Custom Image Background */}
-      <motion.section 
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="w-full py-24 px-6 flex items-center justify-center relative my-12"
-        style={{
-          backgroundImage: `url(${ourMissionImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center'
-        }}
-      >
-        {/* Overlay for Readability */}
-        <div className="absolute inset-0 bg-black/40 z-0"></div>
-
-        <div className="max-w-4xl mx-auto relative z-10 text-center bg-white/10 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-white/20 shadow-2xl">
-          <h2 className="font-playfair text-3xl md:text-5xl font-bold text-white mb-6">Our Mission</h2>
-          <p className="font-inter text-lg md:text-xl text-white/90 leading-relaxed font-light">
-            “Our mission is to create furniture that supports a healthy future generation — sustainable, breathable, chemical-free, and crafted with care.”
-— M. Suriya Kanniyappan, Founder
-          </p>
-        </div>
-      </motion.section>
+      {/* NEW MISSION AND VISION SECTION */}
+      <MissionVisionSection />
 
       {/* Our Articles Section */}
       <motion.section 
