@@ -203,7 +203,7 @@ export const AboutUsPage = () => {
               transition={{
                 repeat: Infinity,
                 ease: "linear",
-                duration: isMobile ? 10 : 30, // Faster on mobile (10s)
+                duration: isMobile ? 2 : 15, // Lower = Faster (4s mobile, 15s desktop)
               }}
             >
               {[

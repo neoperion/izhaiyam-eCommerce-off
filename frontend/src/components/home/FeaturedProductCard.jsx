@@ -60,7 +60,7 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
 
                     {/* Product Name */}
                     <Link to={`/product/${_id}`}>
-                        <h3 className="text-gray-800 font-medium text-[8px] lg:text-base mb-1 lg:mb-2 line-clamp-2 hover:text-orange-500 transition-colors leading-snug">
+                        <h3 className="text-gray-800 font-medium text-[6px] lg:text-base mb-1 lg:mb-2 line-clamp-1 hover:text-orange-500 transition-colors leading-snug">
                             {title}
                         </h3>
                     </Link>
