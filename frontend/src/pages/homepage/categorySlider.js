@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
 import cotImg from '../../assets/COT1.png';
 import sofaImg from '../../assets/sofa.png';
@@ -18,15 +18,25 @@ const CategorySlider = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { allProductsData } = useSelector((state) => state.productsData);
 
   const categories = [
-    { name: 'Cot', image: cotImg, products: 24, type: 'features', value: 'cot' },
-    { name: 'Sofa', image: sofaImg, products: 36, type: 'features', value: 'sofa' },
-    { name: 'Diwan', image: diwanImg, products: 18, type: 'features', value: 'diwan' },
-    { name: 'Chair', image: chairImg, products: 20, type: 'features', value: 'chairs' },
-    { name: 'Swing', image: swingImg, products: 12, type: 'features', value: 'swing' },
-    { name: 'Balcony', image: balconyImg, products: 14, type: 'location', value: 'balcony' },
+    { name: 'Cot', image: cotImg, type: 'features', value: 'cot' },
+    { name: 'Sofa', image: sofaImg, type: 'features', value: 'sofa' },
+    { name: 'Diwan', image: diwanImg, type: 'features', value: 'diwan' },
+    { name: 'Chair', image: chairImg, type: 'features', value: 'chairs' },
+    { name: 'Swing', image: swingImg, type: 'features', value: 'swing' },
+    { name: 'Balcony', image: balconyImg, type: 'location', value: 'balcony' },
   ];
+
+  const getProductCount = (categoryType, categoryValue) => {
+    if (!allProductsData) return 0;
+    return allProductsData.filter((product) =>
+      product.categories &&
+      product.categories[categoryType] &&
+      product.categories[categoryType].some(cat => cat.toLowerCase() === categoryValue.toLowerCase())
+    ).length;
+  };
 
   const handleCategoryClick = (category) => {
     dispatch(setSelectedCategory(category.type));
@@ -141,7 +151,7 @@ const CategorySlider = () => {
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
                 <h3 className="text-sm font-bold mb-1">{category.name}</h3>
-                <p className="text-[10px] text-white/90 mb-1">{category.products} Products</p>
+                <p className="text-[10px] text-white/90 mb-1">{getProductCount(category.type, category.value)} Products</p>
                 <div className="flex items-center gap-2 text-[10px] font-medium group-hover:gap-3 transition-all">
                   <span>Explore</span>
                   <ArrowRight size={10} />
@@ -194,7 +204,7 @@ const CategorySlider = () => {
                     {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                       <h3 className="text-lg font-bold mb-1">{category.name}</h3>
-                      <p className="text-[11px] text-white/90 mb-2">{category.products} Products</p>
+                      <p className="text-[11px] text-white/90 mb-2">{getProductCount(category.type, category.value)} Products</p>
                       <div className="flex items-center gap-2 text-[11px] font-medium group-hover:gap-3 transition-all">
                         <span>Explore</span>
                         <ArrowRight size={14} />

@@ -68,6 +68,25 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
     window.scrollTo(0, 0);
   };
 
+  const searchRef = React.useRef(null);
+
+  // Close search on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchClicked(false);
+      }
+    };
+
+    if (isSearchClicked) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchClicked]);
+
   return (
     <header className="sticky top-0 z-[1000] bg-primary shadow-lg">
       <nav className="container-page">
@@ -92,22 +111,51 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
 
           {/* Right Icons */}
           <div className="flex items-center gap-2 md:gap-6">
-            <button
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
-              onClick={() => setIsSearchClicked(!isSearchClicked)}
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5 text-primary-foreground" />
-            </button>
+            <div ref={searchRef}>
+              <button
+                className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+                onClick={() => setIsSearchClicked(!isSearchClicked)}
+                aria-label="Search"
+              >
+                <Search className="w-5 h-5 text-primary-foreground" />
+              </button>
+
+              {/* Search Dropdown - Moved inside ref container to detect clicks properly */}
+              {isSearchClicked && (
+                <div className="absolute left-0 right-0 top-full bg-primary shadow-lg animate-fade-in border-t border-primary-foreground/10">
+                  <div className="container-page py-4">
+                    <div className="flex gap-2 max-w-2xl mx-auto">
+                      <input
+                        type="text"
+                        placeholder="Search for furniture..."
+                        className="flex-1 px-4 py-3 rounded-lg bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSearching(e);
+                            setIsSearchClicked(false);
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={handleSearching}
+                        className="btn-secondary px-6"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => setIsWishlistActive(true)}
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
               aria-label="Wishlist"
             >
               <Heart className="w-5 h-5 text-primary-foreground" />
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
                   {wishlist.length}
                 </span>
               )}
@@ -123,12 +171,12 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
 
             <button
               onClick={() => setIsCartSectionActive(true)}
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
               aria-label="Shopping Cart"
             >
               <ShoppingBag className="w-5 h-5 text-primary-foreground" />
               {totalProductQuantityCart > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
                   {totalProductQuantityCart}
                 </span>
               )}
@@ -156,32 +204,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
           </div>
         )}
 
-        {/* Search Dropdown */}
-        {isSearchClicked && (
-          <div className="absolute left-0 right-0 top-full bg-primary shadow-lg animate-fade-in">
-            <div className="container-page py-4">
-              <div className="flex gap-2 max-w-2xl mx-auto">
-                <input
-                  type="text"
-                  placeholder="Search for furniture..."
-                  className="flex-1 px-4 py-3 rounded-lg bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearching(e);
-                      setIsSearchClicked(false);
-                    }
-                  }}
-                />
-                <button
-                  onClick={handleSearching}
-                  className="btn-secondary px-6"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+
       </nav>
     </header>
   );

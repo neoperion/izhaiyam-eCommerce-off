@@ -5,8 +5,7 @@ import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 import { withWatermark } from '../../utils/withWatermark';
 
-const FeaturedProductCard = ({ product, isWishlisted }) =>
-{
+const FeaturedProductCard = ({ product, isWishlisted }) => {
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
     const dispatch = useDispatch();

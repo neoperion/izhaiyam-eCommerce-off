@@ -89,11 +89,11 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
 
   return (
     <article className="flex flex-col gap-4 w-full mt-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold font-inter">Price Range</h3>
+      <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+        <h3 className="text-base font-bold font-inter text-gray-900">Price Range</h3>
         {isPriceSectionOpen ? (
           <RiArrowDropUpLine
-            className="w-8 h-6 cursor-pointer"
+            className="w-8 h-6 cursor-pointer text-gray-600"
             onClick={() => setIsPriceSectionOpen(!isPriceSectionOpen)}
           />
         ) : (
@@ -115,7 +115,7 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
             {/* Price Display */}
             <div className="flex items-center justify-center gap-2">
               <div className="flex-1 max-w-[120px]">
-                <label className="text-xs text-sage-600 mb-1 block font-inter">Min</label>
+                <label className="text-xs text-gray-500 mb-1 block font-inter">Min</label>
                 <input
                   type="number"
                   value={minValue}
@@ -123,12 +123,12 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
                   min={MIN_PRICE}
                   max={maxValue - STEP}
                   step={STEP}
-                  className="w-full px-2 py-1.5 border border-sage-300 rounded-md text-sm font-inter font-medium outline-none focus:border-sage-600 transition-colors"
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm font-inter font-medium outline-none focus:border-[#93a267] transition-colors"
                 />
               </div>
-              <div className="h-10 w-px bg-sage-300 mt-5"></div>
+              <div className="h-10 w-px bg-gray-300 mt-5"></div>
               <div className="flex-1 max-w-[120px]">
-                <label className="text-xs text-sage-600 mb-1 block font-inter">Max</label>
+                <label className="text-xs text-gray-500 mb-1 block font-inter">Max</label>
                 <input
                   type="number"
                   value={maxValue}
@@ -136,7 +136,7 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
                   min={minValue + STEP}
                   max={MAX_PRICE}
                   step={STEP}
-                  className="w-full px-2 py-1.5 border border-sage-300 rounded-md text-sm font-inter font-medium outline-none focus:border-sage-600 transition-colors"
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm font-inter font-medium outline-none focus:border-[#93a267] transition-colors"
                 />
               </div>
             </div>
@@ -144,11 +144,11 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
             {/* Dual Range Slider */}
             <div className="relative pt-2 pb-4">
               {/* Track Background */}
-              <div className="absolute top-1/2 -translate-y-1/2 w-full h-2 bg-sage-100 rounded-full" />
+              <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full" />
 
               {/* Active Track */}
               <div
-                className="absolute top-1/2 -translate-y-1/2 h-2 bg-sage-600 rounded-full"
+                className="absolute top-1/2 -translate-y-1/2 h-1 bg-[#93a267] rounded-full"
                 style={{
                   left: `${getPercentage(minValue)}%`,
                   right: `${100 - getPercentage(maxValue)}%`,
@@ -163,7 +163,7 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
                 step={STEP}
                 value={minValue}
                 onChange={handleMinChange}
-                className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-sage-700 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-sage-800 [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-sage-700 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-sage-800 [&::-moz-range-thumb]:transition-colors"
+                className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#93a267] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-[#7a8a55] [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#93a267] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#7a8a55] [&::-moz-range-thumb]:transition-colors"
                 style={{ zIndex: minValue > MAX_PRICE - (MAX_PRICE - MIN_PRICE) / 4 ? 5 : 3 }}
               />
 
@@ -175,21 +175,21 @@ export const PriceRange = ({ setCheckedPriceRangeDOM }) => {
                 step={STEP}
                 value={maxValue}
                 onChange={handleMaxChange}
-                className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-sage-700 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-sage-800 [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-sage-700 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-sage-800 [&::-moz-range-thumb]:transition-colors"
+                className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#93a267] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-[#7a8a55] [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#93a267] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-[#7a8a55] [&::-moz-range-thumb]:transition-colors"
                 style={{ zIndex: 4 }}
               />
             </div>
 
             {/* Price Labels */}
-            <div className="flex items-center justify-between text-xs text-sage-600 font-inter font-medium">
+            <div className="flex items-center justify-between text-xs text-gray-500 font-inter font-medium">
               <span>{formatCurrency(MIN_PRICE)}</span>
               <span>{formatCurrency(MAX_PRICE)}</span>
             </div>
 
             {/* Current Selection Display */}
-            <div className="bg-sage-50 rounded-lg p-3 text-center">
-              <p className="text-sm text-sage-700 font-inter">
-                Selected Range: <span className="font-semibold text-sage-900">{formatCurrency(minValue)} - {formatCurrency(maxValue)}</span>
+            <div className="bg-[#93a267]/10 rounded-lg p-3 text-center">
+              <p className="text-sm text-gray-800 font-inter">
+                Selected Range: <span className="font-semibold text-[#5d6b38]">{formatCurrency(minValue)} - {formatCurrency(maxValue)}</span>
               </p>
             </div>
           </motion.div>

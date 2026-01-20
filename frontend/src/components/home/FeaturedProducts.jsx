@@ -6,8 +6,7 @@ import FeaturedProductCard from './FeaturedProductCard';
 import { useSelector } from 'react-redux';
 import API from '../../config';
 
-const FeaturedProducts = () =>
-{
+const FeaturedProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const scrollContainerRef = useRef(null);
@@ -15,10 +14,8 @@ const FeaturedProducts = () =>
     // Get wishlist from Redux (same as shop page)
     const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
 
-    useEffect(() =>
-    {
-        const fetchFeaturedProducts = async () =>
-        {
+    useEffect(() => {
+        const fetchFeaturedProducts = async () => {
             try {
                 setLoading(true);
                 // Fetch only featured products, limit to 8 for 2 rows
@@ -65,7 +62,7 @@ const FeaturedProducts = () =>
                     {loading ? (
                         // Skeleton Loading
                         Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-full bg-white rounded-none p-4 animate-pulse snap-center">
+                            <div key={i} className="flex-shrink-0 w-[calc(50%-8px)] sm:w-[280px] lg:w-full bg-white rounded-none p-4 animate-pulse snap-center">
                                 <div className="aspect-square bg-gray-200 mb-4" />
                                 <div className="space-y-3">
                                     <div className="h-4 bg-gray-200 w-3/4 rounded" />
@@ -76,7 +73,7 @@ const FeaturedProducts = () =>
                     ) : (
                         products.length > 0 ? (
                             products.map((product) => (
-                                <div key={product._id} className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-full snap-center">
+                                <div key={product._id} className="flex-shrink-0 w-[calc(50%-8px)] sm:w-[280px] lg:w-full snap-center">
                                     <FeaturedProductCard
                                         product={product}
                                         isWishlisted={wishlist.some(item => item._id === product._id)}

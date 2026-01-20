@@ -11,6 +11,7 @@ const Index = ({ setCheckedCategoryDOM }) => {
   const dispatch = useDispatch();
 
   const { selectedSubCategoryForFilter } = useSelector((state) => state.filterByCategoryAndPrice);
+  const { allProductsData } = useSelector((state) => state.productsData);
 
   // THE MAPPED JSON TO CREATE THE CHECKBOX AND CATEGORY UI
   const productCategories = {
@@ -56,6 +57,7 @@ const Index = ({ setCheckedCategoryDOM }) => {
                   subCategories={productCategories[categoryTitle]}
                   selectedSubCategory={selectedSubCategoryForFilter}
                   onSelect={handleSelectCategory}
+                  allProductsData={allProductsData}
                 />
               );
             })}

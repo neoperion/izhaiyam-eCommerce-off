@@ -5,13 +5,23 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategory, onSelect }) => {
+export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategory, onSelect, allProductsData }) => {
   const [isExpanded, setIsExpanded] = useState(true); // Changed to true - open by default
 
   // Check if any subcategory within this category is selected
   const isCategoryActive = Array.isArray(selectedSubCategory)
     ? selectedSubCategory.some(item => item.category === categoryTitle)
     : false;
+
+  // Helper to calculate product count
+  const getProductCount = (subCategory) => {
+    if (!allProductsData) return 0;
+    return allProductsData.filter((product) =>
+      product.categories &&
+      product.categories[categoryTitle] &&
+      product.categories[categoryTitle].includes(subCategory)
+    ).length;
+  };
 
   return (
     <div className="border-b border-gray-100 last:border-b-0">
@@ -51,25 +61,33 @@ export const CategoryLists = ({ categoryTitle, subCategories, selectedSubCategor
                 const isSelected = Array.isArray(selectedSubCategory)
                   ? selectedSubCategory.some(item => item.subCategory === subCategory)
                   : false;
+
+                const count = getProductCount(subCategory);
+
                 return (
                   <motion.label
                     key={subCategory}
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05, duration: 0.2 }}
-                    className="flex items-center cursor-pointer group py-1"
+                    className="flex items-center justify-between cursor-pointer group py-1"
                   >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => onSelect(categoryTitle, subCategory)}
-                      className="w-4 h-4 rounded border-gray-300 text-sage-600 focus:ring-sage-500 cursor-pointer accent-sage-600 transition-all hover:border-sage-400"
-                    />
-                    <span
-                      className={`ml-3 text-sm font-inter transition-colors capitalize ${isSelected ? "text-sage-900 font-semibold" : "text-gray-600 group-hover:text-gray-900"
-                        }`}
-                    >
-                      {subCategory}
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => onSelect(categoryTitle, subCategory)}
+                        className="w-4 h-4 rounded border-gray-300 text-sage-600 focus:ring-sage-500 cursor-pointer accent-sage-600 transition-all hover:border-sage-400"
+                      />
+                      <span
+                        className={`ml-3 text-sm font-inter transition-colors capitalize ${isSelected ? "text-sage-900 font-semibold" : "text-gray-600 group-hover:text-gray-900"
+                          }`}
+                      >
+                        {subCategory}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-0.5 rounded-full">
+                      {count}
                     </span>
                   </motion.label>
                 );

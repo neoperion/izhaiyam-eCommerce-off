@@ -1,7 +1,16 @@
 import React from "react";
-import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
-import { FaPinterest, FaWhatsapp } from "react-icons/fa";
+import { MapPin, Phone, Mail } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import fbIcon from "../../assets/fb.png";
+import instaIcon from "../../assets/insta.png";
+import threadsIcon from "../../assets/threads.png";
+import cardsIcon from "../../assets/cards.png";
+import paytmIcon from "../../assets/paytm.png";
+import phonepeIcon from "../../assets/phonepe.png";
+import razorpayIcon from "../../assets/razorpay.png";
+import upiIcon from "../../assets/upi.png";
+import gpayIcon from "../../assets/gpay.png";
 
 export const Footer = () => {
   const quickLinks = ["Cot & Beds", "Tables", "Chairs", "Dining", "Decor"];
@@ -45,30 +54,28 @@ export const Footer = () => {
                   href="https://www.facebook.com/rithanyahandicrafts.kayirukattil"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
+                  className="w-12 h-12 flex items-center justify-center transition-all duration-300 hover:scale-110"
                   aria-label="Facebook"
                 >
-                  <Facebook className="w-5 h-5" />
+                  <img src={fbIcon} alt="Facebook" className="w-full h-full object-contain" />
                 </a>
                 <a
                   href="https://www.instagram.com/izhaiyam_handloom_furnitures/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
+                  className="w-12 h-12 flex items-center justify-center transition-all duration-300 hover:scale-110"
                   aria-label="Instagram"
                 >
-                  <Instagram className="w-5 h-5" />
+                  <img src={instaIcon} alt="Instagram" className="w-full h-full object-contain" />
                 </a>
                 <a
                   href="https://www.threads.com/@izhaiyam_handloom_furnitures?igshid=NTc4MTIwNjQ2YQ=="
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#93a267] flex items-center justify-center transition-all duration-300 text-[#F5F5DC] hover:text-white"
+                  className="w-12 h-12 flex items-center justify-center transition-all duration-300 hover:scale-110"
                   aria-label="Threads"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.182.408-2.256 1.33-3.022.858-.712 2.043-1.146 3.525-1.289.885-.086 1.858-.084 2.895.005.011-.476.003-.96-.022-1.453-.103-1.944-.545-3.332-1.315-4.127-.801-.828-2.01-1.228-3.69-1.228-.034 0-.068 0-.103.002-1.39.017-2.573.396-3.514 1.13-.993.773-1.660 1.905-1.984 3.369l-2.065-.442c.42-1.96 1.322-3.527 2.68-4.66C8.772 1.725 10.574 1.2 12.7 1.2c2.266 0 4.147.613 5.592 1.822 1.422 1.19 2.177 2.963 2.313 5.424.045.838.041 1.727-.012 2.647.477.309.912.67 1.296 1.087 1.067 1.16 1.622 2.67 1.606 4.374-.018 1.878-.75 3.623-2.117 5.048-1.794 1.872-4.123 2.905-7.127 3.164l-.052.005c-.197.02-.395.03-.595.03zM11.126 15.12c-.925.056-1.628.31-2.09.761-.388.378-.571.84-.545 1.373.023.45.238.833.64 1.138.484.37 1.171.561 1.989.561.077 0 .155-.002.234-.006 1.07-.058 1.9-.45 2.466-1.167.474-.602.789-1.449.94-2.523-.977-.092-1.958-.155-2.917-.155-.235 0-.472.006-.717.018z"/>
-                  </svg>
+                  <img src={threadsIcon} alt="Threads" className="w-full h-full object-contain" />
                 </a>
               </div>
             </div>
@@ -128,54 +135,37 @@ export const Footer = () => {
 
 
         {/* Secure Payment & Trust Badges */}
-        <div className="border-t border-primary-foreground/20 bg-black/10">
+        <div className="border-t border-primary-foreground/20 bg-black/8">
           <div className="container-page py-6">
-             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                
-                {/* Security Trust Badge */}
-                <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-full bg-[#93a267]/20 flex items-center justify-center text-[#93a267]">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                   </div>
-                   <div className="text-left">
-                      <h5 className="font-playfair font-bold text-white text-sm">100% Secure Payments</h5>
-                      <p className="font-inter text-xs text-white/60">Encrypted transactions & safe checkout</p>
-                   </div>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+
+              {/* Security Trust Badge */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
                 </div>
-
-                {/* Payment Methods */}
-                <div className="flex flex-wrap justify-center items-center gap-4">
-                   <span className="font-inter text-xs text-white/50 hidden md:inline-block">Partenred with</span>
-                   
-                   {/* Razorpay Logo (Text Representation for clean look) */}
-                   <div className="flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
-                      <span className="font-bold text-white tracking-tight border border-white/20 px-2 py-0.5 rounded text-sm bg-blue-900/40">Razorpay</span>
-                   </div>
-
-                   <div className="h-6 w-px bg-white/20 hidden md:block"></div>
-
-                   {/* Icons Row */}
-                   <div className="flex items-center gap-3 text-white/80">
-                      {/* Visa */}
-                      <div className="flex flex-col items-center gap-1" title="Visa">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">Cards</span>
-                      </div>
-                      
-                      {/* UPI */}
-                      <div className="flex flex-col items-center gap-1" title="UPI">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">UPI</span>
-                      </div>
-
-                      {/* Netbanking */}
-                      <div className="flex flex-col items-center gap-1" title="Netbanking">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90"><path d="M3 21h18"/><path d="M5 21v-7"/><path d="M19 21v-7"/><path d="M5 10a5 5 0 0 1 14 0"/><path d="M12 10v4"/></svg>
-                         <span className="text-[9px] font-inter uppercase tracking-wide opacity-60">NetBanking</span>
-                      </div>
-                   </div>
+                <div className="text-left">
+                  <h5 className="font-playfair font-bold text-white text-sm">100% Secure Payments</h5>
+                  <p className="font-inter text-xs text-white/60">Encrypted transactions & safe checkout</p>
                 </div>
-             </div>
+              </div>
+
+              {/* Payment Methods */}
+              <div className="flex flex-wrap justify-center items-center gap-4 transition-all duration-300">
+        
+
+                <img src={razorpayIcon} alt="Razorpay" className="h-20 object-contain" />
+                <div className="h-6 w-px bg-white/20 hidden md:block mx-2"></div>
+
+                <img src={upiIcon} alt="UPI" className="h-14 object-contain" />
+                <img src={gpayIcon} alt="Google Pay" className="h-7 object-contain" />
+                <img src={phonepeIcon} alt="PhonePe" className="h-9 object-contain" />
+                <img src={paytmIcon} alt="Paytm" className="h-10 object-contain" />
+                <div className="h-6 w-px bg-white/20 hidden md:block mx-2"></div>
+
+                <img src={cardsIcon} alt="Cards" className="h-20 object-contain" />
+              </div>
+            </div>
           </div>
         </div>
 

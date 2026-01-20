@@ -1,21 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { SEO } from "../components/SEO/SEO";
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import { motion } from "framer-motion";
+import { motion, useSpring, useTransform, useInView, useMotionValue } from "framer-motion";
 import FooterSection from "../components/footerSection";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
-import suriyaImage from "../assets/team/suriya_kanniyappan.jpg";
+import suriyaImage from "../assets/team/suriya_kanniyappan.png";
 import manivasagamImage from "../assets/team/manivasagam.png";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
 import BrandStorySection from "../components/BrandStorySection";
-import MissionVisionSection from "../components/MissionVisionSection"; // Imported new section
+import MissionVisionSection from "../components/MissionVisionSection";
 
 // Import award images
 import award2 from "../assets/award2.jpeg";
 import award3 from "../assets/award3.jpg";
 import aboutHeroImage from "../assets/about_us_hero.png";
 import ourMissionImage from "../assets/our_mission.png";
+import thinamalarImg from '../assets/thinamalar.png';
+import puthuguamImg from '../assets/puthuguam.png';
+import dinathanthiImg from '../assets/dinathanthi.png';
+import chankayaImg from '../assets/chankaya.png';
+import behindtakiesImg from '../assets/behindtakies.png';
+import viktanImg from '../assets/viktan.png';
+
+// Reusable Counter Component
+const Counter = ({ value, duration = 2 }) => {
+  const ref = React.useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { duration: duration * 1000, bounce: 0 });
+  const rounded = useTransform(springValue, (latest) => Math.floor(latest));
+
+  useEffect(() => {
+    if (inView) {
+      motionValue.set(value);
+    }
+  }, [inView, value, motionValue]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
+};
 
 export const AboutUsPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,13 +57,13 @@ export const AboutUsPage = () => {
 
   // Founders data with individual images
   const founders = [
-    { 
-      name: "M. Suriya Kanniyappan", 
+    {
+      name: "M. Suriya Kanniyappan",
       role: "Founder & Creative Director",
       image: suriyaImage
     },
-    { 
-      name: "N. Manivasagam", 
+    {
+      name: "N. Manivasagam",
       role: "Co-Founder & Production Head",
       image: manivasagamImage
     }
@@ -48,7 +71,7 @@ export const AboutUsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <SEO 
+      <SEO
         title="About Us - Tradition Meets Craftsmanship"
         description="Discover the story of Izhaiyam Handloom Furniture. Founded to preserve traditional rope furniture making while empowering local artisans in Tamil Nadu."
         canonical="https://www.izhaiyam.com/aboutUs"
@@ -66,7 +89,7 @@ export const AboutUsPage = () => {
         }}
       />
       {/* Enhanced Modern Hero Section with Image Background */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -81,7 +104,7 @@ export const AboutUsPage = () => {
         {/* Dark Overlay for Readability */}
         <div className="absolute inset-0 bg-black/50 z-0"></div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -114,7 +137,7 @@ export const AboutUsPage = () => {
       </motion.section>
 
       {/* Stats Section - Moved outside Hero for cleaner look */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -124,80 +147,111 @@ export const AboutUsPage = () => {
         <div className="max-w-4xl mx-auto px-4">
           <div className="grid grid-cols-3 gap-2 md:gap-8 shadow-2xl rounded-2xl bg-white border border-gray-100 p-6 md:p-8">
             <div className="text-center">
-              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">6+</p>
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">
+                <Counter value={6} />+
+              </p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Years of Excellence</p>
             </div>
             <div className="text-center border-l border-gray-100">
-              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">40+</p>
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">
+                <Counter value={40} />+
+              </p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
             </div>
             <div className="text-center border-l border-gray-100">
-              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">1500+</p>
+              <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">
+                <Counter value={1500} duration={2.5} />+
+              </p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Happy Customers</p>
             </div>
           </div>
         </div>
       </motion.section>
 
+
+
       {/* NEW MISSION AND VISION SECTION */}
       <MissionVisionSection />
 
-      {/* Our Articles Section */}
-      <motion.section 
-        initial={{ opacity: 0, y: 50 }}
+      {/* Press & Media Recognition Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="w-full bg-gray-50 py-24 px-6"
+        className="w-full bg-white py-20 border-t border-gray-100 overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Articles</h2>
+        <div className="max-w-7xl mx-auto text-center px-6">
+          <h2 className="font-inter text-2xl md:text-3xl font-bold text-gray-900 mb-4 tracking-tight">
+            Press & Media Recognition
+          </h2>
+          <p className="font-inter text-base text-gray-500 max-w-2xl mx-auto mb-16 leading-relaxed">
+            Celebrated by leading media outlets for our unwavering commitment to <span className="text-[#93a267] font-medium">Tradition</span> and <span className="text-[#93a267] font-medium">Quality Craftsmanship</span>.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
-            {/* Left Column - Text */}
-            <div className="flex items-start pt-8">
-              <div className="text-left">
-                <p className="font-inter text-base font-light text-gray-700 leading-relaxed">
-                  Furniture is more than a functional element in a home—it is an expression of culture, comfort, and craftsmanship. Our brand was founded with the belief that well-made furniture should carry a story, a purpose, and a soul. We bring together traditional techniques and contemporary design to create furniture that is timeless, meaningful, and built to last.
-                  <br /><br />
-                  Each piece in our collection is thoughtfully handcrafted by skilled artisans who have inherited their knowledge through generations. Their hands shape raw materials into refined forms, paying close attention to detail, balance, and durability. From the initial design to the final polish, every stage of the process reflects patience, precision, and pride in workmanship. We do not believe in mass production; instead, we value quality over quantity and authenticity over shortcuts.
-                  <br /><br />
-                  At the heart of our work is a strong commitment to empowering artisans, especially women craftsmen who play a vital role in preserving traditional art forms. By providing fair opportunities, a supportive work environment, and consistent demand for their skills, we help sustain livelihoods while keeping heritage craftsmanship alive. When you choose our furniture, you are not just purchasing a product—you are supporting a community and a legacy.
-                  <br /><br />
-                  Our designs are inspired by everyday living. We focus on creating furniture that is both aesthetically pleasing and highly functional. Clean lines, balanced proportions, and natural materials define our style, making our pieces suitable for modern homes while still retaining a warm, traditional essence. Whether it is a chair, a table, or a handcrafted décor piece, each product is designed to seamlessly blend into your space and enhance your daily life.
-                  <br /><br />
-                  Quality is central to everything we do. We carefully source materials that are durable, sustainable, and responsibly selected. Our furniture is built to withstand time, usage, and changing trends. Rigorous quality checks ensure that every product meets our standards before reaching your home, so you can trust in its strength, finish, and comfort.
-                </p>
-              </div>
-            </div>
+        {/* Auto-Scrolling Marquee */}
+        <div className="relative w-full overflow-hidden">
+          {/* Gradient Masks for Fade Effect */}
+          <div className="absolute top-0 left-0 w-24 h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
 
-            {/* Right Column - Article Preview */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
-              <img
-                src={newsImage}
-                alt="Article Preview"
-                className="w-full h-auto object-contain"
-              />
-            </div>
+          <div className="flex w-max">
+            <motion.div
+              className="flex items-center gap-16 md:gap-24 px-8"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{
+                repeat: Infinity,
+                ease: "linear",
+                duration: isMobile ? 10 : 30, // Faster on mobile (10s)
+              }}
+            >
+              {[
+                { name: 'Chanakya TV', img: chankayaImg },
+                { name: 'Puthuyugam TV', img: puthuguamImg },
+                { name: 'Behind Talkies', img: behindtakiesImg },
+                { name: 'Dinamalar', img: thinamalarImg },
+                { name: 'Dinathanthi', img: dinathanthiImg },
+                { name: 'Aval Vikatan', img: viktanImg },
+                // Duplicates for seamless loop
+                { name: 'Chanakya TV', img: chankayaImg },
+                { name: 'Puthuyugam TV', img: puthuguamImg },
+                { name: 'Behind Talkies', img: behindtakiesImg },
+                { name: 'Dinamalar', img: thinamalarImg },
+                { name: 'Dinathanthi', img: dinathanthiImg },
+                { name: 'Aval Vikatan', img: viktanImg },
+              ].map((media, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 group flex flex-col items-center justify-center transition-opacity duration-300"
+                >
+                  <img
+                    src={media.img}
+                    alt={media.name}
+                    className="h-20 md:h-28 w-auto object-contain transition-all duration-300 hover:scale-110"
+                  />
+                </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </motion.section>
 
       {/* Our Founder Section */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
         className="w-full bg-white py-24 px-6"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-8xl mx-auto">
           <h2 className="font-inter text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-center mb-20">Our Founders</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-5xl mx-auto">
             {founders.map((founder, i) => (
               <div key={i} className="text-center">
-                <div className="rounded-lg w-80 h-96 md:w-96 md:h-[28rem] mb-8 overflow-hidden mx-auto shadow-xl">
+                <div className="rounded-lg w-full max-w-sm h-[23rem] md:w-[23rem] md:h-[23rem] mb-8 overflow-hidden mx-auto shadow-xl transition-all duration-300 hover:scale-[1.02]">
                   <img
                     src={founder.image}
                     alt={founder.name}
@@ -223,7 +277,7 @@ export const AboutUsPage = () => {
       </motion.div>
 
       {/* Our Awards Section */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}

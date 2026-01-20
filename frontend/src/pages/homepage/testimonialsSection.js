@@ -241,15 +241,6 @@ export const TestimonialsSection = () => {
             </div>
         ))}
       </div>
-
-      {/* Info Text */}
-      <div className="max-w-7xl mx-auto mt-4 md:mt-12 text-center">
-        <div className="inline-flex items-center gap-2 text-xs md:text-sm text-[#93a267]/80 bg-white px-4 py-2 rounded-full shadow-sm border border-[#93a267]/10">
-          <span className="w-2 h-2 rounded-full bg-[#93a267] animate-pulse"></span>
-          <span className="font-inter font-medium hidden md:inline">Hover to pause • Click name to view review</span>
-          <span className="font-inter font-medium md:hidden">Swipe to explore reviews</span>
-        </div>
-      </div>
     </div>
   );
 };
@@ -257,7 +248,7 @@ export const TestimonialsSection = () => {
 // Extracted Card Component for Reusability
 const DesktopTestimonialCard = ({ testimonial, renderStars, isMobile = false }) => (
     <div
-      className={`testimonial-card flex-shrink-0 bg-white border border-[#93a267]/20 rounded-xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(147,162,103,0.15)] transition-all duration-300 relative group/card h-full flex flex-col ${isMobile ? 'w-full' : 'w-[350px] md:w-[450px]'}`}
+      className={`testimonial-card flex-shrink-0 bg-white border border-[#93a267]/20 rounded-xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(147,162,103,0.15)] transition-all duration-300 relative group/card flex flex-col ${isMobile ? 'w-full min-h-[380px]' : 'w-[350px] md:w-[450px] min-h-[420px] md:min-h-[450px]'}`}
     >
       <a href={testimonial.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-0" aria-label={`View review by ${testimonial.name}`}></a>
       
@@ -298,3 +289,4 @@ const DesktopTestimonialCard = ({ testimonial, renderStars, isMobile = false }) 
       </div>
     </div>
 );
+
