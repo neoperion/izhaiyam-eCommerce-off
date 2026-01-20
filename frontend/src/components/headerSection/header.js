@@ -95,7 +95,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
           <img
             src={logoDark}
             alt="IZHAYAM HANDLOOM FURNITURE"
-            className="h-10 md:h-16 w-auto cursor-pointer"
+            className="h-10 md:h-16 w-auto cursor-pointer transition-transform duration-300 hover:scale-105"
             onClick={() => {
               navigate("/");
               window.scrollTo(0, 0);
@@ -113,22 +113,22 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
           <div className="flex items-center gap-2 md:gap-6">
             <div ref={searchRef}>
               <button
-                className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+                className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-110 active:scale-95"
                 onClick={() => setIsSearchClicked(!isSearchClicked)}
                 aria-label="Search"
               >
-                <Search className="w-5 h-5 text-primary-foreground" />
+                <Search className="w-5 h-5 text-primary-foreground transition-transform duration-300" />
               </button>
 
               {/* Search Dropdown - Moved inside ref container to detect clicks properly */}
               {isSearchClicked && (
                 <div className="absolute left-0 right-0 top-full bg-primary shadow-lg animate-fade-in border-t border-primary-foreground/10">
                   <div className="container-page py-4">
-                    <div className="flex gap-2 max-w-2xl mx-auto">
+                    <div className="flex gap-2 max-w-2xl mx-auto w-full px-4 md:px-0">
                       <input
                         type="text"
-                        placeholder="Search for furniture..."
-                        className="flex-1 px-4 py-3 rounded-lg bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+                        placeholder="Search..."
+                        className="flex-1 min-w-0 px-4 py-3 rounded-lg bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30 text-sm md:text-base"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             handleSearching(e);
@@ -138,7 +138,7 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
                       />
                       <button
                         onClick={handleSearching}
-                        className="btn-secondary px-6"
+                        className="btn-secondary px-4 md:px-6 whitespace-nowrap text-sm md:text-base"
                       >
                         Search
                       </button>
@@ -150,10 +150,10 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
 
             <button
               onClick={() => setIsWishlistActive(true)}
-              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-110 active:scale-95 relative"
               aria-label="Wishlist"
             >
-              <Heart className="w-5 h-5 text-primary-foreground" />
+              <Heart className="w-5 h-5 text-primary-foreground transition-transform duration-300 group-hover:fill-primary-foreground/20" />
               {wishlist.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
                   {wishlist.length}
@@ -163,18 +163,18 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
 
             <button
               onClick={handleMyAccountClick}
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-110 active:scale-95"
               aria-label="Account"
             >
-              <User className="w-5 h-5 text-primary-foreground" />
+              <User className="w-5 h-5 text-primary-foreground transition-transform duration-300" />
             </button>
 
             <button
               onClick={() => setIsCartSectionActive(true)}
-              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors relative"
+              className="group p-2 rounded-lg hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-110 active:scale-95 relative"
               aria-label="Shopping Cart"
             >
-              <ShoppingBag className="w-5 h-5 text-primary-foreground" />
+              <ShoppingBag className="w-5 h-5 text-primary-foreground transition-transform duration-300" />
               {totalProductQuantityCart > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-foreground text-xs rounded-full flex items-center justify-center font-bold opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
                   {totalProductQuantityCart}
@@ -185,13 +185,13 @@ export const Header = ({ setIsWishlistActive, setIsCartSectionActive, isLargeScr
             {/* Mobile Menu Button */}
             <button
               onClick={() => setDisplayVerticalNavBar(!displayVerticalNavBar)}
-              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors md:hidden"
+              className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-all duration-300 hover:scale-110 active:scale-95 md:hidden"
               aria-label="Toggle menu"
             >
               {displayVerticalNavBar ? (
-                <X className="w-5 h-5 text-primary-foreground" />
+                <X className="w-5 h-5 text-primary-foreground transition-transform duration-300 rotate-0 hover:rotate-90" />
               ) : (
-                <Menu className="w-5 h-5 text-primary-foreground" />
+                <Menu className="w-5 h-5 text-primary-foreground transition-transform duration-300" />
               )}
             </button>
           </div>

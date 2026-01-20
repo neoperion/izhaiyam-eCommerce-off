@@ -46,8 +46,18 @@ export function HeroSection() {
 
                 {/* Floating Brand Badge - Top Right */}
                 <div className="absolute top-6 right-5 z-20">
-                    <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg">
-                        <img src="/favicon.ico" alt="Izhaiyam" className="w-8 h-8 object-contain" />
+                    <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg overflow-hidden relative">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <img src="/favicon.ico" alt="Izhaiyam" className="w-8 h-8 object-contain opacity-90" />
+                        </div>
+                        <svg viewBox="0 0 100 100" className="relative z-10 w-full h-full p-2 animate-[spin_12s_linear_infinite]">
+                            <path id="curve-mobile" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
+                            <text className="text-[6.5px] uppercase tracking-[0.15em] font-bold fill-white">
+                                <textPath href="#curve-mobile">
+                                    EST 2019 • IZHAIYAM • HANDLOOM • EST 2019 • IZHAIYAM • HANDLOOM •
+                                </textPath>
+                            </text>
+                        </svg>
                     </div>
                 </div>
 
@@ -69,17 +79,17 @@ export function HeroSection() {
                     <div className="flex gap-3">
                         <Link
                             to="/shop"
-                            className="flex-1 h-14 bg-[#93a267] text-white rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform font-medium"
+                            className="flex-1 h-14 bg-[#93a267] text-white rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform font-medium text-xs sm:text-base px-2"
                         >
-                            <span>Explore Collection</span>
-                            <ArrowUpRight size={18} />
+                            <span className="whitespace-nowrap">Explore Collection</span>
+                            <ArrowUpRight size={18} className="flex-shrink-0" />
                         </Link>
 
                         <Link
                             to="/contactUs"
-                            className="h-14 px-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium flex items-center justify-center active:bg-white/20 transition-colors"
+                            className="flex-1 h-14 px-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium flex items-center justify-center active:bg-white/20 transition-colors text-xs sm:text-base"
                         >
-                            Custom
+                            Custom orders
                         </Link>
                     </div>
 
@@ -164,7 +174,7 @@ export function HeroSection() {
                     </div>
                     <svg viewBox="0 0 100 100" className="relative z-10 w-full h-full p-2 animate-[spin_12s_linear_infinite]">
                         <path id="curve-desktop" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
-                        <text className="text-[10px] uppercase tracking-[0.15em] font-bold fill-white">
+                        <text className="text-[8px] uppercase tracking-[0.10em] font-bold fill-white">
                             <textPath href="#curve-desktop">
                                 EST 2019 • IZHAIYAM HANDLOOM •
                             </textPath>

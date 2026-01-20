@@ -56,11 +56,11 @@ const FeaturesBadges = () => {
     }, [features.length]);
 
     return (
-        <section className="w-full bg-gradient-to-b from-white to-gray-50 py-12 md:py-16">
+        <section className="w-full bg-gradient-to-b from-white to-gray-50 py-6 md:py-16">
             <div className="max-w-7xl mx-auto">
 
                 {/* Section Header - Mobile */}
-                <div className="lg:hidden text-center mb-6 px-6">
+                <div className="lg:hidden text-center mb-4 px-6">
                     <p className="text-xs font-bold tracking-[0.15em] text-[#93a267] uppercase mb-1">Why Choose Us</p>
                     <h2 className="font-inter text-xl font-semibold text-gray-900">Our Promise</h2>
                 </div>
@@ -77,7 +77,7 @@ const FeaturesBadges = () => {
                                 key={index}
                                 className="flex-shrink-0 w-[72%] sm:w-[45%] md:w-[30%] snap-center"
                             >
-                                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-full flex flex-col items-center text-center transition-all duration-300 hover:shadow-md">
+                                <div className="h-full flex flex-col items-center text-center p-4">
                                     {/* Icon Container */}
                                     <div className="w-16 h-16 mb-4 rounded-xl bg-[#93a267]/10 flex items-center justify-center">
                                         <img
@@ -113,8 +113,8 @@ const FeaturesBadges = () => {
                                     }
                                 }}
                                 className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === index
-                                        ? 'w-6 bg-[#93a267]'
-                                        : 'w-1.5 bg-gray-300 hover:bg-gray-400'
+                                    ? 'w-6 bg-[#93a267]'
+                                    : 'w-1.5 bg-gray-300 hover:bg-gray-400'
                                     }`}
                                 aria-label={`Go to feature ${index + 1}`}
                             />
@@ -128,7 +128,7 @@ const FeaturesBadges = () => {
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center transition-all duration-300 hover:shadow-lg hover:border-[#93a267]/30 hover:-translate-y-1"
+                                className="flex flex-col items-center text-center p-4 group"
                             >
                                 {/* Icon Container */}
                                 <div className="w-16 h-16 mb-4 rounded-xl bg-[#93a267]/10 flex items-center justify-center group-hover:bg-[#93a267]/20 transition-colors duration-300">

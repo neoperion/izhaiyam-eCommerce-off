@@ -11,7 +11,7 @@ import { handlePaginationProductsPage } from "../../utils/handlePaginationProduc
 import { FilterBySection } from "../../components/filterSection";
 import { handleSorting } from "../../utils/handleSorting";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoIosArrowBack } from "react-icons/io";
+
 import { motion } from "framer-motion";
 import { Filter, ChevronDown } from "lucide-react";
 import { FilterTriggerIcon } from "../../components/icons/FilterTriggerIcon";
@@ -79,15 +79,7 @@ export const SearchPage = () => {
     }
   };
 
-  // FOR THE 'back' BTN NAVIGATION
-  const navigateToPrevPage = () => {
-    if (prevPage === "home") {
-      navigate("/");
-    }
-    if (prevPage === "shop") {
-      navigate("/shop");
-    }
-  };
+
 
   return (
     <>
@@ -120,23 +112,7 @@ export const SearchPage = () => {
         {/* Main Product Section - Full Width */}
         <main className="flex-1 w-full">
           <div className="container-page py-8">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2 text-sm text-sage-600 mb-6 font-inter">
-              <button onClick={() => navigateToPrevPage()} className="hover:text-sage-900 transition-colors flex items-center gap-1">
-                <IoIosArrowBack />
-                <span className="capitalize">{prevPage}</span>
-              </button>
-              <IoIosArrowBack />
-              <span className="text-sage-900 font-medium">Search results</span>
-              {selectedSubCategoryForFilter && (
-                <>
-                  <IoIosArrowBack />
-                  <span className="capitalize">{selectedCategory}</span>
-                  <IoIosArrowBack />
-                  <span className="capitalize">{selectedSubCategoryForFilter}</span>
-                </>
-              )}
-            </div>
+
 
             {/* Page Header & Sort */}
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
@@ -235,7 +211,7 @@ export const SearchPage = () => {
                 ) : placeholderOfproductsDataCurrentlyRequested.length > 0 ? (
                   <>
                     {/* Products Grid */}
-                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                    <section className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-12">
                       {productsDataForCurrentPage.map((productsData, index) => {
                         return <SingleProductBox key={index} productsData={productsData} />;
                       })}
