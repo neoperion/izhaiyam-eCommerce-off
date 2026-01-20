@@ -54,7 +54,7 @@ export function HeroSection() {
                             <path id="curve-mobile" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
                             <text className="text-[6.5px] uppercase tracking-[0.15em] font-bold fill-white">
                                 <textPath href="#curve-mobile">
-                                    EST 2019 • IZHAIYAM • HANDLOOM • EST 2019 • IZHAIYAM • HANDLOOM •
+                                    EST 2019 • IZHAIYAM HANDLOOM FURNITURE •
                                 </textPath>
                             </text>
                         </svg>
@@ -176,7 +176,7 @@ export function HeroSection() {
                         <path id="curve-desktop" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
                         <text className="text-[8px] uppercase tracking-[0.10em] font-bold fill-white">
                             <textPath href="#curve-desktop">
-                                EST 2019 • IZHAIYAM HANDLOOM •
+                                EST 2019 • IZHAIYAM HANDLOOM FURNITURE •
                             </textPath>
                         </text>
                     </svg>
