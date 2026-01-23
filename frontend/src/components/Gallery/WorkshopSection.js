@@ -31,7 +31,7 @@ const WorkshopSection = ({ data = [] }) => {
         </p>
       </div>
 
-      <div style={{ columnCount: 3, columnGap: '20px' }} className="workshop-masonry">
+      <div className="workshop-masonry">
         {displayData.map((item, index) => {
           const isVideo = item.resource_type === 'video' || item.format === 'mp4' || item.format === 'webm' || item.format === 'mov';
           
@@ -72,15 +72,7 @@ const WorkshopSection = ({ data = [] }) => {
         })}
       </div>
       
-      {/* Mobile override in CSS usually handles column count */}
-      <style>{`
-        @media (max-width: 1024px) {
-          .workshop-masonry { column-count: 2 !important; }
-        }
-        @media (max-width: 600px) {
-          .workshop-masonry { column-count: 1 !important; }
-        }
-      `}</style>
+
     </section>
   );
 };

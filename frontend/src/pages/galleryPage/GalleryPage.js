@@ -11,7 +11,7 @@ import FounderSection from '../../components/Gallery/FounderSection/FounderSecti
 import InstagramSection from '../../components/Gallery/InstagramSection';
 import CelebritySection from '../../components/Gallery/CelebritySection';
 import ClientHomesSection from '../../components/Gallery/ClientHomesSection';
-import ShopImagesSection from '../../components/Gallery/ShopImagesSection';
+import FooterSection from '../../components/footerSection';
 
 const GalleryPage = () => {
   const [galleryData, setGalleryData] = useState({
@@ -64,9 +64,7 @@ const GalleryPage = () => {
       transition={{ duration: 0.5 }}
     >
       <GalleryHero data={galleryData.hero} />
-      
-      <ShopImagesSection data={galleryData['shop-images']} />
-      
+    
       <WorkshopSection data={galleryData.workshop} />
       
       <FounderSection data={galleryData.founder} />
@@ -77,6 +75,7 @@ const GalleryPage = () => {
       
       <ClientHomesSection data={galleryData['client-homes']} />
       
+      <FooterSection />
     </motion.div>
   );
 };

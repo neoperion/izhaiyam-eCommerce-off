@@ -51,7 +51,9 @@ const io = new Server(server, {
 //  middlewares
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none"); // or require-corp if needed, but unsafe-none is safer for broad compatibility
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none"); 
+  // Suppress "unload" violation warning from 3rd party embeds (like Instagram)
+  res.setHeader("Permissions-Policy", "unload=()");
   next();
 });
 const compression = require("compression");
