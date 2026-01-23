@@ -29,7 +29,7 @@ const ExploreCard = ({ title, image, link, category }) =>
                 <div>
                     {/* Brand */}
                     <p className="font-inter text-gray-500 text-[8px] lg:text-xs font-normal mb-0.5 lg:mb-1">
-                        By Wooden Street
+                        By Izhaiyam
                     </p>
 
                     {/* Title */}

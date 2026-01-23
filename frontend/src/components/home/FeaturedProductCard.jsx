@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 import { withWatermark } from '../../utils/withWatermark';
 
-const FeaturedProductCard = ({ product, isWishlisted }) => {
+const FeaturedProductCard = ({ product, isWishlisted }) =>
+{
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
 
     const dispatch = useDispatch();
@@ -55,7 +56,7 @@ const FeaturedProductCard = ({ product, isWishlisted }) => {
 
                     {/* Brand */}
                     <p className="text-gray-500 text-[8px] lg:text-xs font-normal mb-0.5 lg:mb-1">
-                        Wooden Street
+                        Izhaiyam
                     </p>
 
                     {/* Product Name */}
