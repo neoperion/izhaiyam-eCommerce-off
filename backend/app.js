@@ -106,6 +106,7 @@ app.use("/api/v1/instagram", instagramRoute);
 app.use("/api/v1/admin/notifications", notificationRoute); 
 app.use("/api/v1/webhooks/resend", require("./routes/resendWebhookRoute")); // Resend Webhooks
 app.use("/api/v1/contact", require("./routes/contactRoute")); // Contact Form Route
+app.use("/api/v1/gallery", require("./routes/galleryRoute")); // Gallery Images Route
 app.use("/sitemap.xml", sitemapRoute);
 app.use(errorHandler);
 app.use(pathNotFound);

@@ -1,7 +1,17 @@
 const { Resend } = require("resend");
 
 // Initialize Resend with API Key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Fix: Prevent crash if API key is missing
+let resend;
+if (process.env.RESEND_API_KEY) {
+  try {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  } catch (error) {
+    console.warn("⚠️ Failed to initialize Resend:", error.message);
+  }
+} else {
+  console.warn("⚠️ RESEND_API_KEY is missing. Email service will not function.");
+}
 
 const FROM_EMAIL = process.env.FROM_EMAIL || "Izhaiyam <orders@izhaiyam.com>";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@izhaiyam.com';
@@ -12,8 +22,8 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@izhaiyam.com';
  */
 async function sendEmail({ to, subject, html }) {
   try {
-    if (!process.env.RESEND_API_KEY) {
-      console.warn("⚠️ RESEND_API_KEY is missing. Email skipped.");
+    if (!resend) {
+      console.warn("⚠️ Email skipped: Resend client not initialized.");
       return;
     }
 
@@ -178,6 +188,7 @@ async function sendOrderStatusEmail(user, order, status) {
  */
 async function createResendWebhook(url, events = ['email.sent']) {
     try {
+        if (!resend) return console.warn("⚠️ Webhook skipped: Resend not initialized.");
         const { data, error } = await resend.webhooks.create({
             endpoint: url,
             events,
@@ -192,6 +203,7 @@ async function createResendWebhook(url, events = ['email.sent']) {
  */
 async function getResendWebhook(id) {
     try {
+        if (!resend) return console.warn("⚠️ Webhook skipped: Resend not initialized.");
         const { data, error } = await resend.webhooks.get(id);
         if(error) console.error("Webhook Get Error:", error);
         return data;
@@ -203,6 +215,7 @@ async function getResendWebhook(id) {
  */
 async function listResendWebhooks() {
     try {
+        if (!resend) return console.warn("⚠️ Webhook skipped: Resend not initialized.");
         const { data, error } = await resend.webhooks.list();
         if(error) console.error("Webhook List Error:", error);
         return data;
@@ -214,6 +227,7 @@ async function listResendWebhooks() {
  */
 async function updateResendWebhook(id, url, status = 'enabled', events = ['email.sent']) {
     try {
+        if (!resend) return console.warn("⚠️ Webhook skipped: Resend not initialized.");
         const { data, error } = await resend.webhooks.update(id, {
             endpoint: url,
             events,
@@ -229,6 +243,7 @@ async function updateResendWebhook(id, url, status = 'enabled', events = ['email
  */
 async function deleteResendWebhook(id) {
     try {
+        if (!resend) return console.warn("⚠️ Webhook skipped: Resend not initialized.");
         const { data, error } = await resend.webhooks.remove(id);
         if(error) console.error("Webhook Delete Error:", error);
         return data;

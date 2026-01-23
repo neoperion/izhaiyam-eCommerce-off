@@ -1,96 +1,59 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './GalleryPage.css';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
+import './GalleryPage.css';
 import API from '../../config';
 
-const GalleryPage = () => {
-  const [visibleItems, setVisibleItems] = useState(new Set());
-  const [instagramPosts, setInstagramPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const observerRef = useRef(null);
+// Components
+import GalleryHero from '../../components/Gallery/GalleryHero/GalleryHero';
+import WorkshopSection from '../../components/Gallery/WorkshopSection';
+import FounderSection from '../../components/Gallery/FounderSection/FounderSection';
+import InstagramSection from '../../components/Gallery/InstagramSection';
+import CelebritySection from '../../components/Gallery/CelebritySection';
+import ClientHomesSection from '../../components/Gallery/ClientHomesSection';
+import ShopImagesSection from '../../components/Gallery/ShopImagesSection';
 
-  // YouTube videos configuration (Preserved)
-  const youtubeVideos = [
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Handcrafted Furniture Making Process',
-      description: 'Watch our artisans craft beautiful furniture pieces'
-    },
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Behind the Scenes: Workshop Tour',
-      description: 'Explore our traditional woodworking workshop'
-    },
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Design Inspiration & Craftsmanship',
-      description: 'The art and soul behind every piece we create'
-    },
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Sustainable Materials & Practices',
-      description: 'Our commitment to eco-friendly furniture making'
-    },
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Customer Stories & Testimonials',
-      description: 'Hear from our satisfied customers'
-    },
-    {
-      id: 'dQw4w9WgXcQ',
-      title: 'Traditional Techniques Meets Modern Design',
-      description: 'Blending heritage with contemporary aesthetics'
-    }
-  ];
+const GalleryPage = () => {
+  const [galleryData, setGalleryData] = useState({
+    hero: [],
+    workshop: [],
+    founder: [],
+    instagram: [],
+    celebrity: [],
+    'client-homes': [],
+    'shop-images': []
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // NO EXTERNAL SCRIPTS LOADED
-
-    const fetchInstagramPosts = async () => {
+    window.scrollTo(0, 0);
+    
+    const fetchGalleryData = async () => {
       try {
-        const serverUrl = API;
-        const response = await axios.get(`${serverUrl}/api/v1/instagram/public`);
-        if (response.data && response.data.posts) {
-          setInstagramPosts(response.data.posts);
+        const { data } = await axios.get(`${API}/api/v1/gallery`);
+        
+        if (data.success && data.data) {
+           setGalleryData(data.data);
+        } else {
+           setGalleryData(data);
         }
       } catch (error) {
-        console.error('Failed to fetch Instagram posts:', error);
+        console.error("Failed to fetch gallery data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInstagramPosts();
+    fetchGalleryData();
   }, []);
 
-  // Intersection Observer
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleItems((prev) => new Set([...prev, entry.target.dataset.id]));
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '50px' }
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-[#faf9f6]">
+        <div className="loader"></div>
+      </div>
     );
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  const attachObserver = (element) => {
-    if (element && observerRef.current) {
-      observerRef.current.observe(element);
-    }
-  };
-
-
+  }
 
   return (
     <motion.div
@@ -100,119 +63,20 @@ const GalleryPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <section className="gallery-hero">
-        <div className="container-page">
-          <div className="hero-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="12" r="10" fill="#E63946" />
-            </svg>
-          </div>
-          <h1 className="gallery-hero-title font-inter">
-            Discover <span className="highlight">Furniture</span>
-          </h1>
-          <h2 className="gallery-hero-subtitle font-inter">Inspiration</h2>
-          <p className="gallery-hero-text font-inter">
-            Explore the elegance of our handcrafted furniture pieces.
-          </p>
-        </div>
-      </section>
-
-      <section className="instagram-section section-padding">
-        <div className="container-page">
-          {loading ? (
-            <div className="loading-state" style={{ textAlign: 'center', padding: '50px' }}>Loading Gallery...</div>
-          ) : instagramPosts.length > 0 ? (
-            <div className="instagram-grid">
-              {instagramPosts.map((post, index) => (
-                <div
-                  key={post._id || index}
-                  ref={attachObserver}
-                  data-id={`instagram-${index}`}
-                  className={`instagram-card ${visibleItems.has(`instagram-${index}`) ? 'visible' : ''}`}
-                  style={{
-                    background: '#000',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    position: 'relative'
-                  }}
-                >
-                  {/* Video Wrapper 9:16 Aspect Ratio */}
-                  <div style={{ position: 'relative', overflow: 'hidden', paddingTop: '177.77%' }}>
-                    <iframe
-                      src={`${post.embedUrl}/captioned/?autoplay=0&muted=1&playsinline=1`}
-                      title={`Instagram post ${index}`}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        background: '#000'
-                      }}
-                      scrolling="no"
-                      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                      loading="lazy"
-                    ></iframe>
-                  </div>
-
-                  <div style={{ padding: '15px', background: '#fff' }}>
-                    <a
-                      href={post.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ fontSize: '14px', color: '#0095f6', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    >
-                      View on Instagram <span>↗</span>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state" style={{ textAlign: 'center', padding: '50px' }}>
-              <h3 className="font-inter" style={{ fontSize: '24px', marginBottom: '10px' }}>Gallery updating soon.</h3>
-              <p className="font-inter" style={{ color: '#666' }}>Follow us on Instagram.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-
-
-      <section className="youtube-section section-padding">
-        <div className="container-page">
-          <div className="section-header">
-            <h2 className="section-title font-inter">YouTube Showcase</h2>
-          </div>
-          <div className="youtube-grid">
-            {youtubeVideos.map((video, index) => (
-              <div
-                key={video.id + index}
-                ref={attachObserver}
-                data-id={`video-${index}`}
-                className={`youtube-card ${visibleItems.has(`video-${index}`) ? 'visible' : ''}`}
-              >
-                <div className="youtube-embed-container">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                  ></iframe>
-                </div>
-                <div className="youtube-card-content">
-                  <h3 className="youtube-title font-inter">{video.title}</h3>
-                  <button className="youtube-btn font-inter">SHOP NOW</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <GalleryHero data={galleryData.hero} />
+      
+      <ShopImagesSection data={galleryData['shop-images']} />
+      
+      <WorkshopSection data={galleryData.workshop} />
+      
+      <FounderSection data={galleryData.founder} />
+      
+      <InstagramSection data={galleryData.instagram} />
+      
+      <CelebritySection data={galleryData.celebrity} />
+      
+      <ClientHomesSection data={galleryData['client-homes']} />
+      
     </motion.div>
   );
 };

@@ -469,12 +469,17 @@ class App {
         window.removeEventListener('touchend', this.boundOnTouchUp);
 
         // Remove canvas click listener
-        if (this.gl.canvas && this.boundOnCanvasClick) {
+        if (this.gl && this.gl.canvas && this.boundOnCanvasClick) {
             this.gl.canvas.removeEventListener('click', this.boundOnCanvasClick);
         }
 
-        if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
-            this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);
+        if (this.renderer && this.renderer.gl) {
+            const gl = this.renderer.gl;
+            if (gl.canvas && gl.canvas.parentNode) {
+                gl.canvas.parentNode.removeChild(gl.canvas);
+            }
+            const extension = gl.getExtension('WEBGL_lose_context');
+            if (extension) extension.loseContext();
         }
     }
 }
@@ -493,20 +498,27 @@ export default function CircularGallery({
     const appRef = useRef(null);
 
     useEffect(() => {
-        appRef.current = new App(containerRef.current, {
-            items,
-            bend,
-            textColor,
-            borderRadius,
-            font,
-            scrollSpeed,
-            scrollEase,
-            onImageClick: (imageData) => {
-                setSelectedImage(imageData);
-            }
-        });
+        try {
+            appRef.current = new App(containerRef.current, {
+                items,
+                bend,
+                textColor,
+                borderRadius,
+                font,
+                scrollSpeed,
+                scrollEase,
+                onImageClick: (imageData) => {
+                    setSelectedImage(imageData);
+                }
+            });
+        } catch (error) {
+            console.error("Failed to initialize CircularGallery:", error);
+        }
+
         return () => {
-            appRef.current.destroy();
+            if (appRef.current) {
+                appRef.current.destroy();
+            }
         };
     }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
 

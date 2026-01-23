@@ -60,6 +60,7 @@ const PagesRoute = ({ setIsCartSectionActive }) => {
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/aboutUs" element={<AboutUsPage />} />
           <Route path="/contactUs" element={<ContactUsPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
           
           {/* Policy Pages */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
