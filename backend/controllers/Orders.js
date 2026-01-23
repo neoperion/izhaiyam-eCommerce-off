@@ -652,8 +652,8 @@ const updateOrderTracking = async (req, res) => {
         url: "https://spdexp.com/"
       },
       mettur_transports: {
-        type: "DIRECT",
-        url: "https://www.metturtransports.com/track.php?lrno="
+        type: "LANDING",
+        url: "https://www.metturtransports.com/index.php"
       }
     };
 
