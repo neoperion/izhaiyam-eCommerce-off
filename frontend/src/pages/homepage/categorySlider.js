@@ -3,7 +3,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
-import cotImg from '../../assets/COT1.png';
+import cotImg from '../../assets/cot.png';
 import sofaImg from '../../assets/sofa.png';
 import diwanImg from '../../assets/category-diwan.png';
 import chairImg from '../../assets/chair (2).png';
