@@ -3,9 +3,9 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background-color: #F9F8F6; /* Warm off-white */
+  /* warm off-white */
   overflow: hidden;
-  display: flex;
+  /* display: flex; removed to allow hidden class to work */
   flex-direction: column;
   color: #1a1a1a;
 }
@@ -15,7 +15,8 @@
   flex: 1;
   width: 100%;
   height: 100%;
-  max-width: 1440px;
+  max-width: 1280px;
+  /* Matching standard max-w-7xl */
   margin: 0 auto;
   padding: 0;
 }
@@ -26,7 +27,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 6rem;
+  padding: 4rem 3rem;
+  /* Reduced from 6rem to align better */
   position: relative;
   z-index: 10;
 }
@@ -47,7 +49,8 @@
 .eyebrow-line {
   width: 40px;
   height: 1px;
-  background-color: #93A267; /* Primary Sage Green */
+  background-color: #93A267;
+  /* Primary Sage Green */
 }
 
 .eyebrow-text {
@@ -61,10 +64,13 @@
 
 /* Big Title */
 .hero-big-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(3.5rem, 5vw, 6rem);
-  font-weight: 700;
+  font-weight: 800;
+  /* Increased weight for Inter to match impact */
   line-height: 1.1;
+  letter-spacing: -0.02em;
+  /* Tighter tracking for Inter display */
   margin-bottom: 2rem;
   color: #2c3e50;
   display: flex;
@@ -79,7 +85,8 @@
 .highlight-font {
   font-style: italic;
   font-weight: 400;
-  color: #93A267; /* Sage Highlight */
+  color: #93A267;
+  /* Sage Highlight */
 }
 
 /* Description */
@@ -138,7 +145,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 0;
   border: 1px solid #1a1a1a;
   font-size: 0.75rem;
   padding-left: 2px;
@@ -149,29 +156,29 @@
   flex: 1;
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 0;
-  overflow: visible; /* Allow floaters to overlap */
+  padding: 0;
+  overflow: hidden;
 }
 
 .hero-visual-composition {
   position: relative;
   width: 100%;
-  height: 90%;
+  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
 }
 
-.main-image-mask {
-  width: 80%;
-  height: 85%;
-  background: #ccc;
-  overflow: hidden;
+/* Simple Right Image Wrapper */
+.simple-hero-image-wrapper {
+  width: 100%;
+  height: 100%;
   position: relative;
-  z-index: 2;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  /* Rectangular */
 }
 
 .hero-media-object {
@@ -180,68 +187,13 @@
   object-fit: cover;
 }
 
-.image-overlay-gradient {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
-}
-
-/* Secondary Floating Card */
-.secondary-image-card {
-  position: absolute;
-  top: 20%;
-  right: 10%;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  padding: 1.5rem;
-  border-radius: 20px;
-  z-index: 3;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  border: 1px solid rgba(255,255,255,0.5);
-}
-
-.glass-card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat-number {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #666;
-}
-
-/* Decor */
-.hero-decor-circle {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 300px;
-  height: 300px;
-  background: #F0EAE0;
-  border-radius: 50%;
-  z-index: 1;
-}
-
 /* Scroll Line */
 .hero-scroll-line {
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 1px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   z-index: 10;
   transform: translateX(-50%);
 }
@@ -252,10 +204,9 @@
     min-height: auto;
     height: auto;
   }
-  
+
   .gallery-hero-split {
-    flex-direction: column-reverse; /* Visuals top, Text bottom on stack? Or text top? */
-    /* Let's do Text Top, Image Bottom for mobile flow */
+    flex-direction: column-reverse;
     flex-direction: column;
   }
 
@@ -286,7 +237,7 @@
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .hero-actions {
     justify-content: center;
   }
@@ -295,49 +246,35 @@
     height: 50vh;
     padding-bottom: 2rem;
   }
-
-  .main-image-mask {
-    width: 90%;
-    height: 90%;
-    /* Keep arch shape but adjust */
-    border-radius: 150px 150px 0 0 !important;
-  }
-  
-  .secondary-image-card {
-    top: 10%;
-    right: 5%;
-    transform: scale(0.8);
-  }
-  
-  .hero-decor-circle {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 200px;
-  }
 }
 
 @media (max-width: 480px) {
   .hero-big-title {
     font-size: 2.5rem;
   }
-  
+
   .gallery-hero-left {
     padding: 2rem 1rem;
   }
-  
+
   .gallery-hero-right {
     height: 400px;
   }
-  
+
   .btn-modern-primary {
     width: 100%;
     padding: 1rem;
   }
-  
+
   .hero-actions {
     flex-direction: column;
     width: 100%;
     gap: 1rem;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    /* Reduced */
+    padding: 0 1rem;
   }
 }

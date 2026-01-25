@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const CLIENT_HOMES_IMAGES = [
   "https://res.cloudinary.com/deft85hk9/image/upload/v1768929389/IMG_6225_bmiboe.heic",
@@ -15,45 +15,108 @@ const CLIENT_HOMES_IMAGES = [
 ];
 
 const ClientHomesSection = () => {
-  // Process images to ensure they display (convert heic to jpg for browser support)
-  const images = CLIENT_HOMES_IMAGES.map(url => {
-    // Replace .heic with .jpg for browser compatibility if needed, 
-    // or rely on Cloudinary's f_auto if we were transforming properly, 
-    // but simple extension swap works for standard Cloudinary URLs usually.
-    return {
-      url: url.replace(/\.heic$/i, '.jpg'),
-      caption: "Happy Home",
-      location: "Chennai, TN"
+  const scrollRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Speed configuration
+  const SCROLL_SPEED = 0.5; // Pixels per frame
+
+  // Process images
+  const baseImages = CLIENT_HOMES_IMAGES.map(url => ({
+    url: url.replace(/\.heic$/i, '.jpg'),
+    id: url
+  }));
+
+  // Triple the array to ensure smooth infinite loop buffer
+  const galleryImages = [...baseImages, ...baseImages, ...baseImages];
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let animationFrameId;
+    let exactScroll = scrollContainer.scrollLeft;
+
+    const scrollLoop = () => {
+      if (!isPaused && scrollContainer) {
+        // Increment scroll position
+        exactScroll += SCROLL_SPEED;
+
+        // Maximum scroll width (approx 1/3 of total content for seamless loop point)
+        // Actually, we want to reset when we've scrolled past the first set entire width.
+        // Since we tripled the array, the "single set width" is roughly 1/3 of scrollWidth.
+        const singleSetWidth = scrollContainer.scrollWidth / 3;
+
+        if (exactScroll >= singleSetWidth) {
+          exactScroll = 0; // Reset to start (seamless because 2nd set looks same as 1st)
+        }
+
+        scrollContainer.scrollLeft = exactScroll;
+      } else {
+        // If paused (manual interaction), sync exactScroll to current real position
+        // so when resumed it continues smoothly.
+        exactScroll = scrollContainer.scrollLeft;
+      }
+
+      animationFrameId = requestAnimationFrame(scrollLoop);
     };
-  });
+
+    animationFrameId = requestAnimationFrame(scrollLoop);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isPaused]);
 
   return (
-    <section className="gallery-section container-page">
+    <section className="gallery-section container-page overflow-hidden">
       <div className="gallery-section-header">
-        <h2 className="gallery-section-title font-inter">Client Homes</h2>
-        <p className="gallery-section-subtitle font-inter">
+        <h2 className="gallery-section-title font-inter" style={{ color: '#93a267' }}>Client Homes</h2>
+        <p className="gallery-section-subtitle font-inter" style={{ color: '#000000' }}>
           Trusted by families across Tamil Nadu.
         </p>
       </div>
 
-      <div className="client-homes-container">
-        {images.map((item, index) => (
-          <div key={index} className="client-home-card">
-            <img src={item.url} alt="Client Home" className="client-home-image" loading="lazy" />
-            <div className="client-home-info">
-              <h5 className="font-bold font-inter text-lg">
-                {item.caption}
-              </h5>
-              <div className="client-location font-inter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                {item.location}
-              </div>
+      <div className="relative w-full py-4 group">
+        {/* Gradient Masks (optional, can hide during swipe if annoying) */}
+        <div className="absolute top-0 left-0 w-8 md:w-32 h-full bg-gradient-to-r from-[#F9F8F6] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-8 md:w-32 h-full bg-gradient-to-l from-[#F9F8F6] to-transparent z-10 pointer-events-none"></div>
+
+        {/* Swipe text hint (optional)
+          <div className="absolute top-0 right-4 text-xs text-gray-400 md:hidden z-20 mt-2 italic">Swipe to explore</div>
+          */}
+
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-6 md:gap-8 px-4 scrollbar-hide"
+          style={{
+            scrollBehavior: 'auto', // Disable smooth scroll for JS control
+            WebkitOverflowScrolling: 'touch',
+            cursor: 'grab'
+          }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => {
+            // Short delay before resuming to allow fling to settle? 
+            // Or just resume immediately. Usually immediate is fine or 1s delay.
+            setTimeout(() => setIsPaused(false), 1000);
+          }}
+        >
+          {galleryImages.map((item, index) => (
+            <div
+              key={`${item.id}-${index}`}
+              className="flex-shrink-0 relative overflow-hidden shadow-md select-none"
+              style={{ borderRadius: 0 }}
+            >
+              <img
+                src={item.url}
+                alt="Client Home"
+                className="h-48 md:h-72 w-auto object-cover pointer-events-none" // prevent img drag interfering with swipe
+                loading="lazy"
+                style={{ borderRadius: 0 }}
+              />
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

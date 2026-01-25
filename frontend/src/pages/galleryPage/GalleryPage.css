@@ -35,6 +35,7 @@
   0% {
     transform: scale(1);
   }
+
   100% {
     transform: scale(1.1);
   }
@@ -76,20 +77,25 @@
 }
 
 @keyframes shimmer {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.85;
   }
 }
 
 .gallery-hero-subtitle {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
+  /* Slightly reduced for Inter */
   font-weight: 300;
   opacity: 0.95;
-  font-style: italic;
-  font-family: 'Playfair Display', serif;
+  font-style: normal;
+  /* Removed italic usually used with Serif */
+  font-family: 'Inter', sans-serif;
   color: #f5f2ed;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
@@ -114,32 +120,22 @@
 
 .gallery-section-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .gallery-section-title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #4a3b2a;
   margin-bottom: 1rem;
   position: relative;
   display: inline-block;
-  padding-bottom: 0.5rem;
 }
 
-.gallery-section-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #93A267, transparent);
-}
+/* Underline removed as per request */
 
 .gallery-section-subtitle {
   font-size: 1.2rem;
@@ -160,27 +156,30 @@
 .gallery-item {
   margin-bottom: 20px;
   position: relative;
-  border-radius: 20px; /* Rounded Unique Look */
+  border-radius: 0;
+  /* Rounded removed */
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   background: white;
-  break-inside: avoid; /* Prevent masonry break */
+  break-inside: avoid;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .gallery-item:active {
-  transform: scale(0.98); /* Soft Press Effect */
+  transform: scale(0.98);
+  /* Soft Press Effect */
 }
 
 .gallery-image {
   width: 100%;
   display: block;
-  border-radius: 20px;
+  border-radius: 0;
   transition: transform 0.7s ease;
 }
 
 .gallery-item:hover .gallery-image {
-  transform: scale(1.08); /* Cinematic Zoom */
+  transform: scale(1.08);
+  /* Cinematic Zoom */
 }
 
 .gallery-item-overlay {
@@ -233,25 +232,25 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .founder-image {
   width: 100%;
-  border-radius: 24px;
+  border-radius: 0;
   box-shadow: 20px 20px 0 rgba(139, 90, 43, 0.15), 0 12px 48px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease;
 }
 
-.founder-text h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  margin-bottom: 2rem;
-  color: #4a3b2a;
-  font-weight: 700;
-  line-height: 1.2;
-}
+/* .founder-text h3 removed to allow generic title class usage */
 
 .founder-quote {
   font-size: 1.25rem;
@@ -277,8 +276,9 @@
 .instagram-card {
   position: relative;
   /* aspect-ratio: 1;  Removed to allow full embed height */
-  height: 520px; /* Fixed height for consistency */
-  border-radius: 20px;
+  height: 520px;
+  /* Fixed height for consistency */
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -288,22 +288,26 @@
 
 .instagram-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
   z-index: 10;
 }
 
 .instagram-iframe-wrapper {
   width: 100%;
   height: 100%;
-  pointer-events: none; /* Pass clicks to parent link */
+  pointer-events: none;
+  /* Pass clicks to parent link */
   background: #fff;
 }
 
 .instagram-iframe-wrapper iframe {
-  width: 100%; 
-  height: 100% !important; /* Full height */
-  margin-top: 0; /* No offset */
-  transform: none; /* No zoom */
+  width: 100%;
+  height: 100% !important;
+  /* Full height */
+  margin-top: 0;
+  /* No offset */
+  transform: none;
+  /* No zoom */
   object-fit: cover;
 }
 
@@ -316,15 +320,15 @@
 
 .celebrity-card {
   background: white;
-  border-radius: 24px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .celebrity-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
 }
 
 .celebrity-image-wrapper {
@@ -357,7 +361,8 @@
   gap: 30px;
   padding: 30px 10px;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .client-homes-container::-webkit-scrollbar {
@@ -367,9 +372,9 @@
 .client-home-card {
   min-width: 400px;
   background: #fff;
-  border-radius: 24px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   position: relative;
 }
@@ -396,18 +401,21 @@
     gap: 3rem;
     text-align: center;
   }
-  
+
   .founder-quote {
     padding: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
+
   /* Common Mobile Grid Settings */
-  .instagram-grid, 
+  .instagram-grid,
   .celebrity-grid {
-    grid-template-columns: 1fr 1fr; /* Force 2 columns */
-    gap: 12px; /* Tighter gap for mobile */
+    grid-template-columns: 1fr 1fr;
+    /* Force 2 columns */
+    gap: 12px;
+    /* Tighter gap for mobile */
   }
 
   /* Workshop Masonry 2-Col */
@@ -415,86 +423,105 @@
     column-count: 2;
     column-gap: 12px;
   }
-  
+
   /* Client Homes: Convert Scroll to Grid 2x2 */
   .client-homes-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding: 10px 0;
-    overflow-x: visible; /* Disable scroll */
+    overflow-x: visible;
+    /* Disable scroll */
   }
-  
+
   .client-home-card {
-    min-width: 0; /* Allow shrinking */
+    min-width: 0;
+    /* Allow shrinking */
     width: 100%;
-    border-radius: 16px; /* Slightly smaller radius for mobile */
+    border-radius: 16px;
+    /* Slightly smaller radius for mobile */
   }
-  
+
   .client-home-image {
-    height: 180px; /* Smaller height for grid */
+    height: 180px;
+    /* Smaller height for grid */
   }
-  
+
   .client-home-info {
     padding: 1rem;
   }
 
   /* Celebrity Mobile Overrides */
   .celebrity-image-wrapper {
-    height: 220px; /* Adjust height for 2-col */
+    height: 220px;
+    /* Adjust height for 2-col */
   }
-  
+
   .celebrity-info {
     padding: 1rem;
   }
 
   .instagram-card {
     border-radius: 16px;
-    height: 320px; /* Adjusted height for mobile */
+    height: 320px;
+    /* Adjusted height for mobile */
   }
 
   /* General Mobile Typography */
   .gallery-section-title {
     font-size: 2rem;
   }
-  
+
   .founder-text h3 {
     font-size: 2rem;
   }
 
   /* "Banana AI" Mobile Polish */
-  .gallery-item, .celebrity-card, .client-home-card, .instagram-card {
+  .gallery-item,
+  .celebrity-card,
+  .client-home-card,
+  .instagram-card {
     /* Subtle pop-in effect handled by JS, but add soft shadow here */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
-  
+
   /* Hide overlays on mobile interaction (optional, or make them permanent) */
   .gallery-item-overlay {
     opacity: 1;
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
     padding: 12px;
   }
 }
 
 @media (max-width: 480px) {
+
   /* Ultra-small screens: Still keep 2 columns but maybe tighter? */
   .instagram-grid,
   .celebrity-grid,
   .client-homes-container {
     gap: 10px;
   }
-  
-  .client-home-image, 
+
+  .client-home-image,
   .celebrity-image-wrapper {
     height: 150px;
   }
-  
+
   .gallery-section-title {
     font-size: 1.75rem;
   }
-  
+
   .gallery-item-overlay p {
-    font-size: 0.75rem; /* Smaller text */
+    font-size: 0.75rem;
+    /* Smaller text */
+  }
+
+  .gallery-section-subtitle,
+  .gallery-hero-subtitle {
+    font-size: 0.9rem !important;
+    /* Reduced for mobile */
+    line-height: 1.4;
+    padding: 0 1rem;
   }
 }
 
@@ -509,8 +536,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Smooth Scroll */
@@ -518,26 +550,17 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Container Page */
-.container-page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+/* Container Page - Matching Tailwind max-w-7xl and px-6 */
+/* Container Page styles removed to use global index.css */
+
+/* Section Generic - Matching global spacing */
+.gallery-section {
+  padding: 5rem 0;
+  position: relative;
 }
 
 @media (max-width: 768px) {
-  .container-page {
-    padding: 0 1rem;
-  }
-}
-
-/* Section Padding Helper */
-.section-padding {
-  padding: 6rem 0;
-}
-
-@media (max-width: 768px) {
-  .section-padding {
-    padding: 4rem 0;
+  .gallery-section {
+    padding: 3rem 0;
   }
 }

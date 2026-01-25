@@ -1,7 +1,8 @@
 /* FounderSection.css */
 
 .founder-section {
-  background-color: hsl(35 50% 98%); /* Using var(--card) or similar light background */
+  background-color: hsl(35 50% 98%);
+  /* Using var(--card) or similar light background */
   position: relative;
   overflow: hidden;
 }
@@ -15,7 +16,7 @@
   width: 100%;
   height: 100%;
   background: radial-gradient(circle at top right, rgba(147, 162, 103, 0.1), transparent 40%),
-              radial-gradient(circle at bottom left, rgba(147, 162, 103, 0.05), transparent 40%);
+    radial-gradient(circle at bottom left, rgba(147, 162, 103, 0.05), transparent 40%);
   pointer-events: none;
 }
 
@@ -24,9 +25,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 4rem;
-  max-width: 1200px;
   margin: 0 auto;
 }
+
+/* Removed max-width to allow container-page to control it */
+/* Removed .founder-text h3 to allow gallery-section-title to apply */
 
 .founder-image-wrapper {
   flex: 1;
@@ -41,7 +44,8 @@
   max-height: 550px;
   object-fit: cover;
   border-radius: 12px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); /* Premium shadow */
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  /* Premium shadow */
   transition: transform 0.5s ease;
 }
 
@@ -55,49 +59,32 @@
   padding: 2rem;
 }
 
-.founder-text h3 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #93A267; /* var(--primary) sage green */
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.founder-text h3::before {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 2px;
-  background-color: #93A267;
-}
-
 .founder-quote {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  line-height: 1.4;
-  color: #2c2c2c; /* var(--wood-dark) approx */
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  /* Increased line-height for safer readability */
+  color: #2c2c2c;
+  /* var(--wood-dark) approx */
   margin-bottom: 2.5rem;
   position: relative;
+  font-weight: 400;
 }
 
 .founder-quote::before {
   content: "“";
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 5rem;
   color: rgba(147, 162, 103, 0.2);
   position: absolute;
   top: -2rem;
   left: -1rem;
   line-height: 1;
+  font-weight: 700;
 }
 
 .founder-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 1.25rem;
   color: #4a4a4a;
@@ -107,7 +94,8 @@
 .founder-title {
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
-  color: #7d8c56; /* slightly darker sage */
+  color: #7d8c56;
+  /* slightly darker sage */
   font-weight: 500;
   margin-top: 0.25rem;
 }
@@ -132,7 +120,7 @@
   .founder-quote {
     font-size: 1.5rem;
   }
-  
+
   .founder-image {
     max-width: 100%;
     margin: 0 auto;

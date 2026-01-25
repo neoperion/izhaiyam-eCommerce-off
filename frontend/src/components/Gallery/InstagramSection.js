@@ -60,7 +60,7 @@ const InstagramSection = ({ data }) => {
   return (
     <section className="gallery-section container-page">
       <div className="gallery-section-header">
-        <h2 className="gallery-section-title font-inter">
+        <h2 className="gallery-section-title font-inter" style={{ color: '#93a267' }}>
           Follow Us 
           <a 
             href="https://www.instagram.com/izhaiyam_handloom_furnitures/" 
@@ -72,9 +72,7 @@ const InstagramSection = ({ data }) => {
             @Izhaiyam
           </a>
         </h2>
-        <p className="gallery-section-subtitle font-inter">
-          Daily inspiration from our community.
-        </p>
+        
       </div>
 
       <div className="instagram-grid">
