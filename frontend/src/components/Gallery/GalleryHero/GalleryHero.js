@@ -10,7 +10,7 @@ const GalleryHero = ({ data }) => {
 
     return (
         <>
-            {/* --- Mobile Hero (About Page Style) --- */}
+            {/* --- Mobile Hero (About Page Style) - All Mobile Sizes S/M/L --- */}
             <section
                 className="relative w-full h-screen md:hidden flex items-center justify-center overflow-hidden"
                 style={{
@@ -20,28 +20,38 @@ const GalleryHero = ({ data }) => {
                     backgroundRepeat: 'no-repeat'
                 }}
             >
-                <div className="absolute inset-0 bg-black/40 z-0"></div>
+                {/* Dark Overlay for Readability */}
+                <div className="absolute inset-0 bg-black/50 z-0"></div>
 
-                <div className="relative z-10 text-center px-4">
+                <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <p className="font-inter text-xs font-bold tracking-[0.2em] uppercase text-[#E8F0D6] mb-4 drop-shadow-md">
-                            Est. 2019
+                        {/* Eyebrow Text - Responsive sizing */}
+                        <p className="font-inter text-xs md:text-sm font-bold tracking-[0.2em] uppercase text-center mb-3 md:mb-4 text-[#E8F0D6] drop-shadow-md">
+                            Weaving Tradition, Crafting Comfort
                         </p>
-                        <h1 className="font-playfair text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
-                            Timeless<br />Craftsmanship
+
+                        {/* Main Heading - Responsive sizing for all mobile */}
+                        <h1 className="font-playfair text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight drop-shadow-lg">
+                            Gallery
                         </h1>
-                        <div className="flex items-center justify-center gap-3 mb-6">
-                            <div className="w-8 h-0.5 bg-white/70"></div>
-                            <div className="w-2 h-2 rounded-full bg-[#93a267]"></div>
-                            <div className="w-8 h-0.5 bg-white/70"></div>
+
+                        {/* Decorative Line */}
+                        <div className="flex items-center justify-center gap-3 mb-6 md:mb-8">
+                            <div className="w-8 md:w-12 h-0.5 bg-white/70"></div>
+                            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#93a267]"></div>
+                            <div className="w-8 md:w-12 h-0.5 bg-white/70"></div>
                         </div>
-                        <p className="font-inter text-sm text-white/90 font-light max-w-xs mx-auto leading-relaxed drop-shadow-sm">
-                            Immerse yourself in the artistry of Izhaiyam. Where handloom tradition meets modern living spaces.
-                        </p>
+
+                        {/* Description - Responsive sizing */}
+                        <div className="space-y-4 max-w-3xl mx-auto">
+                            <p className="font-inter text-sm sm:text-base md:text-xl text-white/90 leading-relaxed font-light drop-shadow-sm px-2">
+                                Immerse yourself in the artistry of Izhaiyam. Where handloom tradition meets modern living spaces.
+                            </p>
+                        </div>
                     </motion.div>
                 </div>
             </section>
