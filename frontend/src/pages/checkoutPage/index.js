@@ -10,6 +10,7 @@ import axios from "axios";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
 import API from "../../config";
 import Swal from 'sweetalert2';
+import OrderSuccessModal from "../../components/modals/OrderSuccessModal";
 
 export const CheckoutPage = ({ setIsCartSectionActive }) => {
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
@@ -36,6 +37,8 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
     shippingMethod: shippingMethod || "",
     saveAddress: false
   });
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // on reload, set the data after it has gotten userData from localstorage
   useEffect(() => {
@@ -185,13 +188,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
               if (verifyRes.data.success) {
                 // Success Popup
-                await Swal.fire({
-                  title: 'Order Placed Successfully!',
-                  text: 'Check your email for details. We will notify you about the upcoming shipping process.',
-                  icon: 'success',
-                  confirmButtonColor: '#93a267',
-                  confirmButtonText: 'Great!'
-                });
+                setShowSuccessModal(true);
 
                 // Clear Form
                 setCheckoutFormData((prevData) => {
@@ -212,8 +209,7 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
                   };
                 });
                 
-                // Navigate to My Orders
-                navigate("/profilePage/accountInformation");
+                // Navigate to My Orders logic moved to modal
               }
 
 
@@ -253,6 +249,11 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
         <div className="flex flex-col-reverse lg:flex-row lg:flex lg:w-[96%] xl:w-[92%] lg:mx-auto lg:justify-between mb-20 lg:items-start pt-0 lg:pt-20">
           <CheckoutForm {...{ placeOrderFn, checkoutFormData, setCheckoutFormData, savedAddresses }} />
           <OrderSummary {...{ setTotalAmountToBePaid }} />
+          <OrderSuccessModal 
+            isOpen={showSuccessModal} 
+            onClose={() => navigate('/')} 
+            onViewOrder={() => navigate('/profilePage/accountInformation')} 
+          />
         </div>
       </>
     );

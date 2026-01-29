@@ -26,8 +26,8 @@ export function withWatermark(imageUrl) {
 
   // Watermark transformation based on device
   const watermarkTransform = isMobile
-    ? "l_logo_qpvz1g,w_180,o_25,g_south_east,x_12,y_12"
-    : "l_logo_qpvz1g,w_300,o_30,g_south_east,x_20,y_20";
+    ? "l_logo_qpvz1g,w_180,o_80,g_center"
+    : "l_logo_qpvz1g,w_300,o_80,g_center";
 
   // Inject transformation after /upload/
   return imageUrl.replace(
