@@ -3,7 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 const CELEBRITY_IMAGES = [
   "https://res.cloudinary.com/deft85hk9/image/upload/v1768928849/IMG_1235_upruwd.heic",
   "https://res.cloudinary.com/deft85hk9/image/upload/v1768929374/IMG_0867_ifeurh.jpg",
-  "https://res.cloudinary.com/deft85hk9/image/upload/v1768929234/IMG_1024_iws3p0.jpg"
+  "https://res.cloudinary.com/deft85hk9/image/upload/v1768929234/IMG_1024_iws3p0.jpg",
+  "https://res.cloudinary.com/deft85hk9/image/upload/v1768929389/IMG_6225_bmiboe.heic",
+  "https://res.cloudinary.com/deft85hk9/image/upload/v1768929161/IMG_1139_pkeegw.heic"
 ];
 
 const CelebritySection = () => {

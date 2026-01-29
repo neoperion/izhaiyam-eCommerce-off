@@ -19,7 +19,7 @@ export const NavTabs = ({ isMobile, setDisplayVerticalNavBar }) => {
         : 'text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground'
         }`;
     }
-    return `text-base font-semibold transition-colors duration-200 ${isActive
+    return `text-sm lg:text-base font-semibold transition-colors duration-200 ${isActive
       ? 'text-primary-foreground border-b-2 border-primary-foreground pb-1'
       : 'text-primary-foreground/80 hover:text-primary-foreground'
       }`;
@@ -46,7 +46,7 @@ export const NavTabs = ({ isMobile, setDisplayVerticalNavBar }) => {
   }
 
   return (
-    <div className="flex items-center gap-12">
+    <div className="flex items-center gap-4 md:gap-6 lg:gap-12">
       {navLinks.map((link) => (
         <Link
           key={link.name}
