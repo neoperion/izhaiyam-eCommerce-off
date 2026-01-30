@@ -8,14 +8,18 @@ import { handleCartModification } from "../utils/handleCartModification";
 import { isProductInCartFn, isProductInWishlistFn } from "../utils/isSpecificProductInCartAndWishlist.js";
 import { withWatermark } from "../utils/withWatermark";
 
+import { useToast } from "../context/ToastContext";
+
 export const SingleProductBox = ({ productsData }) => {
   const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = productsData;
+  const { toastSuccess, toastInfo } = useToast();
 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isProductInCart, setIsProductInCart] = useState(false);
 
   const dispatch = useDispatch();
   const { wishlist, cart } = useSelector((state) => state.wishlistAndCartSection);
+// ...
 
   useEffect(() => {
     isProductInWishlistFn(_id, setIsWishlisted, wishlist);
@@ -99,7 +103,7 @@ export const SingleProductBox = ({ productsData }) => {
 
           {/* Wishlist Button */}
           <button
-            onClick={() => handleWishlistModification(_id, dispatch)}
+            onClick={() => handleWishlistModification(_id, dispatch, toastSuccess, toastInfo)}
             className="absolute top-3 right-3 hover:scale-110 transition-transform"
           >
             <Heart

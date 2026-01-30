@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { AddressModal } from './AddressModal';
 import { FaHome, FaBriefcase, FaTrash, FaCheckCircle, FaStar } from 'react-icons/fa';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useToast } from "../../context/ToastContext";
 import API from "../../config";
 
 export const Adresses = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [savedAddresses, setSavedAddresses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { toastSuccess, toastError } = useToast();
 
     const serverUrl = API;
 
@@ -51,7 +52,7 @@ export const Adresses = () => {
     const handleSaveAddress = async (addressData) => {
         const token = getAuthToken();
         if (!token) {
-            toast.error("Please login to add an address");
+            toastError("Please login to add an address");
             return;
         }
 
@@ -63,10 +64,10 @@ export const Adresses = () => {
             if (response.data.success) {
                 setSavedAddresses(response.data.addresses);
                 setIsModalOpen(false);
-                toast.success("Address added successfully");
+                toastSuccess("Address added successfully");
             }
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to add address");
+            toastError(error.response?.data?.msg || "Failed to add address");
         }
     };
 
@@ -83,10 +84,10 @@ export const Adresses = () => {
 
             if (response.data.success) {
                 setSavedAddresses(response.data.addresses);
-                toast.success("Address deleted successfully");
+                toastSuccess("Address deleted successfully");
             }
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to delete address");
+            toastError(error.response?.data?.msg || "Failed to delete address");
         }
     };
 
@@ -101,10 +102,10 @@ export const Adresses = () => {
 
             if (response.data.success) {
                 setSavedAddresses(response.data.addresses);
-                toast.success("Default address updated");
+                toastSuccess("Default address updated");
             }
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to set default address");
+            toastError(error.response?.data?.msg || "Failed to set default address");
         }
     };
 

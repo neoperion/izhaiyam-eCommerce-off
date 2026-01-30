@@ -1,13 +1,14 @@
 import { React, useState, useRef } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import API from "../../../config";
 import AdminLayout from "../../../components/admin/AdminLayout";
+import { useToast } from "../../../context/ToastContext";
 
 export const AddNewProduct = () => {
   const navigate = useNavigate();
+  const { toastSuccess, toastError, toastInfo } = useToast();
   const [imgUrls, setImgUrls] = useState([]); // Array of URLs
   const [productTitle, setProductTitle] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -33,11 +34,6 @@ export const AddNewProduct = () => {
     secondaryColorName: "", 
     secondaryHexCode: "#000000",
     isDualColor: false,
-  
-    primaryHexCode: "#000000", 
-    secondaryColorName: "", 
-    secondaryHexCode: "#000000",
-    isDualColor: false,
     images: [] // Array of variant images
   });
 
@@ -49,7 +45,6 @@ export const AddNewProduct = () => {
   const [newWood, setNewWood] = useState({
     woodType: "",
     price: "",
-
     description: "",
     isDefault: false
   });
@@ -125,14 +120,15 @@ export const AddNewProduct = () => {
       woodVariants: isWoodCustomizable === "yes" ? woodVariants.map(w => ({
         woodType: w.woodType,
         price: parseFloat(w.price) || 0,
-
         description: w.description,
         isDefault: w.isDefault
       })) : [],
       abTestConfig: isWoodCustomizable === "yes" ? abTestConfig : { enabled: false },
     };
     console.log("Frontend Create Payload:", formData);
-    const asyncCreateProductToastId = toast.loading("product data upload in progress");
+    
+    toastInfo("Product data upload in progress", "Uploading");
+
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || " ";
       await axios.post(`${serverUrl}/api/v1/products`, formData, {
@@ -142,12 +138,7 @@ export const AddNewProduct = () => {
         },
       });
 
-      toast.update(asyncCreateProductToastId, {
-        render: "Product data has sucessfully been uploaded",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toastSuccess("Product data has successfully been uploaded");
       
       // Navigate back to products list
       navigate('/admin/products');
@@ -158,13 +149,7 @@ export const AddNewProduct = () => {
       else {
         errMessage = error.response.data.message;
       }
-
-      toast.update(asyncCreateProductToastId, {
-        render: `${errMessage} : Product data upload failed`,
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      toastError(`${errMessage} : Product data upload failed`);
     }
   };
 
@@ -179,7 +164,8 @@ export const AddNewProduct = () => {
 
     imgRef.current.nextElementSibling.style.display = "block";
     imgRef.current.nextElementSibling.textContent = "uploading images ...";
-    const asyncImgUploadToastId = toast.loading("Pls wait, product images are currently being uploaded");
+    
+    toastInfo("Pls wait, product images are currently being uploaded", "Uploading");
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || " ";
@@ -194,12 +180,8 @@ export const AddNewProduct = () => {
       // Let's replace for now as it's a "file input" which usually resets selection
       setImgUrls(prev => [...prev, ...data.images]); 
       
-      toast.update(asyncImgUploadToastId, {
-        render: "Product images have been successfully uploaded",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toastSuccess("Product images have been successfully uploaded");
+
       imgRef.current.nextElementSibling.textContent = "uploaded";
     } catch (error) {
       let errMessage;
@@ -207,12 +189,9 @@ export const AddNewProduct = () => {
       else {
         errMessage = error.response.data.message;
       }
-      toast.update(asyncImgUploadToastId, {
-        render: `${errMessage} : Product image upload has failed`,
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      
+      toastError(`${errMessage} : Product image upload has failed`);
+
       imgRef.current.nextElementSibling.textContent = "image upload failed";
     }
   };
@@ -242,16 +221,16 @@ export const AddNewProduct = () => {
       });
       setNewColor({ ...newColor, images: [...(newColor.images || []), ...data.images] });
       setUploadingVariantImage(false);
-      toast.success("Variant images uploaded");
+      toastSuccess("Variant images uploaded");
     } catch (error) {
       setUploadingVariantImage(false);
-      toast.error("Variant image upload failed");
+      toastError("Variant image upload failed");
     }
   };
 
   const addColorVariant = () => {
     if (!newColor.primaryColorName || (!newColor.images || newColor.images.length === 0)) {
-      toast.error("Please provide primary color name and at least one image");
+      toastError("Please provide primary color name and at least one image");
       return;
     }
     
@@ -286,7 +265,7 @@ export const AddNewProduct = () => {
   // Wood Variant Handlers
   const addWoodVariant = () => {
     if (!newWood.woodType || !newWood.price) {
-      toast.error("Please provide Wood Type and Price");
+      toastError("Please provide Wood Type and Price");
       return;
     }
     setWoodVariants([...woodVariants, { ...newWood }]);

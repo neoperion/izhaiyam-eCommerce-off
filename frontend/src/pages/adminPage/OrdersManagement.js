@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload, AiOutlineFilter } from "react-icons/ai";
-import { toast } from "react-toastify";
+import { useToast } from "../../context/ToastContext";
 import { useNavigate } from "react-router-dom";
 import API from "../../config";
 import AdminLayout from '../../components/admin/AdminLayout';
@@ -23,6 +23,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
   const [fullOrderDetails, setFullOrderDetails] = useState(null);
   const [loadingTracking, setLoadingTracking] = useState(false);
+  const { toastSuccess, toastError, toastInfo } = useToast();
 
   // Backend getAllOrders returns flattened structure:
   // { id, customer, product, productCount, amount, paymentMethod, status, date }
@@ -62,11 +63,11 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
           await axios.delete(`${serverUrl}/orders/admin/order/${id}`, {
              headers: { authorization: `Bearer ${LoginToken}` }
           });
-          toast.success("Order deleted successfully");
+          toastSuccess("Order deleted successfully");
           if(onOrderDeleted) onOrderDeleted(id);
           else fetchOrders(); // Fallback
       } catch (error) {
-          toast.error("Failed to delete order");
+          toastError("Failed to delete order");
       }
   }
 
@@ -76,7 +77,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
           const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
           
-          toast.info("Exporting order...");
+          toastInfo("Exporting order...");
           
           const response = await axios.get(`${serverUrl}/orders/export/order/${id}`, {
              headers: { authorization: `Bearer ${LoginToken}` },
@@ -90,9 +91,9 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
           document.body.appendChild(link);
           link.click();
           link.remove();
-          toast.success("Order exported successfully");
+          toastSuccess("Order exported successfully");
       } catch (error) {
-          toast.error("Failed to export order");
+          toastError("Failed to export order");
           console.error(error);
       }
   }
@@ -113,7 +114,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
               setIsTrackingModalOpen(true);
           }
       } catch (error) {
-          toast.error("Failed to load order details");
+          toastError("Failed to load order details");
           console.error(error);
       } finally {
           setLoadingTracking(false);
@@ -181,6 +182,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
 const OrdersManagement = () => {
   const navigate = useNavigate();
   const serverUrl = API;
+  const { toastSuccess, toastError, toastInfo } = useToast();
 
   const [ordersParams, setOrdersParams] = useState({
     orders: [],
@@ -217,7 +219,7 @@ const OrdersManagement = () => {
         const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
         const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
         
-        toast.info(`Exporting ${range} orders...`);
+        toastInfo(`Exporting ${range} orders...`);
         
         const response = await axios.get(`${serverUrl}/orders/export/${range}`, {
            headers: { authorization: `Bearer ${LoginToken}` },
@@ -231,9 +233,9 @@ const OrdersManagement = () => {
         document.body.appendChild(link);
         link.click();
         link.remove();
-        toast.success("Orders exported successfully");
+        toastSuccess("Orders exported successfully");
     } catch (error) {
-        toast.error("Failed to export orders");
+        toastError("Failed to export orders");
         console.error(error);
     }
   };

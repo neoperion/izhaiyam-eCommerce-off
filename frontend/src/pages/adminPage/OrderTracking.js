@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, MapPin, Calendar } from 'lucide-react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useToast } from "../../context/ToastContext";
 import { FullpageSpinnerLoader } from '../../components/loaders/spinnerIcon';
 
 const OrderTracking = ({ order, onClose }) => {
@@ -11,12 +11,13 @@ const OrderTracking = ({ order, onClose }) => {
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState(order?.tracking?.expectedDeliveryDate || '');
   const [status, setStatus] = useState(order?.status || 'Pending'); // Added Status State
   const [loading, setLoading] = useState(false);
+  const { toastSuccess, toastError } = useToast();
 
   if (!order) return null;
 
   const handleSaveTracking = async () => {
     if (!carrier || !trackingId.trim()) {
-      toast.error("Please select a carrier and enter a tracking ID");
+      toastError("Please select a carrier and enter a tracking ID");
       return;
     }
 
@@ -39,11 +40,11 @@ const OrderTracking = ({ order, onClose }) => {
          await axios.put(`${serverUrl}orders/updateStatus/${order.id}`, { status }, header);
       }
 
-      toast.success("Tracking details updated successfully");
+      toastSuccess("Tracking details updated successfully");
       onClose();
       // Optional: Trigger a refresh of the parent list if possible, or user manually refreshes
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update tracking");
+      toastError(error.response?.data?.message || "Failed to update tracking");
     } finally {
       setLoading(false);
     }

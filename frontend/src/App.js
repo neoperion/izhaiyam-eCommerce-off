@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import { getAllProductsData } from "./features/productSlice";
 import { Wishlist } from "./components/wishlistSection";
 import { Cart } from "./components/cartSection";
-import { ToastContainer, Slide } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import { ToastProvider } from "./context/ToastContext";
 import { fetchIsTokenValid } from "./features/authSlice/fetchIsTokenValid";
 import { getUserData } from "./features/authSlice";
 import { HelmetProvider } from 'react-helmet-async';
@@ -95,6 +95,7 @@ function App() {
   return (
     <HelmetProvider>
     <SocketProvider>
+    <ToastProvider> 
     <SocketListener />
     <div className="App-container lg:text-[18px]">
 
@@ -122,20 +123,8 @@ function App() {
       {/* Render app content */}
       <PagesRoute {...{ setIsCartSectionActive }} />
 
-      <ToastContainer
-        position="top-right"
-        transition={Slide}
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
     </div>
+    </ToastProvider>
     </SocketProvider>
     </HelmetProvider>
   );

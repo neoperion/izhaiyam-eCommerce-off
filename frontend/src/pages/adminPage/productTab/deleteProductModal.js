@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
-
 import ReactDOM from "react-dom";
-import { toast } from "react-toastify";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
+import { useToast } from "../../../context/ToastContext";
 
 export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id, onSuccess }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const { toastSuccess, toastError } = useToast();
 
   const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
@@ -27,18 +27,10 @@ export const DeleteProductModal = ({ isDeleteModalOn, setIsDeleteModalOn, _id, o
       
       if(onSuccess) onSuccess();
 
-      toast("Product has been successfully deleted", {
-        type: "success",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastSuccess("Product has been successfully deleted");
     } catch (error) {
       setIsDeleteLoading(false);
-      toast(error?.response?.data?.message || error?.message, {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError(error?.response?.data?.message || error?.message);
     }
   };
 

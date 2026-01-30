@@ -1,8 +1,7 @@
-// ---------------------- IMPORTS ----------------------
 import { loginUser } from "../features/authSlice/login";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { useToast } from "../context/ToastContext";
 import { validateEmail } from "../utils/emailRegexValidation";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
@@ -26,6 +25,7 @@ export const LoginPage = () => {
   const { isLoading } = useSelector((state) => state.userAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { toastInfo, toastError } = useToast();
 
   // Forgot password
   const handleForgotPassword = () => {
@@ -35,11 +35,11 @@ export const LoginPage = () => {
   // Resend verification mail
   const handleResendVerification = () => {
     if (!loginDetails.email) {
-      toast("Please enter your email address", { type: "info" });
+      toastInfo("Please enter your email address");
       return;
     }
     if (!validateEmail(loginDetails.email)) {
-      toast("Please enter a valid email", { type: "error" });
+      toastError("Please enter a valid email");
       return;
     }
     dispatch(fetchResendEmailVerificationLink(loginDetails.email));
@@ -51,13 +51,13 @@ export const LoginPage = () => {
 
     // Check if email (contains @) or generic identifier
     if (!loginDetails.email) {
-      toast("Please enter your email or phone number", { type: "info" });
+      toastInfo("Please enter your email or phone number");
       return;
     }
 
     // If it looks like an email, validate it
     if (loginDetails.email.includes('@') && !validateEmail(loginDetails.email)) {
-      toast("Enter a valid email", { type: "error" });
+      toastError("Enter a valid email");
       return;
     }
 

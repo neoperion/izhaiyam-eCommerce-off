@@ -1,15 +1,16 @@
 import { React, useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { AiOutlineClose } from "react-icons/ai";
 import { FullpageSpinnerLoader } from "../../../components/loaders/spinnerIcon";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../../../config";
 import AdminLayout from "../../../components/admin/AdminLayout";
+import { useToast } from "../../../context/ToastContext";
 
 export const EditAndupdateProductModal = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { toastSuccess, toastError, toastInfo } = useToast();
   const [isFetchingUpdatedDataLoading, setIsFetchingUpdatedDataLoading] = useState(false);
   const [productDetails, setProductDetails] = useState({
     title: "",
@@ -89,7 +90,7 @@ export const EditAndupdateProductModal = () => {
         setIsFetchingUpdatedDataLoading(false);
       } catch (error) {
         setIsFetchingUpdatedDataLoading(false);
-        toast.error("Failed to fetch product data");
+        toastError("Failed to fetch product data");
         navigate('/admin/products');
       }
     };
@@ -235,7 +236,7 @@ export const EditAndupdateProductModal = () => {
     };
     console.log("Frontend Update Payload:", formData);
 
-    const asyncCreateProductToastId = toast.loading("product data upload in progress");
+    toastInfo("Product data upload in progress", "Uploading");
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || " ";
@@ -247,12 +248,7 @@ export const EditAndupdateProductModal = () => {
         },
       });
 
-      toast.update(asyncCreateProductToastId, {
-        render: "Product data has sucessfully been updated",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toastSuccess("Product data has sucessfully been updated");
 
       setIsFetchingUpdatedDataLoading(false);
       navigate('/admin/products');
@@ -265,12 +261,7 @@ export const EditAndupdateProductModal = () => {
         errMessage = error?.response?.data?.message;
       }
 
-      toast.update(asyncCreateProductToastId, {
-        render: `${errMessage} : Product data update failed`,
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      toastError(`${errMessage} : Product data update failed`);
       setIsFetchingUpdatedDataLoading(false);
     }
   };
@@ -286,7 +277,7 @@ export const EditAndupdateProductModal = () => {
 
     imgRef.current.nextElementSibling.style.display = "block";
     imgRef.current.nextElementSibling.textContent = "uploading images ...";
-    const asyncImgUploadToastId = toast.loading("Pls wait, product images are currently being uploaded");
+    toastInfo("Pls wait, product images are currently being uploaded");
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || " ";
@@ -312,12 +303,8 @@ export const EditAndupdateProductModal = () => {
         };
       });
 
-      toast.update(asyncImgUploadToastId, {
-        render: "Product images have been successfully updated",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      toastSuccess("Product images have been successfully updated");
+
       imgRef.current.nextElementSibling.textContent = "uploaded";
     } catch (error) {
       let errMessage;
@@ -325,12 +312,8 @@ export const EditAndupdateProductModal = () => {
       else {
         errMessage = error?.response?.data?.message;
       }
-      toast.update(asyncImgUploadToastId, {
-        render: `${errMessage} : Product image upload has failed`,
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      toastError(`${errMessage} : Product image upload has failed`);
+
       imgRef.current.nextElementSibling.textContent = "image upload failed";
     }
   };
@@ -374,16 +357,16 @@ export const EditAndupdateProductModal = () => {
       });
 
       setUploadingVariantImage(false);
-      toast.success("Variant images uploaded");
+      toastSuccess("Variant images uploaded");
     } catch (error) {
       setUploadingVariantImage(false);
-      toast.error("Variant image upload failed");
+      toastError("Variant image upload failed");
     }
   };
 
   const addColorVariant = () => {
     if (!newColor.primaryColorName || !newColor.imageUrl) {
-      toast.error("Please provide primary color name and image");
+      toastError("Please provide primary color name and image");
       return;
     }
     
@@ -417,7 +400,7 @@ export const EditAndupdateProductModal = () => {
   // Wood Variant Handlers
   const addWoodVariant = () => {
     if (!newWood.woodType || !newWood.price) {
-      toast.error("Please provide Wood Type and Price");
+      toastError("Please provide Wood Type and Price");
       return;
     }
     setWoodVariants([...woodVariants, { ...newWood }]);

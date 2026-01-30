@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit2, LogOut, Package, MapPin, Heart, HelpCircle, Wallet, Eye, EyeOff, Search, Plus, Trash2, User, Menu, X, Calendar } from 'lucide-react';
-import { toast } from "react-toastify";
+import { useToast } from "../../context/ToastContext";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
 import FooterSection from "../../components/footerSection";
@@ -15,6 +15,7 @@ export const ProfilePage = () => {
   const dispatch = useDispatch();
   const { isTokenValidLoader, userData } = useSelector((state) => state.userAuth);
   const { wishlist } = useSelector((state) => state.wishlistAndCartSection);
+  const { toastSuccess, toastError, toastInfo } = useToast();
 
   const [activeTab, setActiveTab] = useState('myProfile');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -61,11 +62,7 @@ export const ProfilePage = () => {
   };
 
   const handleUpdateProfile = () => {
-    toast("Profile updated successfully!", {
-      type: "success",
-      autoClose: 3000,
-      position: "top-center",
-    });
+    toastSuccess("Profile updated successfully!");
     setIsEditing(false);
   };
 
@@ -104,36 +101,20 @@ export const ProfilePage = () => {
 
   const handleUpdatePassword = () => {
     if (passwordData.password !== passwordData.confirmPassword) {
-      toast("Passwords do not match!", {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError("Passwords do not match!");
       return;
     }
-    toast("Password updated successfully!", {
-      type: "success",
-      autoClose: 3000,
-      position: "top-center",
-    });
+    toastSuccess("Password updated successfully!");
     setPasswordData({ password: '', confirmPassword: '' });
   };
 
   const logoutBtnClick = async () => {
     try {
       await localStorage.clear("userData");
-      toast("User has successfully logged out", {
-        type: "success",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastSuccess("User has successfully logged out");
       navigate("/login");
     } catch (error) {
-      toast("Something went wrong", {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError("Something went wrong");
     }
   };
 
@@ -624,7 +605,7 @@ export const ProfilePage = () => {
                             </button>
                             <button
                               onClick={() => {
-                                handleWishlistModification(product._id, dispatch);
+                                handleWishlistModification(product._id, dispatch, toastSuccess, toastInfo || null); // toastInfo might not serve a purpose here but consistency
                               }}
                               className="px-3 md:px-6 py-1.5 md:py-2 border-2 border-red-500 text-red-500 font-inter font-medium rounded hover:bg-red-50 transition-all text-xs md:text-sm whitespace-nowrap flex items-center justify-center gap-1 md:gap-2"
                             >
@@ -656,7 +637,7 @@ export const ProfilePage = () => {
                   <h3 className="font-inter text-xl md:text-2xl font-bold text-gray-900 mb-2">Help & Support Center</h3>
                   <p className="font-inter text-sm md:text-base text-gray-600 mb-6 md:mb-8">Need assistance? We're here to help!</p>
                   <button
-                    onClick={() => navigate('/contact')}
+                    onClick={() => navigate('/contactUs')}
                     className="font-inter px-6 md:px-8 py-2 md:py-3 bg-[#93a267] text-white text-sm md:text-base font-semibold rounded hover:bg-[#7d8c56] transition-all"
                   >
                     CONTACT US

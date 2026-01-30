@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { enterNewPasswordAsync } from "../features/authSlice/enterNewPassword";
-import { toast } from "react-toastify";
+import { useToast } from "../context/ToastContext";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export const EnterNewPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { toastSuccess, toastError } = useToast();
   //first field and confirm password field
   const [passwords, setPasswords] = useState({ password: "", confirmPassword: "" });
 
@@ -30,26 +31,14 @@ export const EnterNewPassword = () => {
     e.preventDefault();
     const { password, confirmPassword } = passwords;
     if (password !== confirmPassword) {
-      toast("passwords doesnt match", {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError("passwords doesnt match");
     } else {
       const response = await dispatch(enterNewPasswordAsync({ password, token }));
 
       if (!response.payload.success) {
-        toast(response.errorMsg, {
-          type: "error",
-          autoClose: 3000,
-          position: "top-center",
-        });
+        toastError(response.errorMsg);
       } else {
-        toast("Password has been updated,please relogin with the new credentials", {
-          type: "success",
-          autoClose: 3000,
-          position: "top-center",
-        });
+        toastSuccess("Password has been updated,please relogin with the new credentials");
         localStorage.removeItem("UserData");
         navigate("/login");
       }

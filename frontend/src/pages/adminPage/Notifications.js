@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useToast } from "../../context/ToastContext";
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Bell, CheckCircle, AlertTriangle, AlertOctagon, Info, Clock, Trash2 } from 'lucide-react';
 
@@ -11,6 +11,7 @@ const NotificationsProtocol = () => {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const socket = useSocket();
+    const { toastSuccess, toastError } = useToast();
 
     const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
@@ -75,7 +76,7 @@ const NotificationsProtocol = () => {
              setNotifications(prev => prev.map(n => n._id === id ? {...n, isRead: true} : n));
              
         } catch (error) {
-             toast.error("Failed to update status");
+             toastError("Failed to update status");
         }
     };
 
@@ -88,10 +89,10 @@ const NotificationsProtocol = () => {
              
              // Optimistic Update
              setNotifications(prev => prev.filter(n => n._id !== id));
-             toast.success("Notification deleted");
+             toastSuccess("Notification deleted");
              
         } catch (error) {
-             toast.error("Failed to delete notification");
+             toastError("Failed to delete notification");
         }
     };
 
@@ -105,10 +106,10 @@ const NotificationsProtocol = () => {
              });
              
              setNotifications([]);
-             toast.success("All notifications cleared");
+             toastSuccess("All notifications cleared");
              
         } catch (error) {
-             toast.error("Failed to clear notifications");
+             toastError("Failed to clear notifications");
         }
     };
 
@@ -120,10 +121,10 @@ const NotificationsProtocol = () => {
              });
              
              setNotifications(prev => prev.map(n => ({...n, isRead: true})));
-             toast.success("All marked as read");
+             toastSuccess("All marked as read");
              
         } catch (error) {
-             toast.error("Failed to update status");
+             toastError("Failed to update status");
         }
     };
 

@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Trash2, Plus, ArrowUp, ArrowDown, Eye, EyeOff, Move, Image as ImageIcon, Loader2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout'; // Import AdminLayout
-import { toast } from 'react-toastify'; // Assume toast is available like in user.js
+import { useToast } from "../../context/ToastContext";
 
 export const InstagramGalleryManager = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [inputUrl, setInputUrl] = useState('');
+    const { toastSuccess, toastError, toastWarn } = useToast();
 
     useEffect(() => {
         fetchPosts();
@@ -30,7 +31,7 @@ export const InstagramGalleryManager = () => {
             setPosts(response.data.posts || []);
         } catch (err) {
             console.error('Fetch posts error:', err);
-            toast.error("Failed to fetch gallery posts");
+            toastError("Failed to fetch gallery posts");
         } finally {
             setLoading(false);
         }
@@ -46,7 +47,7 @@ export const InstagramGalleryManager = () => {
         e.preventDefault();
 
         if (!validateUrl(inputUrl)) {
-            toast.warn("Invalid Instagram URL. Must be a Post link (/p/) or Reel link (/reel/).");
+            toastWarn("Invalid Instagram URL. Must be a Post link (/p/) or Reel link (/reel/).");
             return;
         }
 
@@ -66,11 +67,11 @@ export const InstagramGalleryManager = () => {
             }, config);
 
             setInputUrl('');
-            toast.success("Post added successfully");
+            toastSuccess("Post added successfully");
             fetchPosts();
         } catch (err) {
             const msg = err.response?.data?.message || 'Failed to add post';
-            toast.error(msg);
+            toastError(msg);
         } finally {
             setActionLoading(false);
         }
@@ -86,10 +87,10 @@ export const InstagramGalleryManager = () => {
                     withCredentials: true,
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.success("Post deleted");
+                toastSuccess("Post deleted");
                 fetchPosts();
             } catch (err) {
-                toast.error('Failed to delete post');
+                toastError('Failed to delete post');
             }
         }
     };
@@ -106,9 +107,9 @@ export const InstagramGalleryManager = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchPosts();
-            toast.success(`Post ${post.isActive ? 'hidden' : 'visible'} now`);
+            toastSuccess(`Post ${post.isActive ? 'hidden' : 'visible'} now`);
         } catch (err) {
-            toast.error('Failed to update status');
+            toastError('Failed to update status');
         }
     };
 
@@ -138,9 +139,9 @@ export const InstagramGalleryManager = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // fetchPosts(); // Optional, local state update is instant
-            toast.success("Order updated");
+            toastSuccess("Order updated");
         } catch (err) {
-            toast.error('Failed to save order');
+            toastError('Failed to save order');
             fetchPosts(); // Revert on error
         }
     };

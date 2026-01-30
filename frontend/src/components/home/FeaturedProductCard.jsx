@@ -5,9 +5,12 @@ import { useDispatch } from 'react-redux';
 import { handleWishlistModification } from '../../utils/handleWishlistModification';
 import { withWatermark } from '../../utils/withWatermark';
 
+import { useToast } from '../../context/ToastContext';
+
 const FeaturedProductCard = ({ product, isWishlisted }) =>
 {
     const { _id, title, price, image, discountPercentValue, rating, reviews, isFeatured } = product;
+    const { toastSuccess, toastInfo } = useToast();
 
     const dispatch = useDispatch();
 
@@ -41,7 +44,7 @@ const FeaturedProductCard = ({ product, isWishlisted }) =>
 
                     {/* Wishlist Button */}
                     <button
-                        onClick={() => handleWishlistModification(_id, dispatch)}
+                        onClick={() => handleWishlistModification(_id, dispatch, toastSuccess, toastInfo)}
                         className="absolute top-3 right-3 hover:scale-110 transition-transform"
                     >
                         <Heart

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import FooterSection from "../components/footerSection";
 import contactImage from "../assets/image.png";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../context/ToastContext";
 
 export const ContactUsPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ export const ContactUsPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const { toastSuccess, toastError } = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +44,7 @@ export const ContactUsPage = () => {
       if (response.status === 200) {
         setSubmitStatus("success");
         setFormData({ name: "", email: "", subject: "", message: "" });
-        toast.success("Message sent successfully!");
+        toastSuccess("Message sent successfully!");
         
         setTimeout(() => {
           setSubmitStatus(null);
@@ -52,7 +53,7 @@ export const ContactUsPage = () => {
     } catch (error) {
       console.error("Contact Form Error:", error);
       setSubmitStatus("error");
-      toast.error(error.response?.data?.msg || "Failed to send message. Please try again.");
+      toastError(error.response?.data?.msg || "Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

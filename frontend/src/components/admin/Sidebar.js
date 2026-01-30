@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useToast } from '../../context/ToastContext';
 import {
   LayoutDashboard,
   Package,
@@ -14,6 +14,7 @@ import {
 export const Sidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toastSuccess, toastError } = useToast();
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
@@ -29,18 +30,10 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
   const handleLogout = async () => {
     try {
       await localStorage.clear("userData");
-      toast("User has successfully logged out", {
-        type: "success",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastSuccess("User has successfully logged out");
       navigate("/login");
     } catch (error) {
-      toast("Something went wrong", {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError("Something went wrong");
     }
   };
 

@@ -1,15 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
 import { AiOutlineDelete, AiOutlineEdit, AiFillPushpin } from "react-icons/ai";
-import { toast } from "react-toastify";
 import { DeleteProductModal } from "./deleteProductModal";
 import { ProductDetailsModal } from "./productDetailsAdminPage";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../../context/ToastContext";
 
 export const SingleProductTableCell = ({ products, serialNo, fetchProductData, onProductDeleted }) => {
   const navigate = useNavigate();
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isProductDetailsModalOn, setIsProductDetailsModalOn] = useState(false);
+  const { toastError } = useToast();
   const [productDetails, setProductDetails] = useState({
     _id: "",
     title: "",
@@ -42,11 +43,7 @@ export const SingleProductTableCell = ({ products, serialNo, fetchProductData, o
       return true;
     } catch (error) {
       setLoader(false);
-      toast(error.response.data?.message || error.message, {
-        type: "error",
-        autoClose: 3000,
-        position: "top-center",
-      });
+      toastError(error.response.data?.message || error.message);
     }
   };
 

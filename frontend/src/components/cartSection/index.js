@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleSetShippingMethodValue } from "../../utils/handleSetShippingMethodValueFn";
 import { settingTotalProductPriceAndTotalQuantityValue } from "../../utils/settingTotalProductPriceAndquantityValue";
-import { toast } from "react-toastify";
+import { useToast } from "../../context/ToastContext";
 import { motion } from "framer-motion";
 import { primaryBtnVariant } from "../../utils/animation";
 
@@ -20,6 +20,7 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
   const { isLoading } = useSelector((state) => state.productsData);
   const { shippingMethod } = useSelector((state) => state.userAuth);
+  const { toastError } = useToast();
 
 
   // setting shippingMethodValue based on chosen method
@@ -43,11 +44,7 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
     }
 
     if (isOrderAboveLimit) {
-      toast("One or more product quantities selected is more than the amount in stock", {
-        type: "error",
-        autoClose: false,
-        position: "top-center",
-      });
+      toastError("One or more product quantities selected is more than the amount in stock");
     } else {
       setIsCartSectionActive(false);
       navigate("/checkout");

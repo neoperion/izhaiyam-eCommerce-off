@@ -1,7 +1,7 @@
 import { store } from "../store";
 import { setCart } from "../features/wishlistAndCartSlice";
 
-export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart, selectedColor = null, woodType = null, cartItemId = null) => {
+export const handleCartModification = (_id, dispatch, productQuantity, isObjInCart, selectedColor = null, woodType = null, cartItemId = null, toastSuccess, toastInfo) => {
   const { allProductsData } = store.getState().productsData;
   const { cart } = store.getState().wishlistAndCartSection;
 
@@ -36,6 +36,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
             return !(colorMatch && woodMatch);
           });
         }
+        if (toastInfo) toastInfo("Product removed from cart");
 
       } else if (productQuantity) {
         // ON QUANTITY CHANGE (Update)
@@ -52,7 +53,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
           }
           return item;
         });
-
+        if (toastSuccess) toastSuccess("Cart updated");
       }
       break;
 
@@ -74,6 +75,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
             ...existingItem,
             quantity: existingItem.quantity + (parseInt(productQuantity) || 1)
           };
+          if (toastSuccess) toastSuccess("Cart updated");
         } else {
           // New Item
           const newCartItemId = generateCartItemId(_id, woodType, selectedColor);
@@ -119,6 +121,7 @@ export const handleCartModification = (_id, dispatch, productQuantity, isObjInCa
           };
 
           newCart = [...cart, newItem];
+          if (toastSuccess) toastSuccess("Product added to cart");
         }
 
       }

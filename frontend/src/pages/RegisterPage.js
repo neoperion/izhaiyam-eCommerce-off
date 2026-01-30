@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FullpageSpinnerLoader } from "../components/loaders/spinnerIcon";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
+import { useToast } from "../context/ToastContext";
 
 export const RegisterPage = () => {
   const [isInputValueInPassword, setIsInputValueInPassword] = useState(true);
@@ -24,6 +24,7 @@ export const RegisterPage = () => {
   const { isLoading } = useSelector((state) => state.userAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { toastSuccess, toastError } = useToast();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,21 +34,21 @@ export const RegisterPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(registerDetails.email)) {
-      toast.error("Please enter a valid email address");
+      toastError("Please enter a valid email address");
       return;
     }
 
     // Simple phone validation: 10-15 digits
     const phoneRegex = /^\d{10,15}$/;
     if (!phoneRegex.test(registerDetails.phone)) {
-      toast.error("Please enter a valid phone number (10-15 digits)");
+      toastError("Please enter a valid phone number (10-15 digits)");
       return;
     }
 
     const response = await dispatch(RegisterUser(registerDetails));
 
     if (!response.error) {
-      toast.success("Account created successfully. Welcome aboard!");
+      toastSuccess("Account created successfully. Welcome aboard!");
       navigate("/login");
       setRegisterDetails({
         firstName: "",
@@ -58,7 +59,7 @@ export const RegisterPage = () => {
         password: "",
       });
     } else {
-      toast.error(response.payload || "Registration failed");
+      toastError(response.payload || "Registration failed");
     }
   };
 

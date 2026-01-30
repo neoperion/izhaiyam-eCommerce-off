@@ -6,12 +6,15 @@ import { setCart } from "../../features/wishlistAndCartSlice";
 import { useNavigate } from "react-router-dom";
 import { withWatermark } from "../../utils/withWatermark";
 
+import { useToast } from "../../context/ToastContext";
+
 export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
   const { _id, title, price, image, quantity, discountPercentValue, selectedColor, woodType, cartItemId } = cartData;
   const currentImage = selectedColor ? selectedColor.imageUrl : image;
   const currentPrice = price;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { toastSuccess, toastInfo } = useToast();
 
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
   const [productQuantityInCart, setProductQuantityInCart] = useState(quantity); // Init with props quantity
@@ -27,9 +30,9 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
     if (productQuantityInCart === quantity) return; // No change
 
     // Dispatch update using cartItemId if possible
-    handleCartModification(_id, dispatch, productQuantityInCart - quantity, true, selectedColor, woodType, cartItemId);
+    handleCartModification(_id, dispatch, productQuantityInCart - quantity, true, selectedColor, woodType, cartItemId, toastSuccess, toastInfo);
     
-  }, [productQuantityInCart, _id, selectedColor, woodType, dispatch, quantity, cartItemId]);
+  }, [productQuantityInCart, _id, selectedColor, woodType, dispatch, quantity, cartItemId]); // Added dependencies to suppress warnings logic, though standard check is safer.
 
   // get the discount percent value if present
   let discountedPrice = currentPrice - (currentPrice * discountPercentValue) / 100;
@@ -133,7 +136,7 @@ export const SingleProductSection = ({ cartData, setIsCartSectionActive }) => {
           {/* Delete Button */}
           <button
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-colors"
-            onClick={() => handleCartModification(_id, dispatch, null, true, selectedColor, woodType, cartItemId)}
+            onClick={() => handleCartModification(_id, dispatch, null, true, selectedColor, woodType, cartItemId, toastSuccess, toastInfo)}
             aria-label="Remove from cart"
           >
             <IoTrashOutline className="w-4 h-4" />

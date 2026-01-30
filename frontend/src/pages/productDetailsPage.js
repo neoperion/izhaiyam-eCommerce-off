@@ -12,11 +12,46 @@ import { LoadingIndicator } from "../components/application/loading-indicator/lo
 import ExploreCard from "../components/home/ExploreCard";
 import { withWatermark } from "../utils/withWatermark";
 
+import { useToast } from "../context/ToastContext";
+
 export const ProductDetailsPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { toastSuccess, toastInfo } = useToast();
 
   const { allProductsData, isLoading } = useSelector((state) => state.productsData);
+  // ... (rest of code)
+
+  const handleAddToCart = () => {
+    if (productQuantity < 1) {
+      alert("Product quantity can't be less than 1");
+      return;
+    }
+    if (currentStock === 0) { // Check specific stock logic if needed, simplified here
+       alert("Out of stock");
+       return;
+    }
+
+    if (productQuantity > currentStock) {
+      alert(`Only ${currentStock} items are available in stock.`);
+      return;
+    }
+    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null, null, toastSuccess, toastInfo);
+    setProductQuantity(1);
+  };
+
+  const handleBuyNow = () => {
+    if (productQuantity < 1) {
+      alert("Product quantity can't be less than 1");
+      return;
+    }
+    if (productQuantity > currentStock) {
+      alert(`Only ${currentStock} items are available in stock.`);
+      return;
+    }
+    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null, null, toastSuccess, toastInfo);
+    navigate("/checkout");
+  };
   const { wishlist, cart } = useSelector((state) => state.wishlistAndCartSection);
 
   const { productId } = useParams();
@@ -135,31 +170,6 @@ export const ProductDetailsPage = () => {
     if (categories[key].length > 0) subCategoriesArr.push(...categories[key]);
   }
 
-  const handleAddToCart = () => {
-    if (productQuantity < 1) {
-      alert("Product quantity can't be less than 1");
-      return;
-    }
-    if (productQuantity > currentStock) {
-      alert(`Only ${currentStock} items are available in stock.`);
-      return;
-    }
-    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null);
-    setProductQuantity(1);
-  };
-
-  const handleBuyNow = () => {
-    if (productQuantity < 1) {
-      alert("Product quantity can't be less than 1");
-      return;
-    }
-    if (productQuantity > currentStock) {
-      alert(`Only ${currentStock} items are available in stock.`);
-      return;
-    }
-    handleCartModification(_id, dispatch, productQuantity, isProductInCart, isCustomizationActive ? selectedColor : null, isWoodCustomizable && selectedWood ? selectedWood : null);
-    navigate("/checkout");
-  };
 
   useEffect(() => {
     isProductInWishlistFn(_id, setIsWishlisted, wishlist);
@@ -239,7 +249,7 @@ export const ProductDetailsPage = () => {
                   </button>
                 </>
               )}
-              <button className={`absolute top-4 right-4 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`} onClick={(e) => { e.stopPropagation(); handleWishlistModification(_id, dispatch); }} aria-label="Add to wishlist">
+              <button className={`absolute top-4 right-4 p-2 rounded-full shadow-lg transition-all duration-300 z-10 ${isWishlisted ? "bg-primary text-primary-foreground" : "bg-white hover:bg-primary/10"}`} onClick={(e) => { e.stopPropagation(); handleWishlistModification(_id, dispatch, toastSuccess, toastInfo); }} aria-label="Add to wishlist">
                 <Heart className={`w-5 h-5 transition-all ${isWishlisted ? "fill-current" : "stroke-foreground"}`} />
               </button>
             </div>

@@ -5,11 +5,12 @@ import API from "../config";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setIsLoggedIn, getUserData } from "../features/authSlice";
-import { toast } from "react-toastify";
+import { useToast } from "../context/ToastContext";
 
 const GoogleAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { toastSuccess, toastError } = useToast();
 
   // Debug API URL to ensure we are hitting the correct backend
   useEffect(() => {
@@ -38,7 +39,7 @@ const GoogleAuth = () => {
       dispatch(getUserData(userData));
 
       // 3. User Feedback & Navigation
-      toast.success("Login Successful! Redirecting...");
+      toastSuccess("Login Successful! Redirecting...");
       
       // Navigate to home immediately
       navigate("/");
@@ -46,7 +47,7 @@ const GoogleAuth = () => {
     } catch (error) {
       console.error("Google Backend Auth Error:", error);
       const errorMessage = error.response?.data?.message || "Google Login Failed";
-      toast.error(errorMessage);
+      toastError(errorMessage);
     }
   };
 
@@ -56,7 +57,7 @@ const GoogleAuth = () => {
         onSuccess={handleSuccess}
         onError={(err) => {
           console.error("Google Login Error:", err);
-          toast.error("Google Login Failed from Provider");
+          toastError("Google Login Failed from Provider");
         }}
         theme="outline"
         // Removed explicit width="100%" to avoid GSI warning. 

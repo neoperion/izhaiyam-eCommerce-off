@@ -5,10 +5,12 @@ import { handleWishlistModification } from "../../utils/handleWishlistModificati
 import { handleCartModification } from "../../utils/handleCartModification";
 import { isProductInCartFn } from "../../utils/isSpecificProductInCartAndWishlist.js";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
 export const SingleProductSection = ({ wishlistData, setIsWishlistActive }) => {
   const [isProductInCart, setIsProductInCart] = useState(false);
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
+  const { toastSuccess, toastInfo } = useToast();
 
   const { title, price, image, stock, _id } = wishlistData;
   const dispatch = useDispatch();
@@ -84,7 +86,7 @@ export const SingleProductSection = ({ wishlistData, setIsWishlistActive }) => {
 
           <button
             className="w-9 h-9 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-colors border border-red-200"
-            onClick={() => handleWishlistModification(_id, dispatch)}
+            onClick={() => handleWishlistModification(_id, dispatch, toastSuccess, toastInfo)}
             aria-label="Remove from wishlist"
           >
             <IoTrashOutline className="w-5 h-5" />
