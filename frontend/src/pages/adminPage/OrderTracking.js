@@ -101,7 +101,7 @@ const OrderTracking = ({ order, onClose }) => {
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primaryColor focus:border-transparent font-medium"
                     >
                       <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
+                      <option value="Processed">Processed</option>
                       <option value="Shipped">Shipped</option>
                       <option value="Delivered">Delivered</option>
                       <option value="Cancelled">Cancelled</option>

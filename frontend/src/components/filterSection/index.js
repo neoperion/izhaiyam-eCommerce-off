@@ -28,13 +28,16 @@ export const FilterBySection = ({
   const location = useLocation();
 
   const { sortedAllProductsData, sortedSearchedProductData } = useSelector((state) => state.productsData);
+  const { priceRange, selectedSubCategoryForFilter } = useSelector((state) => state.filterByCategoryAndPrice);
 
   //this is to distinguish between when the filter function is to display toast message and when its not to
   let theFnCallDoesNotNeedToast = true;
 
   // RESET FILTERS WHEN LOCATION URL CHANGES
   useEffect(() => {
-    resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch, theFnCallDoesNotNeedToast);
+    if (!location.state?.fromCategory) {
+      resetFilter(checkedCategoryDOM, checkedPriceRangeDOM, location, dispatch, theFnCallDoesNotNeedToast);
+    }
   }, [location.pathname]);
 
   // Filter in the shop page is from the sortedAllProductsData while the one in the searchpage is from sortedSearchedProductsData
@@ -46,10 +49,12 @@ export const FilterBySection = ({
         NoOfProductsPerPage,
         currentPageNo,
         sortedAllProductsData,
+        sortedAllProductsData,
+        { priceRange, selectedSubCategoryForFilter },
         theFnCallDoesNotNeedToast
       );
     }
-  }, [location.pathname, sortedAllProductsData]);
+  }, [location.pathname, sortedAllProductsData, selectedSubCategoryForFilter, priceRange]);
 
   useEffect(() => {
     if (location.pathname === "/search") {
@@ -58,6 +63,8 @@ export const FilterBySection = ({
         NoOfProductsPerPage,
         currentPageNo,
         sortedSearchedProductData,
+        sortedSearchedProductData,
+        { priceRange, selectedSubCategoryForFilter },
         theFnCallDoesNotNeedToast
       );
     }
@@ -194,13 +201,14 @@ export const FilterBySection = ({
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#93A267'}
               onClick={() => {
                 location.pathname === "/shop" &&
-                  handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
+                  handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData, { priceRange, selectedSubCategoryForFilter });
                 location.pathname === "/search" &&
                   handleFilterByCategoriesAndPrice(
                     dispatch,
                     NoOfProductsPerPage,
                     currentPageNo,
-                    sortedSearchedProductData
+                    sortedSearchedProductData,
+                    { priceRange, selectedSubCategoryForFilter }
                   );
 
                 setIsFilterFnApplied(true);

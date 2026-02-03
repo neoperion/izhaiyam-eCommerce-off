@@ -145,22 +145,22 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
         <div className="flex items-center gap-3">
           <AiOutlineEye
             onClick={() => navigate(`/admin/orders-management/${id}`)}
-            className="w-5 h-5 cursor-pointer hover:fill-blue-600 fill-gray-600 transition-colors"
+            className="w-6 h-6 md:w-5 md:h-5 shrink-0 cursor-pointer hover:fill-blue-600 fill-gray-600 transition-colors"
             title="View Details"
           />
           <AiOutlineEdit
             onClick={handleTrackingClick}
-            className={`w-5 h-5 cursor-pointer hover:fill-yellow-600 fill-gray-600 transition-colors ${loadingTracking ? 'opacity-50' : ''}`}
+            className={`w-6 h-6 md:w-5 md:h-5 shrink-0 cursor-pointer hover:fill-yellow-600 fill-gray-600 transition-colors ${loadingTracking ? 'opacity-50' : ''}`}
              title="Update Status / Tracking"
           />
            <AiOutlineDelete
             onClick={() => deleteOrder(id)}
-            className="w-5 h-5 cursor-pointer hover:fill-red-600 fill-gray-600 transition-colors"
+            className="w-6 h-6 md:w-5 md:h-5 shrink-0 cursor-pointer hover:fill-red-600 fill-gray-600 transition-colors"
              title="Delete Order"
           />
            <AiOutlineDownload
             onClick={() => exportSingleOrder(id)}
-            className="w-5 h-5 cursor-pointer hover:fill-green-600 fill-gray-600 transition-colors"
+            className="w-6 h-6 md:w-5 md:h-5 shrink-0 cursor-pointer hover:fill-green-600 fill-gray-600 transition-colors"
              title="Export Excel"
           />
         </div>

@@ -598,9 +598,12 @@ const getAllUsers = async (req, res) => {
              name: u.username,
              email: u.email,
              phone: u.phone,
-             orders: u.orders.length, // Only legacy count shown for now
-             status: u.verificationStatus
+             orders: u.orders.length,
+             status: u.verificationStatus,
+             adminStatus: u.adminStatus,
+             joined: u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'
         }));
+        console.log(`Sending ${usersData.length} users (Admin privileges included)`);
         res.status(200).json({ success: true, users: usersData, totalUsers: users.length });
     } catch(e) { throw new CustomErrorHandler(500, e.message); }
 };

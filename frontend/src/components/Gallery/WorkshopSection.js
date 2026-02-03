@@ -12,6 +12,7 @@ const WorkshopSection = ({ data = [] }) => {
     "https://res.cloudinary.com/deft85hk9/image/upload/v1768929046/IMG_6152_gm4wvb.jpg",
     "https://res.cloudinary.com/deft85hk9/image/upload/v1768928972/IMG_3820_glmfhy.jpg",
     "https://res.cloudinary.com/deft85hk9/image/upload/v1768928921/IMG_1296_fmasfl.jpg",
+    "https://res.cloudinary.com/deft85hk9/image/upload/v1768928992/IMG_4206_wh3xuh.jpg"
   ];
 
   const displayData = manualImages.map(url => ({
@@ -24,7 +25,7 @@ const WorkshopSection = ({ data = [] }) => {
   return (
     <section className="gallery-section container-page">
       <div className="gallery-section-header">
-        <h2 style={{ color: '#93a267' }} className="gallery-section-title font-inter">Workshop & Manufacturing</h2>
+        <h2 style={{ color: '#93a267' }} className="gallery-section-title font-inter">Workshop & Weaving Projects</h2>
       </div>
 
       <div className="workshop-masonry">

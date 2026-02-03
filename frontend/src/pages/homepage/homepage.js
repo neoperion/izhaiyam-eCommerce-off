@@ -10,6 +10,7 @@ import FeaturesBadges from "./FeaturesBadges";
 
 import { FurnitureCareGuide } from "./FurnitureCareGuide";
 import { WhyChooseUsSection } from "./whyChooseUsSection";
+import BrandStorySection from "../../components/BrandStorySection";
 
 const Homepage = () => {
   return (
@@ -23,6 +24,7 @@ const Homepage = () => {
       <CategorySlider />
       <FeaturesBadges />
       <FeaturedProducts />
+      <BrandStorySection />
       <FurnitureCareGuide />
       <WhyChooseUsSection />
       <FAQSection />

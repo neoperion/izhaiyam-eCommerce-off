@@ -59,18 +59,18 @@ const Index = () => {
   useEffect(() => {
     if (selectedSubCategoryForFilter || priceRange) {
       setIsFilterLoading(true);
-      handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
+      handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData, { priceRange, selectedSubCategoryForFilter });
       setIsFilterFnApplied(true);
       // Brief loading state
       setTimeout(() => setIsFilterLoading(false), 300);
     } else if (!selectedSubCategoryForFilter && !priceRange && isFilterFnApplied) {
       // Reset when no filters selected
       setIsFilterLoading(true);
-      handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData);
+      handleFilterByCategoriesAndPrice(dispatch, NoOfProductsPerPage, currentPageNo, sortedAllProductsData, { priceRange, selectedSubCategoryForFilter });
       setIsFilterFnApplied(false);
       setTimeout(() => setIsFilterLoading(false), 300);
     }
-  }, [selectedSubCategoryForFilter, priceRange]);
+  }, [selectedSubCategoryForFilter, priceRange, sortedAllProductsData]);
 
   // PAGINATES THE DATA WHEN VALUE  placeholderOfproductsDataCurrentlyRequested CHANGES IN THE FILTER FN
   useEffect(() => {

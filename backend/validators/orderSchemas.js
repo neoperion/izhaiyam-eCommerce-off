@@ -62,7 +62,7 @@ const orderSchemas = {
     }),
 
     updateStatus: Joi.object({
-        status: Joi.string().valid('Pending', 'Shipped', 'Delivered', 'Cancelled', 'pending', 'shipped', 'delivered', 'cancelled').required()
+        status: Joi.string().valid('Pending', 'Shipped', 'Delivered', 'Cancelled', 'Processed', 'pending', 'shipped', 'delivered', 'cancelled', 'processed').required()
     }),
 
     updateUserStatus: Joi.object({

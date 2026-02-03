@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { SEO } from "../components/SEO/SEO";
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import { motion, useSpring, useTransform, useInView, useMotionValue } from "framer-motion";
+import { motion, useSpring, useTransform, useInView, useMotionValue, useAnimationFrame } from "framer-motion";
+import { useRef } from 'react';
 import FooterSection from "../components/footerSection";
 import newsImage from "../assets/news.png";
 import founderImage from "../assets/IMG_0207 (1).jpg";
 import suriyaImage from "../assets/team/suriya_kanniyappan.png";
 import manivasagamImage from "../assets/team/manivasagam.png";
 import CircularGallery from "../components/CircularGallery/CircularGallery";
-import BrandStorySection from "../components/BrandStorySection";
 import MissionVisionSection from "../components/MissionVisionSection";
+import { MarqueeContent } from "../components/MarqueeContent";
 
 // Import award images
 import award2 from "../assets/award2.jpeg";
@@ -39,6 +40,8 @@ const Counter = ({ value, duration = 2 }) => {
 
   return <motion.span ref={ref}>{rounded}</motion.span>;
 };
+
+
 
 export const AboutUsPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -154,7 +157,7 @@ export const AboutUsPage = () => {
             </div>
             <div className="text-center border-l border-gray-100">
               <p className="font-inter text-2xl md:text-5xl font-bold mb-1 md:mb-2 text-[#93a267]">
-                <Counter value={40} />+
+                <Counter value={13} />+
               </p>
               <p className="font-inter text-[10px] md:text-sm font-semibold text-gray-900 uppercase tracking-wide">Skilled Weavers</p>
             </div>
@@ -197,42 +200,15 @@ export const AboutUsPage = () => {
           <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
 
           <div className="flex w-max">
-            <motion.div
-              className="flex items-center gap-16 md:gap-24 px-8"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{
-                repeat: Infinity,
-                ease: "linear",
-                duration: isMobile ? 2 : 15, // Lower = Faster (4s mobile, 15s desktop)
-              }}
-            >
-              {[
+            {/* Interactive Marquee Container */}
+            <MarqueeContent isMobile={isMobile} mediaItems={[
                 { name: 'Chanakya TV', img: chankayaImg },
                 { name: 'Puthuyugam TV', img: puthuguamImg },
                 { name: 'Behind Talkies', img: behindtakiesImg },
                 { name: 'Dinamalar', img: thinamalarImg },
                 { name: 'Dinathanthi', img: dinathanthiImg },
                 { name: 'Aval Vikatan', img: viktanImg },
-                // Duplicates for seamless loop
-                { name: 'Chanakya TV', img: chankayaImg },
-                { name: 'Puthuyugam TV', img: puthuguamImg },
-                { name: 'Behind Talkies', img: behindtakiesImg },
-                { name: 'Dinamalar', img: thinamalarImg },
-                { name: 'Dinathanthi', img: dinathanthiImg },
-                { name: 'Aval Vikatan', img: viktanImg },
-              ].map((media, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 group flex flex-col items-center justify-center transition-opacity duration-300"
-                >
-                  <img
-                    src={media.img}
-                    alt={media.name}
-                    className="h-20 md:h-28 w-auto object-contain transition-all duration-300 hover:scale-110"
-                  />
-                </div>
-              ))}
-            </motion.div>
+            ]} />
           </div>
         </div>
       </motion.section>
@@ -266,15 +242,7 @@ export const AboutUsPage = () => {
         </div>
       </motion.section>
 
-      {/* Brand Story Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <BrandStorySection />
-      </motion.div>
+
 
       {/* Our Awards Section */}
       <motion.section

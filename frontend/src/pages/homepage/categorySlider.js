@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedCategory, setSelectedSubCategoryForFilter } from '../../features/filterBySlice';
 import cotImg from '../../assets/cot.png';
 import sofaImg from '../../assets/sofa.png';
-import diwanImg from '../../assets/category-diwan.png';
+import diwanImg from '../../assets/traditional_diwan.png';
 import chairImg from '../../assets/chair (2).png';
-import swingImg from '../../assets/HEALTH (5).png';
-import balconyImg from '../../assets/ourvision.png';
+import swingImg from '../../assets/ourvision.png';
+import balconyImg from '../../assets/modern_balcony.png';
 
 const CategorySlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,8 +40,8 @@ const CategorySlider = () => {
 
   const handleCategoryClick = (category) => {
     dispatch(setSelectedCategory(category.type));
-    dispatch(setSelectedSubCategoryForFilter(category.value));
-    navigate('/shop');
+    dispatch(setSelectedSubCategoryForFilter([{ category: category.type, subCategory: category.value }]));
+    navigate('/shop', { state: { fromCategory: true } });
   };
 
   const cardsToShow = 3;

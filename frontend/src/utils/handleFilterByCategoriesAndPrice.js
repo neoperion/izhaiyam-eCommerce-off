@@ -1,4 +1,4 @@
-import { store } from "../store";
+// import { store } from "../store"; // Removed direct store access
 import { setPlaceholderOfproductsDataCurrentlyRequested } from "../features/productSlice";
 
 // FUNCTIONALITY FOR FILTERING BY PRICE
@@ -24,9 +24,10 @@ export const handleFilterByCategoriesAndPrice = (
   NoOfProductsPerPage,
   currentPageNo,
   sortedAllProductsData,
-  doesTheFnCallNotNeedToast
+  filterState, // New argument: { priceRange, selectedSubCategoryForFilter }
+  doesTheFnCallNotNeedToast 
 ) => {
-  const { priceRange, selectedSubCategoryForFilter } = store.getState().filterByCategoryAndPrice;
+  const { priceRange, selectedSubCategoryForFilter } = filterState;
 
   // Check if we have any category filters
   const hasCategoryFilters = Array.isArray(selectedSubCategoryForFilter) && selectedSubCategoryForFilter.length > 0;
