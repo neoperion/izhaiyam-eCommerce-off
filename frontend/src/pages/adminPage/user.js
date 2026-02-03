@@ -291,7 +291,7 @@ export const UserManagement = () => {
                       <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{user.email}</td>
                       <td className="p-3 md:p-4 text-sm md:text-base text-gray-700">{user.phone || '-'}</td>
                       <td className="p-3 md:p-4 text-sm md:text-base text-gray-600">{user.orders}</td>
-                      <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{user.spent.toLocaleString()}</td>
+                      <td className="p-3 md:p-4 font-semibold text-sm md:text-base text-primaryColor">₹{(user.spent || 0).toLocaleString()}</td>
                       <td className="p-3 md:p-4">
                         <button
                           onClick={() => handleStatusChange(user.id, user.status)}
@@ -402,7 +402,7 @@ export const UserManagement = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Total Spent</p>
-                    <p className="font-semibold text-primaryColor">₹{selectedUser.spent.toLocaleString()}</p>
+                    <p className="font-semibold text-primaryColor">₹{(selectedUser.spent || 0).toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Joined Date</p>
