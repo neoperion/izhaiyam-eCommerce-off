@@ -44,22 +44,7 @@ export function HeroSection() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
                 </div>
 
-                {/* Floating Brand Badge - Top Right */}
-                <div className="absolute top-6 right-5 z-20">
-                    <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-lg overflow-hidden relative">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <img src="/favicon.ico" alt="Izhaiyam" className="w-8 h-8 object-contain opacity-90" />
-                        </div>
-                        <svg viewBox="0 0 100 100" className="relative z-10 w-full h-full p-2 animate-[spin_12s_linear_infinite]">
-                            <path id="curve-mobile" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
-                            <text className="text-[6.5px] uppercase tracking-[0.15em] font-bold fill-white">
-                                <textPath href="#curve-mobile">
-                                    EST 2019 • IZHAIYAM HANDLOOM FURNITURE •
-                                </textPath>
-                            </text>
-                        </svg>
-                    </div>
-                </div>
+                {/* Floating Brand Badge - Removed as per user request */}
 
                 {/* Content Area - Positioned at Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 z-10 px-5 pb-8 pt-20 bg-gradient-to-t from-black/60 to-transparent">

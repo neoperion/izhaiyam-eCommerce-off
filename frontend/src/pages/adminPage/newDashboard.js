@@ -58,7 +58,13 @@ export const AdminDashboard = () => {
   const [salesTrendData, setSalesTrendData] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  
+  // New Filter State
+  const currentYear = new Date().getFullYear();
   const [timeRange, setTimeRange] = useState('Monthly'); // Weekly, Monthly, Yearly
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState('All'); // 'All' or 0-11 index
+
   const [topSellingData, setTopSellingData] = useState([]); // Server-side data
   const [loadingTopSelling, setLoadingTopSelling] = useState(false);
   
@@ -67,6 +73,15 @@ export const AdminDashboard = () => {
   const socket = useSocket();
 
   const COLORS = ['#3D7F57', '#5FAF78', '#81CF99', '#A3DFBA', '#C5EFDB'];
+  
+  // Constants
+  const months = [
+    { value: 0, label: 'January' }, { value: 1, label: 'February' }, { value: 2, label: 'March' },
+    { value: 3, label: 'April' }, { value: 4, label: 'May' }, { value: 5, label: 'June' },
+    { value: 6, label: 'July' }, { value: 7, label: 'August' }, { value: 8, label: 'September' },
+    { value: 9, label: 'October' }, { value: 10, label: 'November' }, { value: 11, label: 'December' }
+  ];
+  const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // [2026, 2025, 2024...]
 
   // ------------------------------------------------------------------
   // 0. SOCKET LISTENER (REAL-TIME UPDATES)
@@ -105,56 +120,58 @@ export const AdminDashboard = () => {
   // ------------------------------------------------------------------
   // 1. FILTER LOGIC
   // ------------------------------------------------------------------
-  const filterOrdersByRange = (orders, range) => {
-      const now = new Date();
-      const start = new Date();
-      
+  // ------------------------------------------------------------------
+  // 1. FILTER LOGIC
+  // ------------------------------------------------------------------
+  const filterOrdersByRange = (orders, range, year, month) => {
       if (range === 'Weekly') {
-          start.setDate(now.getDate() - 7);
-      } else if (range === 'Monthly') {
-          start.setMonth(now.getMonth(), 1); // Start of current month
-      } else if (range === 'Yearly') {
-          start.setFullYear(now.getFullYear(), 0, 1); // Start of current year
-      }
-      
-      // Setup day start time
-      start.setHours(0,0,0,0);
+           // Last 7 Days Logic
+           const weekStart = new Date();
+           weekStart.setDate(weekStart.getDate() - 7);
+           weekStart.setHours(0,0,0,0);
+           return orders.filter(o => new Date(o.rawDate || o.createdAt) >= weekStart);
+      } 
+      else {
+          const y = parseInt(year);
+          const m = month === 'All' ? -1 : parseInt(month);
 
-      return orders.filter(o => new Date(o.rawDate || o.createdAt) >= start);
+          return orders.filter(o => {
+              const d = new Date(o.rawDate || o.createdAt);
+              const paramYear = d.getFullYear();
+              const paramMonth = d.getMonth();
+              
+              if (paramYear !== y) return false;
+              if (m !== -1 && paramMonth !== m) return false;
+              return true;
+          });
+      }
   };
 
   // ------------------------------------------------------------------
   // 2. RE-CALCULATE METRICS WHEN RANGE/DATA CHANGES
   // ------------------------------------------------------------------
   useEffect(() => {
-      if (allOrdersRef.length > 0) {
+      if (allOrdersRef.length > 0 || !loading) {
           recalculateMetrics();
       }
-      
-      // Fetch Top Selling on Range Change + Polling
       fetchTopSellingProducts();
-      
-      // Auto-refresh every 30 seconds
-      const intervalId = setInterval(fetchTopSellingProducts, 30000);
-      
-      return () => clearInterval(intervalId);
        // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRange, allOrdersRef]);
+  }, [timeRange, selectedYear, selectedMonth, allOrdersRef]);
 
   const recalculateMetrics = () => {
-      const filteredOrders = filterOrdersByRange(allOrdersRef, timeRange);
+      const filteredOrders = filterOrdersByRange(allOrdersRef, timeRange, selectedYear, selectedMonth);
 
       const totalRevenue = filteredOrders.reduce((sum, order) => sum + (order.totalPrice || order.amount || 0), 0);
       const avgOrder = filteredOrders.length > 0 ? totalRevenue / filteredOrders.length : 0;
       
       // Calculate order status counts
       // Note: Backend might return 'status' or 'orderStatus' depending on endpoint (admin/all returns 'status')
-      const pendingOrders = filteredOrders.filter(o => (o.status || o.orderStatus) === 'Pending' || (o.status || o.orderStatus) === 'Processing').length;
-      const deliveredOrders = filteredOrders.filter(o => (o.status || o.orderStatus) === 'Delivered').length;
-      const cancelledOrders = filteredOrders.filter(o => (o.status || o.orderStatus) === 'Cancelled').length;
+      const pendingOrders = filteredOrders.filter(o => (o.status || o.orderStatus)?.toLowerCase().includes('pending') || (o.status || o.orderStatus)?.toLowerCase().includes('processing')).length;
+      const deliveredOrders = filteredOrders.filter(o => (o.status || o.orderStatus)?.toLowerCase() === 'delivered').length;
+      const cancelledOrders = filteredOrders.filter(o => (o.status || o.orderStatus)?.toLowerCase() === 'cancelled').length;
       
       // Update Trends
-      const salesTrend = generateSalesTrend(filteredOrders, timeRange);
+      const salesTrend = generateSalesTrend(filteredOrders, timeRange, selectedYear, selectedMonth);
       setSalesTrendData(salesTrend);
       
       // Update Stats
@@ -239,8 +256,17 @@ export const AdminDashboard = () => {
           setLoadingTopSelling(true);
           const loginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || "";
           
+          const params = {};
+          if (timeRange === 'Weekly') {
+              params.range = 'weekly';
+          } else {
+              // Use Year/Month
+              params.year = selectedYear;
+              if (selectedMonth !== 'All') params.month = selectedMonth;
+          }
+
           const response = await axios.get(`${serverUrl}/orders/dashboard/top-selling`, {
-              params: { range: timeRange.toLowerCase() },
+              params,
               headers: { authorization: `Bearer ${loginToken}` }
           });
           
@@ -258,7 +284,7 @@ export const AdminDashboard = () => {
   // ------------------------------------------------------------------
   // 4. CHART DATA GENERATORS
   // ------------------------------------------------------------------
-  const generateSalesTrend = (orders, range) => {
+  const generateSalesTrend = (orders, range, year, month) => {
     let data = [];
     
     if (range === 'Weekly') {
@@ -282,50 +308,36 @@ export const AdminDashboard = () => {
                  orders: dailyOrders.length
              });
         }
-    } else if (range === 'Monthly') {
-         // Current Month (by weeks) or just Last 12 months? 
-         // "Monthly" usually implies "This Month" breakdown OR "Last 12 Months".
-         // The prompt says: "Monthly: Current calendar month". Break it down by Weeks (1-4).
-         
-         const now = new Date();
-         const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'];
-         
-         // Logic: Filter orders in current month
-         const currentMonthOrders = orders.filter(o => {
-             const d = new Date(o.rawDate || o.createdAt);
-             return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-         });
-         
-         // Simple bucket by day / 7
-         for(let i=0; i<5; i++){
-             const wStart = i * 7 + 1;
-             const wEnd = (i+1) * 7;
-             const weekOrders = currentMonthOrders.filter(o => {
-                 const d = new Date(o.rawDate || o.createdAt).getDate();
-                 return d >= wStart && d <= wEnd;
-             });
-             data.push({
-                 month: weeks[i],
-                 sales: weekOrders.reduce((sum, o) => sum + (o.totalPrice || o.amount || 0), 0),
-                 orders: weekOrders.length
-             });
+    } else {
+         if (month !== 'All') {
+            // Specific Month Selected -> Show Weeks (1-5)
+            const mIndex = parseInt(month);
+            const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'];
+            for(let i=0; i<5; i++){
+                 const wStart = i * 7 + 1;
+                 const wEnd = (i+1) * 7;
+                 const weekOrders = orders.filter(o => {
+                     const d = new Date(o.rawDate || o.createdAt).getDate();
+                     return d >= wStart && d <= wEnd;
+                 });
+                 data.push({
+                     month: weeks[i],
+                     sales: weekOrders.reduce((sum, o) => sum + (o.totalPrice || o.amount || 0), 0),
+                     orders: weekOrders.length
+                 });
+            }
+         } else {
+             // Full Year Selected -> Show Months (Jan-Dec)
+             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+             for (let i = 0; i < 12; i++) {
+                 const monthOrders = orders.filter(o => new Date(o.rawDate || o.createdAt).getMonth() === i);
+                 data.push({
+                     month: monthNames[i],
+                     sales: monthOrders.reduce((sum, o) => sum + (o.totalPrice || o.amount || 0), 0),
+                     orders: monthOrders.length
+                 });
+             }
          }
-         
-    } else { // Yearly
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const currentYear = new Date().getFullYear();
-        
-        for (let i = 0; i < 12; i++) {
-             const monthOrders = orders.filter(o => {
-                 const d = new Date(o.rawDate || o.createdAt);
-                 return d.getMonth() === i && d.getFullYear() === currentYear;
-             });
-             data.push({
-                 month: months[i],
-                 sales: monthOrders.reduce((sum, o) => sum + (o.totalPrice || o.amount || 0), 0),
-                 orders: monthOrders.length
-             });
-        }
     }
     return data;
   };
@@ -364,21 +376,57 @@ export const AdminDashboard = () => {
             <p className="text-gray-500 mt-1">Welcome back! Here's what's happening with your store today.</p>
         </div>
         
-        {/* Time Range Selector */}
-        <div className="flex bg-white rounded-lg border shadow-sm p-1">
-            {['Weekly', 'Monthly', 'Yearly'].map(range => (
-                <button
-                    key={range}
-                    onClick={() => setTimeRange(range)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                        timeRange === range 
-                        ? 'bg-emerald-600 text-white shadow-sm' 
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                >
-                    {range}
-                </button>
-            ))}
+        {/* FILTERS */}
+        <div className="flex gap-2 flex-wrap">
+            {/* Range Toggle */}
+            <div className="flex bg-white rounded-lg border shadow-sm p-1">
+                {['Weekly', 'Yearly'].map(range => (
+                    <button
+                        key={range}
+                        onClick={() => {
+                            setTimeRange(range);
+                            if (range === 'Weekly') {
+                                setSelectedMonth('All'); // Reset
+                            }
+                        }}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                            timeRange === range 
+                            ? 'bg-emerald-600 text-white shadow-sm' 
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                    >
+                        {range}
+                    </button>
+                ))}
+            </div>
+
+            {/* Year & Month Selectors (Visible only when NOT Weekly) */}
+            {timeRange !== 'Weekly' && (
+                <>
+                <div className="relative">
+                    <select 
+                        value={selectedYear} 
+                        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                        className="appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-medium"
+                    >
+                        {years.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                </div>
+                
+                <div className="relative">
+                    <select 
+                        value={selectedMonth} 
+                        onChange={(e) => setSelectedMonth(e.target.value)}
+                        className="appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-medium"
+                    >
+                        <option value="All">All Months</option>
+                        {months.map(m => (
+                            <option key={m.value} value={m.value}>{m.label}</option>
+                        ))}
+                    </select>
+                </div>
+                </>
+            )}
         </div>
       </div>
 
@@ -431,7 +479,9 @@ export const AdminDashboard = () => {
         <Card>
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Sales Trend</h3>
-            <p className="text-sm text-gray-500">Monthly sales performance</p>
+            <p className="text-sm text-gray-500">
+                {timeRange === 'Weekly' ? 'Last 7 Days' : selectedMonth === 'All' ? `Year ${selectedYear}` : `${months[selectedMonth]?.label} ${selectedYear}`}
+            </p>
           </div>
           <div style={{ height: '300px' }}>
             <Line
@@ -466,7 +516,9 @@ export const AdminDashboard = () => {
         <Card>
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Revenue vs Orders</h3>
-            <p className="text-sm text-gray-500">Comparison over months</p>
+            <p className="text-sm text-gray-500">
+                {timeRange === 'Weekly' ? 'Last 7 Days' : selectedMonth === 'All' ? `Year ${selectedYear}` : `${months[selectedMonth]?.label} ${selectedYear}`}
+            </p>
           </div>
           <div style={{ height: '300px' }}>
             <Bar

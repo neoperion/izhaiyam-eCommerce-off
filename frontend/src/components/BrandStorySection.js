@@ -104,27 +104,19 @@ const BrandStorySection = () => {
             <img src={wellnessLifestyleImg} alt="Wellness Lifestyle" className="w-full h-full object-cover" />
           </div>
 
-          <div className="relative">
-            <div 
-              ref={scrollContainerRef}
-              className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {benefits.map((item, idx) => (
-                <div 
-                  key={idx}
-                  className={`flex-none w-[200px] snap-center p-5 rounded-xl border border-gray-100 shadow-sm ${item.color}`}
-                >
-                  <div className="bg-white/80 w-10 h-10 rounded-full flex items-center justify-center mb-3 shadow-sm">
-                    {item.icon}
-                  </div>
-                  <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
-                  <p className="text-xs text-gray-500 leading-snug">{item.desc}</p>
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            {benefits.map((item, idx) => (
+              <div 
+                key={idx}
+                className="group bg-white p-4 rounded-2xl border border-gray-100 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.05)] flex flex-col items-center text-center transition-all active:scale-95"
+              >
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-[#93a267]/10 text-[#93a267]">
+                  {React.cloneElement(item.icon, { size: 22, className: "text-[#93a267]", strokeWidth: 1.5 })}
                 </div>
-              ))}
-            </div>
-            {/* Scroll Indication Fade */}
-            <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                <h3 className="font-playfair font-bold text-gray-900 text-[0.95rem] mb-1">{item.title}</h3>
+                <p className="font-inter text-[11px] text-gray-500 leading-snug opacity-80">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
 

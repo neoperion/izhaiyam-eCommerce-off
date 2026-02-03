@@ -1,5 +1,5 @@
 const express = require("express");
-const { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts, updateOrderStatus } = require("../controllers/Orders");
+const { postUserOrders, getAllOrders, getSpecificAdminOrder, getAllUsers, getSingleUser, updateUser, updateUserStatus, deleteUser, updateOrderTracking, deleteOrder, getTopSellingProducts, updateOrderStatus, createManualOrder } = require("../controllers/Orders");
 const { exportOrders, exportOrderById } = require("../controllers/exportController");
 const { createRazorpayOrder, verifyPayment } = require("../controllers/paymentController");
 const { checkIfUserIsAnAdminMiddleware } = require("../middleware/adminAuthorisation");
@@ -16,6 +16,10 @@ router.route("/all").get(checkIfUserIsAnAdminMiddleware, getAllOrders);
 router.route("/admin/order/:id")
     .get(checkIfUserIsAnAdminMiddleware, getSpecificAdminOrder)
     .delete(checkIfUserIsAnAdminMiddleware, deleteOrder);
+
+// Manual Order Route
+router.route("/admin/manual-order").post(checkIfUserIsAnAdminMiddleware, createManualOrder);
+
 router.route("/users").get(checkIfUserIsAnAdminMiddleware, getAllUsers);
 router.route("/users/:id").get(checkIfUserIsAnAdminMiddleware, getSingleUser);
 router.route("/users/:id").patch(checkIfUserIsAnAdminMiddleware, updateUser);

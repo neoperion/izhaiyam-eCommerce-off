@@ -57,7 +57,7 @@ const getAllProducts = async (req, res) => {
 
   const products = await result;
 
-  res.status(200).json({ message: "success", products });
+  res.status(200).json({ success: true, message: "success", products });
 };
 
 const uploadProductImages = async (req, res) => {

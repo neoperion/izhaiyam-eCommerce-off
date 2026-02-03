@@ -273,6 +273,7 @@ const getAllOrders = async (req, res) => {
           paymentMethod: order.payment?.method || 'N/A',
           paymentId: order.payment?.razorpayPaymentId || 'N/A',
           status: order.deliveryStatus,
+          orderSource: order.orderSource || 'online',
           date: new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           rawDate: order.date,
           orderItems: orderItems
@@ -501,14 +502,31 @@ const deleteOrder = async (req, res) => {
    ========================================================================== */
 const getTopSellingProducts = async (req, res) => {
     try {
-        const { range } = req.query; 
+        const { range, year, month } = req.query; 
         const now = new Date();
         let startDate = new Date();
         let endDate = new Date();
         
         startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
         
-        if (range === 'weekly') { /* ... logic */ 
+        if (year) {
+            // Specific Year Logic
+            const y = parseInt(year);
+            const m = month !== undefined && month !== '' ? parseInt(month) : -1; // -1 means all months
+            
+            if (m >= 0 && m <= 11) {
+                // Specific Month
+                startDate = new Date(y, m, 1);
+                endDate = new Date(y, m + 1, 0);
+            } else {
+                // Whole Year
+                startDate = new Date(y, 0, 1);
+                endDate = new Date(y, 11, 31);
+            }
+            endDate.setHours(23,59,59,999);
+            
+        } else if (range === 'weekly') { 
+            // Legacy Range Logic
              const day = now.getDay(); const diff = now.getDate() - day + (day === 0 ? -6 : 1); startDate.setDate(diff); endDate.setDate(startDate.getDate() + 6);
         } else if (range === 'monthly') { startDate.setDate(1); endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); endDate.setHours(23,59,59,999); }
         else if (range === 'yearly') { startDate.setMonth(0, 1); endDate = new Date(now.getFullYear(), 11, 31); endDate.setHours(23,59,59,999); }
@@ -546,7 +564,7 @@ const getTopSellingProducts = async (req, res) => {
         [...newStats, ...legacyStats].forEach(item => {
             if (!item._id) return;
             const key = item._id.toString();
-            if (!finalStats[key]) finalStats[key] = { productName: item.productName || "Unknown", unitsSold: 0, revenue: 0 };
+            if (!finalStats[key]) finalStats[key] = { id: key, productName: item.productName || "Unknown", unitsSold: 0, revenue: 0 };
             finalStats[key].unitsSold += item.unitsSold;
             finalStats[key].revenue += item.revenue;
         });
@@ -628,6 +646,145 @@ const deleteUser_Inline = async(req, res) => {
     res.status(200).json({ success:true });
 };
 
+const createManualOrder = async (req, res) => {
+    const { customerDetails, products, paymentStatus, deliveryStatus } = req.body;
+    // products: Array of { productId, quantity, price (optional override) }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        // 1. Find or Create User
+        // Check by Phone OR Email to avoid duplicates
+        let user = await User.findOne({
+            $or: [
+                { phone: customerDetails.phone },
+                { email: customerDetails.email }
+            ]
+        }).session(session);
+        
+        if (!user) {
+            // Create a new placeholder user
+            const nameParts = customerDetails.name.trim().split(" ");
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(" ") || "User";
+
+            user = new User({
+                firstName: firstName,
+                lastName: lastName,
+                username: customerDetails.name,
+                email: customerDetails.email || `offline_${customerDetails.phone}@manual.com`,
+                phone: customerDetails.phone,
+                password: "offline_user_generated", 
+                verificationStatus: "Verified" 
+            });
+            await user.save({ session });
+        }
+
+        // 2. Process Items & Deduct Stock
+        const orderItems = [];
+        let totalAmount = 0;
+
+        for (const item of products) {
+            // Check if it's a "Custom Manual Product" (No ID or explicit flag)
+            if (item.isCustom || !item.productId || item.productId.toString().startsWith('custom_')) {
+                // Custom Product Logic
+                const unitPrice = parseFloat(item.price || 0);
+                orderItems.push({
+                    productId: null, 
+                    quantity: item.quantity,
+                    name: item.name || "Custom Item",
+                    image: item.image || "", 
+                    price: unitPrice,
+                    category: "Manual",
+                    wood: { type: "Not Selected", price: 0 },
+                    customization: { enabled: false }
+                });
+                totalAmount += unitPrice * item.quantity;
+            } else {
+                // Existing Product Logic
+                const product = await Product.findById(item.productId).session(session);
+                if (!product) throw new Error(`Product not found: ${item.productId}`);
+                
+                // Check Stock
+                if (product.stock < item.quantity) {
+                    throw new Error(`Insufficient stock for ${product.title} (Available: ${product.stock})`);
+                }
+
+                // Deduct Stock
+                product.stock -= item.quantity;
+                await product.save({ session });
+
+                // Price (Use override if provided, else product price)
+                const unitPrice = item.price !== undefined ? parseFloat(item.price) : product.price;
+
+                // Build Snapshot
+                orderItems.push({
+                    productId: product._id,
+                    quantity: item.quantity,
+                    name: product.title,
+                    image: product.image,
+                    price: unitPrice,
+                    category: product.category || "Others",
+                    wood: { type: "Not Selected", price: 0 },
+                    customization: { enabled: false }
+                });
+                totalAmount += unitPrice * item.quantity;
+            }
+        }
+
+
+
+        // 3. Create Order
+        const newOrder = new Order({
+            user: user._id,
+            products: orderItems,
+            
+            // Customer Details
+            username: customerDetails.name,
+            email: user.email,
+            phone: customerDetails.phone,
+            
+            // Address (Map fields)
+            addressLine1: customerDetails.addressLine1 || customerDetails.address, // Fallback
+            addressLine2: customerDetails.addressLine2 || "",
+            city: customerDetails.city || "",
+            state: customerDetails.state || "",
+            postalCode: customerDetails.pincode || "",
+            country: "India",
+            addressType: "Home", // Default
+            
+            totalAmount: totalAmount,
+            
+            // Statuses
+            deliveryStatus: deliveryStatus || "processed",
+            paymentStatus: paymentStatus || "pending",
+            
+            // Source
+            orderSource: "offline",
+            
+            // Payment
+            payment: {
+                method: "manual", // distinct from cod/razorpay
+                amount: totalAmount,
+                status: paymentStatus || "pending"
+            }
+        });
+
+        await newOrder.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json({ success: true, order: newOrder, message: "Manual order created successfully" });
+
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new CustomErrorHandler(500, error.message);
+    }
+};
+
 module.exports = { 
     postUserOrders, 
     getAllOrders, 
@@ -640,5 +797,6 @@ module.exports = {
     updateOrderTracking, 
     deleteOrder, 
     getTopSellingProducts, 
-    updateOrderStatus 
+    updateOrderStatus,
+    createManualOrder // NEW EXPORT
 };

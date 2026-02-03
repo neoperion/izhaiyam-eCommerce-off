@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload, AiOutlineFilter } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlineDownload, AiOutlineFilter, AiOutlinePlus } from "react-icons/ai";
 import { useToast } from "../../context/ToastContext";
 import { useNavigate } from "react-router-dom";
 import API from "../../config";
 import AdminLayout from '../../components/admin/AdminLayout';
 import OrderTracking from './OrderTracking';
-
-// Inline Pagination Component to avoid import issues if path differs, or reuse if path is standard.
-// For safety and self-containment given previous path issues, I will start with a local version or import if confident.
-// The user asked for "Same pagination UI", so reusing the existing component is best if possible. 
-// However, `paginationForProductsAdmin.js` is inside `productTab`. I can import it relative to `OrdersManagement`.
-// `OrdersManagement.js` is in `pages/adminPage/`. `productTab` is `pages/adminPage/productTab/`.
-// So import path: `./productTab/paginationForProductsAdmin`
+import ManualOrderModal from './ManualOrderModal';
 
 import { PaginationSectionForProductsAdminPage } from "./productTab/paginationForProductsAdmin";
-
 
 
 export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDeleted }) => {
@@ -25,21 +18,12 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
   const [loadingTracking, setLoadingTracking] = useState(false);
   const { toastSuccess, toastError, toastInfo } = useToast();
 
-  // Backend getAllOrders returns flattened structure:
-  // { id, customer, product, productCount, amount, paymentMethod, status, date }
-  // { id, customer, product, productCount, amount, paymentMethod, status, date }
-  const { id, customer, product, amount, paymentMethod, status, date } = order;
+  const { id, customer, product, amount, paymentMethod, status, date, orderSource } = order;
 
-  // Extract Categories
-  // orderItems might be passed as productItems or similar if flattened? 
-  // Inspecting `fetchOrders`: `const allOrders = data.orders`. 
-  // Backend usually returns full object.
-  // Let's assume order.orderItems exists.
   const categories = order.orderItems 
       ? [...new Set(order.orderItems.map(item => item.category || 'Others'))].join(', ')
       : 'Others';
 
-  // Status Badge Logic
   const getStatusBadge = (status) => {
     switch (status) {
       case "Delivered":
@@ -47,12 +31,20 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
       case "Shipped":
         return <span className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-blue-400">Shipped</span>;
       case "Processing":
-        return <span className="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-yellow-400">Processing</span>;
+      case "Processed":
+        return <span className="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-yellow-400">Processed</span>;
       case "Cancelled":
         return <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-red-400">Cancelled</span>;
       default:
         return <span className="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-gray-400">{status}</span>;
     }
+  };
+
+  const getSourceBadge = (source) => {
+      if (source === 'offline') {
+          return <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded border border-purple-400">Offline</span>;
+      }
+      return <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-0.5 rounded border border-blue-200">Online</span>;
   };
 
   const deleteOrder = async (id) => {
@@ -65,7 +57,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
           });
           toastSuccess("Order deleted successfully");
           if(onOrderDeleted) onOrderDeleted(id);
-          else fetchOrders(); // Fallback
+          else fetchOrders(); 
       } catch (error) {
           toastError("Failed to delete order");
       }
@@ -76,14 +68,11 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
       try {
           const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
-          
           toastInfo("Exporting order...");
-          
           const response = await axios.get(`${serverUrl}/orders/export/order/${id}`, {
              headers: { authorization: `Bearer ${LoginToken}` },
              responseType: 'blob'
           });
-          
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
@@ -103,12 +92,9 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
       try {
           const serverUrl = API;
           const LoginToken = JSON.parse(localStorage.getItem("UserData")).loginToken || "";
-          
-          // Fetch full details to get current tracking info
           const { data } = await axios.get(`${serverUrl}/orders/admin/order/${id}`, {
              headers: { authorization: `Bearer ${LoginToken}` }
           });
-          
           if(data.success) {
               setFullOrderDetails(data.order);
               setIsTrackingModalOpen(true);
@@ -125,7 +111,10 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
     <>
     <tr className="hover:bg-gray-50 transition-colors">
       <td className="p-4 text-black font-inter border-b border-gray-200">{serialNo}</td>
-      <td className="p-4 text-black border-b border-gray-200 text-sm">{id}</td>
+      <td className="p-4 text-black border-b border-gray-200 text-sm">
+          {id}
+          <div className="mt-1">{getSourceBadge(orderSource)}</div>
+      </td>
       <td className="p-4 text-black border-b border-gray-200">{customer || "Guest"}</td>
       <td className="p-4 text-black border-b border-gray-200 max-w-xs truncate" title={product}>
           {product}
@@ -169,7 +158,7 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
                 order={fullOrderDetails} 
                 onClose={() => {
                     setIsTrackingModalOpen(false);
-                    fetchOrders(); // Refresh list to update status if changed
+                    fetchOrders(); 
                 }} 
             />
         )}
@@ -179,8 +168,8 @@ export const SingleOrderTableCell = ({ order, serialNo, fetchOrders, onOrderDele
   );
 };
 
+
 const OrdersManagement = () => {
-  const navigate = useNavigate();
   const serverUrl = API;
   const { toastSuccess, toastError, toastInfo } = useToast();
 
@@ -189,11 +178,11 @@ const OrdersManagement = () => {
     ordersLength: 0,
     pageNo: 1,
     perPage: 10,
-    perPage: 10,
     isError: false,
-    filterStatus: 'All', // Added Filter State
+    filterStatus: 'All', 
   });
   const [loading, setLoading] = useState(false);
+  const [isManualOrderModalOpen, setIsManualOrderModalOpen] = useState(false);
 
   const { orders, ordersLength, pageNo, perPage, isError } = ordersParams;
 
@@ -284,8 +273,18 @@ const OrdersManagement = () => {
 
       setOrdersParams(prev => ({
           ...prev,
-          orders: currentOrders,
-          ordersLength: totalOrders
+          ordersLength: totalOrders,
+          orders: currentOrders.map(order => ({
+              id: order.id, // Transformed by getAllOrders already
+              customer: order.customer,
+              product: order.product,
+              orderItems: order.orderItems,
+              amount: order.amount,
+              paymentMethod: order.paymentMethod,
+              status: order.status,
+              orderSource: order.orderSource || 'online',
+              date: order.date
+          }))
       }));
       setLoading(false);
 
@@ -307,6 +306,15 @@ const OrdersManagement = () => {
             
             <div className="flex gap-4"> {/* Wrapper for Buttons */}
             
+            {/* Manual Order Button */}
+             <button 
+                onClick={() => setIsManualOrderModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded shadow hover:bg-emerald-700 transition-colors"
+            >
+                <AiOutlinePlus className="w-5 h-5" />
+                Add Manual Order
+            </button>
+
             {/* Filter Dropdown */}
             <div>
                  <div className="relative">
@@ -360,6 +368,7 @@ const OrdersManagement = () => {
                   <tr className="border-b bg-gray-50">
                     <th className="text-sm font-medium text-gray-700 p-4">S.No</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Order ID</th>
+                    <th className="text-sm font-medium text-gray-700 p-4">Source</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Customer Name</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Product(s)</th>
                     <th className="text-sm font-medium text-gray-700 p-4">Category</th>
@@ -414,6 +423,14 @@ const OrdersManagement = () => {
 
         </div>
       </section>
+      
+      {isManualOrderModalOpen && (
+          <ManualOrderModal 
+              onClose={() => setIsManualOrderModalOpen(false)}
+              onOrderCreated={() => fetchOrders(ordersParams)}
+          />
+      )}
+
     </AdminLayout>
   );
 };

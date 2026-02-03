@@ -78,7 +78,7 @@ const orderSchema = new mongoose.Schema(
     
     // Payment Details
     payment: {
-        method: { type: String, enum: ["razorpay", "cod"], default: "cod" },
+        method: { type: String, enum: ["razorpay", "cod", "manual"], default: "cod" },
         razorpayOrderId: String,
         razorpayPaymentId: String,
         razorpaySignature: String,
@@ -94,6 +94,13 @@ const orderSchema = new mongoose.Schema(
       trackingUrl: String,
       liveLocationUrl: String,
       expectedDeliveryDate: Date
+    },
+    
+    // Order Source (Online vs Manual/Offline)
+    orderSource: {
+        type: String,
+        enum: ["online", "offline"],
+        default: "online"
     },
 
     // Date
