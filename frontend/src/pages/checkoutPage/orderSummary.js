@@ -6,23 +6,25 @@ import { Package } from 'lucide-react';
 import { withWatermark } from "../../utils/withWatermark";
 
 export const OrderSummary = ({ setTotalAmountToBePaid }) => {
-  const [shippingMethodValue, setShippingMethodValue] = useState(0);
+  // const [shippingMethodValue, setShippingMethodValue] = useState(0); // REMOVED
   const [totalProductPrice, setTotalProductPrice] = useState(0);
   const [productTotalQuantity, setProductTotalQuantity] = useState(0);
 
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
-  const { shippingMethod } = useSelector((state) => state.userAuth);
+  // const { shippingMethod } = useSelector((state) => state.userAuth); // REMOVED
 
   // cart with quantity lesser than zero shouldnt be allowed for checkout
   const filteredCart = cart.filter((product) => product.quantity > 0);
 
+  /* REMOVED SHIPPING EFFECT
   useEffect(() => {
     handleSetShippingMethodValue(shippingMethod, setShippingMethodValue);
   }, [shippingMethod]);
+  */
 
   useEffect(() => {
-    setTotalAmountToBePaid(totalProductPrice + productTotalQuantity * shippingMethodValue);
-  }, [totalProductPrice, shippingMethodValue, productTotalQuantity, setTotalAmountToBePaid]);
+    setTotalAmountToBePaid(totalProductPrice); // Updated: Total = Subtotal
+  }, [totalProductPrice, setTotalAmountToBePaid]);
 
   useEffect(() => {
     settingTotalProductPriceAndTotalQuantityValue(setProductTotalQuantity, setTotalProductPrice);
@@ -102,23 +104,16 @@ export const OrderSummary = ({ setTotalAmountToBePaid }) => {
               ₹{totalProductPrice.toLocaleString("en-IN")}
             </span>
           </div>
-
-          {/* Shipping */}
-          <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-            <div className="flex flex-col">
-              <span className="font-inter text-sm text-gray-600">Shipping</span>
-              <span className="font-inter text-xs text-gray-500 mt-0.5">{shippingMethod} rate</span>
-            </div>
-            <span className="font-inter text-base font-semibold text-gray-900">
-              ₹{(shippingMethodValue * productTotalQuantity).toLocaleString("en-IN")}
-            </span>
-          </div>
+           
+           <div className="text-center pb-3 border-b border-gray-200">
+             <span className="font-inter text-xs text-gray-500">(Inclusive of all applicable GST)</span>
+           </div>
 
           {/* Total */}
           <div className="flex items-center justify-between pt-2">
             <span className="font-inter text-lg font-bold text-gray-900">Total</span>
             <span className="font-inter text-2xl font-bold" style={{ color: '#93a267' }}>
-              ₹{(totalProductPrice + productTotalQuantity * shippingMethodValue).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              ₹{totalProductPrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>

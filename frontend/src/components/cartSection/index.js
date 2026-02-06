@@ -13,20 +13,22 @@ import { motion } from "framer-motion";
 import { primaryBtnVariant } from "../../utils/animation";
 
 export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
-  const [shippingMethodValue, setShippingMethodValue] = useState(0);
+  // const [shippingMethodValue, setShippingMethodValue] = useState(0); // REMOVED
   const [totalProductPrice, setTotalProductPrice] = useState(0);
   const [productTotalQuantity, setProductTotalQuantity] = useState(0);
 
   const { cart } = useSelector((state) => state.wishlistAndCartSection);
   const { isLoading } = useSelector((state) => state.productsData);
-  const { shippingMethod } = useSelector((state) => state.userAuth);
+  // const { shippingMethod } = useSelector((state) => state.userAuth); // REMOVED
   const { toastError } = useToast();
 
 
   // setting shippingMethodValue based on chosen method
+  /* REMOVED SHIPPING EFFECT
   useEffect(() => {
     handleSetShippingMethodValue(shippingMethod, setShippingMethodValue);
   }, [shippingMethod]);
+  */
 
   // iterate through cart and multiply price by quantity while taking notes of discounted products and get totalProductValue and also total product quantity so as to use to get total value which is shipping price for each goods + total products value
   useEffect(() => {
@@ -98,19 +100,15 @@ export const Cart = ({ isCartSectionActive, setIsCartSectionActive }) => {
                     <h2 className="font-inter font-normal text-base md:text-lg text-gray-600">Subtotal</h2>
                     <span className="font-inter text-base md:text-lg tracking-wide font-medium text-gray-900">₹{totalProductPrice.toLocaleString("en-IN")}</span>
                   </div>
-                  <div className="flex  items-center mx-[5%] justify-between  border-b-[1px] border-gray-100 pb-4">
-                    <div className="flex flex-col gap-2">
-                      {" "}
-                      <h2 className="font-inter font-normal md:text-lg text-base text-gray-600">Shipping</h2>
-                      <span className="font-inter text-sm text-gray-500">{shippingMethod} rate</span>
-                    </div>
-
-                    <span className="font-inter tracking-wide text-base md:text-lg font-medium text-gray-900">₹{(shippingMethodValue * productTotalQuantity).toLocaleString("en-IN")}</span>
+                  
+                  <div className="flex items-center mx-[5%] justify-center border-b-[1px] border-gray-100 pb-4">
+                      <span className="font-inter text-xs text-gray-500">(Inclusive of all applicable GST)</span>
                   </div>
+
                   <div className="flex  items-center mx-[5%] justify-between ">
                     <h2 className="font-inter font-semibold text-lg md:text-xl text-gray-900">Total</h2>
                     <h2 className="font-inter font-semibold tracking-wide text-lg md:text-xl text-gray-900">
-                      ₹{(totalProductPrice + productTotalQuantity * shippingMethodValue).toLocaleString("en-IN")}
+                      ₹{totalProductPrice.toLocaleString("en-IN")}
                     </h2>
                   </div>
                   <div className=" mx-[5%] mt-6">

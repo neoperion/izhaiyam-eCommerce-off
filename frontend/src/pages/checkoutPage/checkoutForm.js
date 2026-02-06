@@ -409,49 +409,6 @@ export const CheckoutForm = ({ placeOrderFn, checkoutFormData, setCheckoutFormDa
         </div>
       </div>
 
-      {/* Shipping Options */}
-      <div className="bg-[#faf9f7] rounded-2xl p-6 mb-6">
-        <h2 className="font-inter text-lg font-semibold text-gray-900 mb-5">Shipping Method</h2>
-        <div
-          className="flex flex-col gap-3"
-          onChange={(e) => {
-            if (e.target.type === "radio" && e.target.checked) {
-              dispatch(setShippingMethod(e.target.value));
-              setCheckoutFormData((prevData) => {
-                return { ...prevData, shippingMethod: e.target.value };
-              });
-            }
-          }}
-        >
-          <label className="flex items-center gap-4 p-4 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#93a267] transition-all">
-            <input type="radio" name="shipping-rate" required value="standard" className="w-4 h-4 text-[#93a267] focus:ring-[#93a267]" />
-            <div className="flex-1">
-              <span className="font-inter font-medium text-gray-900">Standard Rate</span>
-              <p className="font-inter text-sm text-gray-500">Delivery in 5-7 business days</p>
-            </div>
-            <span className="font-inter font-semibold text-gray-900">₹70.00</span>
-          </label>
-
-          <label className="flex items-center gap-4 p-4 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#93a267] transition-all">
-            <input type="radio" name="shipping-rate" required value="express" className="w-4 h-4 text-[#93a267] focus:ring-[#93a267]" />
-            <div className="flex-1">
-              <span className="font-inter font-medium text-gray-900">Express Rate</span>
-              <p className="font-inter text-sm text-gray-500">Delivery in 2-3 business days</p>
-            </div>
-            <span className="font-inter font-semibold text-gray-900">₹100.00</span>
-          </label>
-
-          <label className="flex items-center gap-4 p-4 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#93a267] transition-all">
-            <input type="radio" name="shipping-rate" required value="free shipping" className="w-4 h-4 text-[#93a267] focus:ring-[#93a267]" />
-            <div className="flex-1">
-              <span className="font-inter font-medium text-gray-900">Free Shipping</span>
-              <p className="font-inter text-sm text-gray-500">Delivery in 7-10 business days</p>
-            </div>
-            <span className="font-inter font-semibold text-[#93a267]">₹0</span>
-          </label>
-        </div>
-      </div>
-
       {/* Payment Method */}
       <div className="bg-[#faf9f7] rounded-2xl p-6 mb-8">
         <h2 className="font-inter text-lg font-semibold text-gray-900 mb-3">Payment Method</h2>
