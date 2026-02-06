@@ -6,7 +6,7 @@ const ToastContext = createContext(null);
 export const ToastProvider = ({ children }) => {
     const toast = useRef(null);
 
-    const showToast = (severity, summary, detail, life = 3000) => {
+    const showToast = (severity, summary, detail, life = 4000) => {
         if (toast.current) {
             toast.current.show({
                 severity,
@@ -25,7 +25,7 @@ export const ToastProvider = ({ children }) => {
 
     return (
         <ToastContext.Provider value={{ showToast, toastSuccess, toastError, toastInfo, toastWarn }}>
-            <Toast ref={toast} position="top-center" />
+            <Toast ref={toast} position="top-right" />
             {children}
         </ToastContext.Provider>
     );
