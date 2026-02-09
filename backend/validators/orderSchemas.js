@@ -7,8 +7,8 @@ const productItemSchema = Joi.object({
     name: Joi.string().optional(),
     price: Joi.number().optional(),
     image: Joi.string().optional(),
-    wood: Joi.object().optional(),
-    selectedColor: Joi.object().optional(),
+    wood: Joi.object().optional().allow(null),
+    selectedColor: Joi.object().optional().allow(null),
     // Allow other snapshot fields
 }).unknown(true);
 

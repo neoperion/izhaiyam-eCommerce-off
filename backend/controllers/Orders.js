@@ -398,8 +398,24 @@ const updateOrderTracking = async (req, res) => {
 
     if (order) {
         // Fetch user for notification
+        // Fetch user for notification AND Update Embedded Order
         const user = await User.findById(order.user);
-        if(user) { userEmail = user.email; userName = user.username; userPhone = order.phone || user.phone; }
+        if(user) { 
+            userEmail = user.email; userName = user.username; userPhone = order.phone || user.phone; 
+
+            // SYNC: Update the embedded order in User profile
+            await User.updateOne(
+                { _id: user._id, "orders._id": orderId },
+                { 
+                    $set: { 
+                        "orders.$.tracking": trackingData,
+                        "orders.$.deliveryStatus": "Shipped" 
+                    } 
+                }
+            );
+            // Fallback: If order not in array (rare case if sync failed previously), push it? 
+            // For now, assume strict sync or legacy fallback covers it.
+        }
     } else {
         // 2. Try updating LEGACY Order
         const user = await User.findOneAndUpdate(
@@ -448,7 +464,15 @@ const updateOrderStatus = async (req, res) => {
 
     if(order) {
          const user = await User.findById(order.user);
-         if(user) { userEmail = user.email; userName = user.username; userPhone = order.phone || user.phone; }
+         if(user) { 
+            userEmail = user.email; userName = user.username; userPhone = order.phone || user.phone;
+            
+            // SYNC: Update the embedded order in User profile
+            await User.updateOne(
+                { _id: user._id, "orders._id": orderId },
+                { $set: { "orders.$.deliveryStatus": status } }
+            );
+         }
     } else {
         // 2. Try LEGACY Order
         const user = await User.findOneAndUpdate(

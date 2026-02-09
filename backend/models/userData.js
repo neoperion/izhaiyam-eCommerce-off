@@ -118,7 +118,11 @@ const userSchema = mongoose.Schema(
         country: String,
         postalCode: String,
         totalAmount: Number,
-        deliveryStatus: { type: String, enum: ["pending", "delivered", "cancelled", "Shipped", "shipped"], default: "pending" },
+        deliveryStatus: { 
+            type: String, 
+            enum: ["pending", "delivered", "cancelled", "Shipped", "shipped", "Processed", "processed", "Pending", "Delivered", "Cancelled", "Processing", "processing"], 
+            default: "pending" 
+        },
         paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
         payment: {
             method: { type: String, enum: ["razorpay", "cod"], default: "cod" },

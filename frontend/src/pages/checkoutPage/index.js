@@ -5,6 +5,7 @@ import { OrderSummary } from "./orderSummary";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { isTokenValidBeforeHeadingToRoute } from "../../utils/isTokenValidBeforeHeadingToARoute";
+import { fetchIsTokenValid } from "../../features/authSlice/fetchIsTokenValid";
 import { getAllProductsData } from "../../features/productSlice";
 import axios from "axios";
 import { FullpageSpinnerLoader } from "../../components/loaders/spinnerIcon";
@@ -190,6 +191,9 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
                 // Success Popup
                 setShowSuccessModal(true);
 
+                // Refresh User Data to show new order in Profile
+                dispatch(fetchIsTokenValid());
+
                 // Clear Form
                 setCheckoutFormData((prevData) => {
                   return { 
@@ -215,6 +219,11 @@ export const CheckoutPage = ({ setIsCartSectionActive }) => {
 
           } catch (err) {
             console.error("Payment Verification Failed: " + (err.response?.data?.message || err.message));
+            Swal.fire({
+              icon: 'error',
+              title: 'Payment Verification Failed',
+              text: err.response?.data?.message || err.message || "An error occurred during payment verification. Please contact support.",
+            });
           }
         },
         prefill: {

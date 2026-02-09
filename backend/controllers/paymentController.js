@@ -53,6 +53,11 @@ const verifyPayment = async (req, res) => {
 
     // 1. Signature Verify
     const body = razorpay_order_id + "|" + razorpay_payment_id;
+    
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+        throw new CustomErrorHandler(500, "Server Error: Razorpay secret not verified");
+    }
+
     const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET).update(body.toString()).digest("hex");
     if (expectedSignature !== razorpay_signature) throw new CustomErrorHandler(400, "Invalid Signature");
 
@@ -133,6 +138,10 @@ const verifyPayment = async (req, res) => {
          }
     }
 
+    // 5. Link Order to User Profile (CRITICAL FIX)
+    user.orders.push(newOrder);
+    await user.save({ session });
+
     if (session) { await session.commitTransaction(); session.endSession(); }
 
     // Notifications
@@ -155,6 +164,7 @@ const verifyPayment = async (req, res) => {
 
   } catch (error) {
     if (session) { await session.abortTransaction(); session.endSession(); }
+    console.error("Payment Verification Error:", error);
     throw new CustomErrorHandler(error.statusCode || 500, error.message);
   }
 };
