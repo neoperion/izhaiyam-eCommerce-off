@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save, MapPin, Calendar } from 'lucide-react';
-import axios from 'axios';
-import { useToast } from "../../context/ToastContext";
-import { FullpageSpinnerLoader } from '../../components/loaders/spinnerIcon';
+import API from '../../config';
 
 const OrderTracking = ({ order, onClose }) => {
   const [carrier, setCarrier] = useState(order?.tracking?.carrier || '');
@@ -22,13 +20,13 @@ const OrderTracking = ({ order, onClose }) => {
     }
 
     setLoading(true);
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000/";
+    const serverUrl = API;
 
     try {
       const LoginToken = JSON.parse(localStorage.getItem("UserData"))?.loginToken || "";
       const header = { headers: { authorization: `Bearer ${LoginToken}` } };
 
-      await axios.put(`${serverUrl}orders/updateTracking/${order.id}`, {
+      await axios.put(`${serverUrl}/orders/updateTracking/${order.id}`, {
         carrier,
         trackingId: trackingId.trim(),
         liveLocationUrl: liveLocationUrl.trim(),
@@ -37,7 +35,7 @@ const OrderTracking = ({ order, onClose }) => {
 
       // Also update Order Status if changed
       if (status !== order.status) {
-         await axios.put(`${serverUrl}orders/updateStatus/${order.id}`, { status }, header);
+         await axios.put(`${serverUrl}/orders/updateStatus/${order.id}`, { status }, header);
       }
 
       toastSuccess("Tracking details updated successfully");
